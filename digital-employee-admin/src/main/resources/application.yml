@@ -74,7 +74,7 @@ spring:
     # 端口，默认为6379
     port: 6379
     # 数据库索引
-    database: 14
+    database: 12
     # 密码
     password: MyAicyber201415926
     # 连接超时时间
