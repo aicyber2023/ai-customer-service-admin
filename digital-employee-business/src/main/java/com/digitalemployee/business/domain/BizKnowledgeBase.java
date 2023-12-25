@@ -38,6 +38,8 @@ public class BizKnowledgeBase extends BaseEntity {
     /** 远程知识库名称，不可修改，唯一 */
     private String collectionName;
 
+    private String collectionNameQa;
+
     /**
      * 知识库名称
      */

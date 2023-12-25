@@ -9,7 +9,9 @@ import java.util.List;
 @Data
 public class QAParam {
 
+    /** 集合名称 */
     private String collection;
+    /** 问题 */
     private String question;
 
     private Double radius;
@@ -32,14 +34,6 @@ public class QAParam {
         this.history = new ArrayList<>();
     }
 
-    public static QAParam initQAParam(String collection, String question) {
-        final double default_radius = 0.8;
-        final double default_temperature = 2.0;
-        final double default_presence_penalty = 1.5;
-        final double default_frequency_penalty = 0.8;
-        return new QAParam(collection, question, default_radius, default_temperature, default_presence_penalty, default_frequency_penalty);
-    }
-
     public void appendHistory(BizSessionRecord record) {
         history.add(new History(record.getInputText(), record.getOutputText()));
     }
@@ -57,5 +51,13 @@ public class QAParam {
             this.question = question;
             this.answer = answer;
         }
+    }
+
+    public static QAParam initQAParam(String collection, String question) {
+        final double default_radius = 0.8;
+        final double default_temperature = 2.0;
+        final double default_presence_penalty = 1.5;
+        final double default_frequency_penalty = 0.8;
+        return new QAParam(collection, question, default_radius, default_temperature, default_presence_penalty, default_frequency_penalty);
     }
 }

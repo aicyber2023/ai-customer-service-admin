@@ -411,8 +411,9 @@ public class BizKnowledgeBaseServiceImpl extends ServiceImpl<BizKnowledgeBaseMap
 
         String uuid = IdUtil.fastSimpleUUID();
         bizKnowledgeBase.setCollectionName(uuid);
+        bizKnowledgeBase.setCollectionNameQa(IdUtil.fastSimpleUUID());
         bizKnowledgeBase.setName(uuid);
-        bizKnowledgeBase.setUpdateBy(uuid);
+        bizKnowledgeBase.setUpdateBy(String.valueOf(userId));
         this.save(bizKnowledgeBase);
         return bizKnowledgeBase;
     }

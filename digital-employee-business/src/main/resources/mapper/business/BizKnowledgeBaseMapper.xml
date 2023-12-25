@@ -8,6 +8,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="id"    column="id"    />
         <result property="sysUserId"    column="sys_user_id"    />
         <result property="collectionName"    column="collection_name"    />
+        <result property="collectionNameQa"    column="collection_name_qa"    />
         <result property="name"    column="name"    />
         <result property="status"    column="status"    />
         <result property="createBy"    column="create_by"    />
@@ -20,7 +21,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </resultMap>
 
     <sql id="selectBizKnowledgeBaseVo">
-        select id, sys_user_id, collection_name, name, status, create_by, create_time, update_by, update_time, remark , user_id, dept_id from biz_knowledge_base kb
+        select id, sys_user_id, collection_name, collection_name_qa, name, status, create_by, create_time, update_by, update_time, remark , user_id, dept_id from biz_knowledge_base kb
     </sql>
 
     <select id="selectBizKnowledgeBaseList" parameterType="BizKnowledgeBase" resultMap="BizKnowledgeBaseResult">
@@ -45,6 +46,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <trim prefix="(" suffix=")" suffixOverrides=",">
             <if test="sysUserId != null">sys_user_id,</if>
             <if test="collectionName != null and collectionName != ''">collection_name,</if>
+            <if test="collectionNameQa != null and collectionNameQa != ''">collection_name_qa,</if>
             <if test="name != null and name != ''">name,</if>
             <if test="status != null">status,</if>
             <if test="createBy != null and createBy != ''">create_by,</if>
@@ -56,6 +58,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <trim prefix="values (" suffix=")" suffixOverrides=",">
             <if test="sysUserId != null">#{sysUserId},</if>
             <if test="collectionName != null and collectionName != ''">#{collectionName},</if>
+            <if test="collectionNameQa != null and collectionNameQa != ''">#{collectionNameQa},</if>
             <if test="name != null and name != ''">#{name},</if>
             <if test="status != null">#{status},</if>
             <if test="createBy != null and createBy != ''">#{createBy},</if>
@@ -71,6 +74,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <trim prefix="SET" suffixOverrides=",">
             <if test="sysUserId != null">sys_user_id = #{sysUserId},</if>
             <if test="collectionName != null and collectionName != ''">collection_name = #{collectionName},</if>
+            <if test="collectionNameQa != null and collectionNameQa != ''">collection_name_qa = #{collectionNameQa},</if>
             <if test="name != null and name != ''">name = #{name},</if>
             <if test="status != null">status = #{status},</if>
             <if test="createBy != null and createBy != ''">create_by = #{createBy},</if>
