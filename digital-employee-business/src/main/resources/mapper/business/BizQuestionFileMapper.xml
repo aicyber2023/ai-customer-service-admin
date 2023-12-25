@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.digitalemployee.business.mapper.BizQuestionFileMapper">
+    
+    <resultMap type="BizQuestionFile" id="BizQuestionFileResult">
+        <result property="id"    column="id"    />
+        <result property="digitalEmployeeId"    column="digital_employee_id"    />
+        <result property="questionId"    column="question_id"    />
+        <result property="fileName"    column="file_name"    />
+        <result property="filePath"    column="file_path"    />
+        <result property="status"    column="status"    />
+        <result property="fileSize"    column="file_size"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="createBy"    column="create_by"    />
+    </resultMap>
+
+    <sql id="selectBizQuestionFileVo">
+        select id, digital_employee_id, question_id, file_name, file_path, status, file_size, create_time, create_by from biz_question_file
+    </sql>
+
+    <select id="selectBizQuestionFileList" parameterType="BizQuestionFile" resultMap="BizQuestionFileResult">
+        <include refid="selectBizQuestionFileVo"/>
+        <where>  
+            <if test="digitalEmployeeId != null "> and digital_employee_id = #{digitalEmployeeId}</if>
+            <if test="questionId != null "> and question_id = #{questionId}</if>
+            <if test="fileName != null  and fileName != ''"> and file_name like concat('%', #{fileName}, '%')</if>
+            <if test="filePath != null  and filePath != ''"> and file_path = #{filePath}</if>
+            <if test="status != null "> and status = #{status}</if>
+            <if test="fileSize != null "> and file_size = #{fileSize}</if>
+        </where>
+    </select>
+    <select id="selectOneBizQuestionFile" resultMap="BizQuestionFileResult">
+        <include refid="selectBizQuestionFileVo"/>
+        <where>
+            <if test="digitalEmployeeId != null "> and digital_employee_id = #{digitalEmployeeId}</if>
+            <if test="questionId != null "> and question_id = #{questionId}</if>
+            <if test="fileName != null  and fileName != ''"> and file_name = #{fileName}</if>
+<!--            <if test="filePath != null  and filePath != ''"> and file_path = #{filePath}</if>-->
+            <if test="status != null "> and status = #{status}</if>
+            <if test="fileSize != null "> and file_size = #{fileSize}</if>
+        </where>
+    </select>
+    
+    <select id="selectBizQuestionFileById" parameterType="Long" resultMap="BizQuestionFileResult">
+        <include refid="selectBizQuestionFileVo"/>
+        where id = #{id}
+    </select>
+        
+    <insert id="insertBizQuestionFile" parameterType="BizQuestionFile" useGeneratedKeys="true" keyProperty="id">
+        insert into biz_question_file
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="digitalEmployeeId != null">digital_employee_id,</if>
+            <if test="questionId != null">question_id,</if>
+            <if test="fileName != null and fileName != ''">file_name,</if>
+            <if test="filePath != null and filePath != ''">file_path,</if>
+            <if test="status != null">status,</if>
+            <if test="fileSize != null">file_size,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="createBy != null and createBy != ''">create_by,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="digitalEmployeeId != null">#{digitalEmployeeId},</if>
+            <if test="questionId != null">#{questionId},</if>
+            <if test="fileName != null and fileName != ''">#{fileName},</if>
+            <if test="filePath != null and filePath != ''">#{filePath},</if>
+            <if test="status != null">#{status},</if>
+            <if test="fileSize != null">#{fileSize},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="createBy != null and createBy != ''">#{createBy},</if>
+         </trim>
+    </insert>
+
+    <update id="updateBizQuestionFile" parameterType="BizQuestionFile">
+        update biz_question_file
+        <trim prefix="SET" suffixOverrides=",">
+<!--            <if test="digitalEmployeeId != null">digital_employee_id = #{digitalEmployeeId},</if>-->
+<!--            <if test="questionId != null">question_id = #{questionId},</if>-->
+            <if test="fileName != null and fileName != ''">file_name = #{fileName},</if>
+<!--            <if test="filePath != null and filePath != ''">file_path = #{filePath},</if>-->
+            <if test="status != null">status = #{status},</if>
+<!--            <if test="fileSize != null">file_size = #{fileSize},</if>-->
+<!--            <if test="createTime != null">create_time = #{createTime},</if>-->
+<!--            <if test="createBy != null and createBy != ''">create_by = #{createBy},</if>-->
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteBizQuestionFileById" parameterType="Long">
+        delete from biz_question_file where id = #{id}
+    </delete>
+
+    <delete id="deleteBizQuestionFileByIds" parameterType="String">
+        delete from biz_question_file where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>

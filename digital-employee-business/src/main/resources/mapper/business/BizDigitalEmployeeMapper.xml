@@ -1,0 +1,194 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.digitalemployee.business.mapper.BizDigitalEmployeeMapper">
+    
+    <resultMap type="BizDigitalEmployee" id="BizDigitalEmployeeResult">
+        <result property="id"    column="id"    />
+        <result property="templateId"    column="template_id"    />
+        <result property="sysUserId"    column="sys_user_id"    />
+        <result property="knowledgeBaseId"    column="knowledge_base_id"    />
+        <result property="avatar"    column="avatar"    />
+        <result property="avatarContentType"    column="avatar_content_type"    />
+        <result property="name"    column="name"    />
+        <result property="model"    column="model"    />
+        <result property="temperature"    column="temperature"    />
+        <result property="maxTokens"    column="max_tokens"    />
+        <result property="presencePenalty"    column="presence_penalty"    />
+        <result property="frequencyPenalty"    column="frequency_penalty"    />
+        <result property="sendMemory"    column="send_memory"    />
+        <result property="historyMessageCount"    column="history_message_count"    />
+        <result property="compressMessageLengthThreshold"    column="compress_message_length_threshold"    />
+        <result property="lang"    column="lang"    />
+        <result property="builtin"    column="builtin"    />
+        <result property="status"    column="status"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateBy"    column="update_by"    />
+        <result property="updateTime"    column="update_time"    />
+        <result property="remark"    column="remark"    />
+        <result property="greeting"    column="greeting"    />
+        <result property="companyAvatar"    column="company_avatar"    />
+        <result property="companyAvatarContentType"    column="company_avatar_content_type"    />
+        <result property="companyName"    column="company_name"    />
+        <result property="employeeKey"    column="employee_key"    />
+        <result property="deptId"    column="dept_id"    />
+        <result property="userId"    column="user_id"    />
+        <result property="proactivelyGreet"    column="proactively_greet"    />
+    </resultMap>
+
+    <sql id="selectBizDigitalEmployeeVo">
+        select id, template_id, sys_user_id, knowledge_base_id, avatar, avatar_content_type, name, model, temperature,
+               max_tokens, presence_penalty, frequency_penalty, send_memory, history_message_count, compress_message_length_threshold,
+               lang, builtin, status, create_by, create_time, update_by, update_time, remark, greeting,
+               company_avatar, company_avatar_content_type, company_name, employee_key, user_id, dept_id, proactively_greet  from biz_digital_employee de
+    </sql>
+
+    <select id="selectBizDigitalEmployeeList" parameterType="BizDigitalEmployee" resultMap="BizDigitalEmployeeResult">
+        <include refid="selectBizDigitalEmployeeVo"/>
+        <where>
+            `status` != 2
+            <if test="templateId != null "> and template_id = #{templateId}</if>
+            <if test="sysUserId != null "> and sys_user_id = #{sysUserId}</if>
+            <if test="knowledgeBaseId != null "> and knowledge_base_id = #{knowledgeBaseId}</if>
+            <if test="avatar != null  and avatar != ''"> and avatar = #{avatar}</if>
+            <if test="avatarContentType != null  and avatarContentType != ''"> and avatar_content_type = #{avatarContentType}</if>
+            <if test="name != null  and name != ''"> and name like concat('%', #{name}, '%')</if>
+            <if test="model != null  and model != ''"> and model = #{model}</if>
+            <if test="temperature != null "> and temperature = #{temperature}</if>
+            <if test="maxTokens != null "> and max_tokens = #{maxTokens}</if>
+            <if test="presencePenalty != null "> and presence_penalty = #{presencePenalty}</if>
+            <if test="frequencyPenalty != null "> and frequency_penalty = #{frequencyPenalty}</if>
+            <if test="sendMemory != null "> and send_memory = #{sendMemory}</if>
+            <if test="historyMessageCount != null "> and history_message_count = #{historyMessageCount}</if>
+            <if test="compressMessageLengthThreshold != null "> and compress_message_length_threshold = #{compressMessageLengthThreshold}</if>
+            <if test="lang != null  and lang != ''"> and lang = #{lang}</if>
+            <if test="builtin != null "> and builtin = #{builtin}</if>
+            <if test="status != null "> and status = #{status}</if>
+            <if test="greeting != null and greeting != '' "> and greeting = #{greeting}</if>
+            <if test="companyAvatar != null and companyAvatar != '' "> and company_avatar = #{companyAvatar}</if>
+            <if test="companyAvatarContentType != null and companyAvatarContentType != '' "> and company_avatar_content_type = #{companyAvatarContentType}</if>
+            <if test="companyName != null and companyName != '' "> and company_name = #{companyName}</if>
+            <if test="employeeKey != null and employeeKey != '' "> and employee_key = #{employeeKey}</if>
+            <if test="proactivelyGreet != null"> and proactively_greet = #{proactivelyGreet}</if>
+            <!-- 权限过滤 -->
+            ${params.dataScope}
+        </where>
+    </select>
+    
+    <select id="selectBizDigitalEmployeeById" parameterType="Long" resultMap="BizDigitalEmployeeResult">
+        <include refid="selectBizDigitalEmployeeVo"/>
+        where id = #{id}
+    </select>
+        
+    <insert id="insertBizDigitalEmployee" parameterType="BizDigitalEmployee" useGeneratedKeys="true" keyProperty="id">
+        insert into biz_digital_employee
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="templateId != null">template_id,</if>
+            <if test="sysUserId != null">sys_user_id,</if>
+            <if test="knowledgeBaseId != null">knowledge_base_id,</if>
+            <if test="avatar != null">avatar,</if>
+            <if test="avatarContentType != null">avatar_content_type,</if>
+            <if test="name != null">name,</if>
+            <if test="model != null">model,</if>
+            <if test="temperature != null">temperature,</if>
+            <if test="maxTokens != null">max_tokens,</if>
+            <if test="presencePenalty != null">presence_penalty,</if>
+            <if test="frequencyPenalty != null">frequency_penalty,</if>
+            <if test="sendMemory != null">send_memory,</if>
+            <if test="historyMessageCount != null">history_message_count,</if>
+            <if test="compressMessageLengthThreshold != null">compress_message_length_threshold,</if>
+            <if test="lang != null">lang,</if>
+            <if test="builtin != null">builtin,</if>
+            <if test="status != null">status,</if>
+            <if test="createBy != null">create_by,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateBy != null">update_by,</if>
+            <if test="updateTime != null">update_time,</if>
+            <if test="remark != null">remark,</if>
+            <if test="greeting != null">greeting,</if>
+            <if test="companyAvatar != null">company_avatar,</if>
+            <if test="companyAvatarContentType != null">company_avatar_content_type,</if>
+            <if test="companyName != null">company_name,</if>
+            <if test="employeeKey != null">employee_key,</if>
+            <if test="proactivelyGreet != null">proactively_greet,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="templateId != null">#{templateId},</if>
+            <if test="sysUserId != null">#{sysUserId},</if>
+            <if test="knowledgeBaseId != null">#{knowledgeBaseId},</if>
+            <if test="avatar != null">#{avatar},</if>
+            <if test="avatarContentType != null">#{avatarContentType},</if>
+            <if test="name != null">#{name},</if>
+            <if test="model != null">#{model},</if>
+            <if test="temperature != null">#{temperature},</if>
+            <if test="maxTokens != null">#{maxTokens},</if>
+            <if test="presencePenalty != null">#{presencePenalty},</if>
+            <if test="frequencyPenalty != null">#{frequencyPenalty},</if>
+            <if test="sendMemory != null">#{sendMemory},</if>
+            <if test="historyMessageCount != null">#{historyMessageCount},</if>
+            <if test="compressMessageLengthThreshold != null">#{compressMessageLengthThreshold},</if>
+            <if test="lang != null">#{lang},</if>
+            <if test="builtin != null">#{builtin},</if>
+            <if test="status != null">#{status},</if>
+            <if test="createBy != null">#{createBy},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateBy != null">#{updateBy},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+            <if test="remark != null">#{remark},</if>
+            <if test="greeting != null">#{greeting},</if>
+            <if test="companyAvatar != null">#{companyAvatar},</if>
+            <if test="companyAvatarContentType != null">#{companyAvatarContentType},</if>
+            <if test="companyName != null">#{companyName},</if>
+            <if test="employeeKey != null">#{employeeKey},</if>
+            <if test="proactivelyGreet != null">#{proactivelyGreet},</if>
+         </trim>
+    </insert>
+
+    <update id="updateBizDigitalEmployee" parameterType="BizDigitalEmployee">
+        update biz_digital_employee
+        <trim prefix="SET" suffixOverrides=",">
+            knowledge_base_id = #{knowledgeBaseId},
+            <if test="templateId != null">template_id = #{templateId},</if>
+            <if test="sysUserId != null">sys_user_id = #{sysUserId},</if>
+            <if test="avatar != null">avatar = #{avatar},</if>
+            <if test="avatarContentType != null">avatar_content_type = #{avatarContentType},</if>
+            <if test="name != null">name = #{name},</if>
+            <if test="model != null">model = #{model},</if>
+            <if test="temperature != null">temperature = #{temperature},</if>
+            <if test="maxTokens != null">max_tokens = #{maxTokens},</if>
+            <if test="presencePenalty != null">presence_penalty = #{presencePenalty},</if>
+            <if test="frequencyPenalty != null">frequency_penalty = #{frequencyPenalty},</if>
+            <if test="sendMemory != null">send_memory = #{sendMemory},</if>
+            <if test="historyMessageCount != null">history_message_count = #{historyMessageCount},</if>
+            <if test="compressMessageLengthThreshold != null">compress_message_length_threshold = #{compressMessageLengthThreshold},</if>
+            <if test="lang != null">lang = #{lang},</if>
+            <if test="builtin != null">builtin = #{builtin},</if>
+            <if test="status != null">status = #{status},</if>
+            <if test="createBy != null">create_by = #{createBy},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateBy != null">update_by = #{updateBy},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+            <if test="remark != null">remark = #{remark},</if>
+            <if test="greeting != null">greeting = #{greeting},</if>
+            <if test="companyAvatar != null">company_avatar = #{companyAvatar},</if>
+            <if test="companyAvatarContentType != null">company_avatar_content_type = #{companyAvatarContentType},</if>
+            <if test="companyName != null">company_name = #{companyName},</if>
+            <if test="employeeKey != null">employee_key = #{employeeKey},</if>
+            <if test="proactivelyGreet != null">proactively_greet = #{proactivelyGreet},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteBizDigitalEmployeeById" parameterType="Long">
+        delete from biz_digital_employee where id = #{id}
+    </delete>
+
+    <delete id="deleteBizDigitalEmployeeByIds" parameterType="String">
+        delete from biz_digital_employee where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>

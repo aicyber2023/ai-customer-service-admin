@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.digitalemployee.business.mapper.BizDigitalEmployeeContextMapper">
+    
+    <resultMap type="BizDigitalEmployeeContext" id="BizDigitalEmployeeContextResult">
+        <result property="id"    column="id"    />
+        <result property="templateId"    column="template_id"    />
+        <result property="digitalEmployeeId"    column="digital_employee_id"    />
+        <result property="role"    column="role"    />
+        <result property="content"    column="content"    />
+        <result property="date"    column="date"    />
+    </resultMap>
+
+    <sql id="selectBizDigitalEmployeeContextVo">
+        select id, template_id, digital_employee_id, role, content, date from biz_digital_employee_context
+    </sql>
+
+    <select id="selectBizDigitalEmployeeContextList" parameterType="BizDigitalEmployeeContext" resultMap="BizDigitalEmployeeContextResult">
+        <include refid="selectBizDigitalEmployeeContextVo"/>
+        <where>  
+            <if test="templateId != null "> and template_id = #{templateId}</if>
+            <if test="digitalEmployeeId != null "> and digital_employee_id = #{digitalEmployeeId}</if>
+            <if test="role != null  and role != ''"> and role = #{role}</if>
+            <if test="content != null  and content != ''"> and content = #{content}</if>
+            <if test="date != null "> and date = #{date}</if>
+
+        </where>
+    </select>
+    
+    <select id="selectBizDigitalEmployeeContextById" parameterType="Long" resultMap="BizDigitalEmployeeContextResult">
+        <include refid="selectBizDigitalEmployeeContextVo"/>
+        where id = #{id}
+    </select>
+        
+    <insert id="insertBizDigitalEmployeeContext" parameterType="BizDigitalEmployeeContext" useGeneratedKeys="true" keyProperty="id">
+        insert into biz_digital_employee_context
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="templateId != null">template_id,</if>
+            <if test="digitalEmployeeId != null">digital_employee_id,</if>
+            <if test="role != null and role != ''">role,</if>
+            <if test="content != null and content != ''">content,</if>
+            <if test="date != null">date,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="templateId != null">#{templateId},</if>
+            <if test="digitalEmployeeId != null">#{digitalEmployeeId},</if>
+            <if test="role != null and role != ''">#{role},</if>
+            <if test="content != null and content != ''">#{content},</if>
+            <if test="date != null">#{date},</if>
+         </trim>
+    </insert>
+
+    <update id="updateBizDigitalEmployeeContext" parameterType="BizDigitalEmployeeContext">
+        update biz_digital_employee_context
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="templateId != null">template_id = #{templateId},</if>
+            <if test="digitalEmployeeId != null">digital_employee_id = #{digitalEmployeeId},</if>
+            <if test="role != null and role != ''">role = #{role},</if>
+            <if test="content != null and content != ''">content = #{content},</if>
+            <if test="date != null">date = #{date},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteBizDigitalEmployeeContextById" parameterType="Long">
+        delete from biz_digital_employee_context where id = #{id}
+    </delete>
+
+    <delete id="deleteBizDigitalEmployeeContextByIds" parameterType="String">
+        delete from biz_digital_employee_context where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>

@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.digitalemployee.business.mapper.BizKnowledgeBaseFileMapper">
+    
+    <resultMap type="BizKnowledgeBaseFile" id="BizKnowledgeBaseFileResult">
+        <result property="id"    column="id"    />
+        <result property="knowledgeBaseId"    column="knowledge_base_id"    />
+        <result property="fileName"    column="file_name"    />
+        <result property="filePath"    column="file_path"    />
+        <result property="vectorIds"    column="vector_ids"    />
+        <result property="status"    column="status"    />
+        <result property="wordAmount"    column="word_amount"    />
+        <result property="fileSize"    column="file_size"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="createBy"    column="create_by"    />
+    </resultMap>
+
+    <sql id="selectBizKnowledgeBaseFileVo">
+        select id, knowledge_base_id, file_name, file_path, vector_ids, status, word_amount, file_size, create_time, create_by from biz_knowledge_base_file
+    </sql>
+
+    <select id="selectBizKnowledgeBaseFileList" parameterType="BizKnowledgeBaseFile" resultMap="BizKnowledgeBaseFileResult">
+        <include refid="selectBizKnowledgeBaseFileVo"/>
+        <where>  
+            <if test="knowledgeBaseId != null "> and knowledge_base_id = #{knowledgeBaseId}</if>
+            <if test="fileName != null  and fileName != ''"> and file_name like concat('%', #{fileName}, '%')</if>
+            <if test="filePath != null  and filePath != ''"> and file_path = #{filePath}</if>
+            <if test="status != null"> and `status` = #{status}</if>
+            <if test="startDateTime != null and endDateTime != null">and create_time between #{startDateTime} and #{endDateTime}</if>
+        </where>
+    </select>
+    
+    <select id="selectBizKnowledgeBaseFileById" parameterType="Long" resultMap="BizKnowledgeBaseFileResult">
+        <include refid="selectBizKnowledgeBaseFileVo"/>
+        where id = #{id}
+    </select>
+        
+    <insert id="insertBizKnowledgeBaseFile" parameterType="BizKnowledgeBaseFile" useGeneratedKeys="true" keyProperty="id">
+        insert into biz_knowledge_base_file
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="knowledgeBaseId != null">knowledge_base_id,</if>
+            <if test="fileName != null and fileName != ''">file_name,</if>
+            <if test="filePath != null and filePath != ''">file_path,</if>
+            <if test="vectorIds != null and vectorIds != ''">vector_ids,</if>
+            <if test="status != null and status != ''">`status`,</if>
+            <if test="wordAmount != null and wordAmount != ''">word_amount,</if>
+            <if test="fileSize != null">file_size,</if>
+            <if test="createBy != null">create_by,</if>
+            <if test="createTime != null">create_time,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="knowledgeBaseId != null">#{knowledgeBaseId},</if>
+            <if test="fileName != null and fileName != ''">#{fileName},</if>
+            <if test="filePath != null and filePath != ''">#{filePath},</if>
+            <if test="vectorIds != null and vectorIds != ''">#{vectorIds},</if>
+            <if test="status != null and status != ''">#{status},</if>
+            <if test="wordAmount != null and wordAmount != ''">#{wordAmount},</if>
+            <if test="fileSize != null">#{fileSize},</if>
+            <if test="createBy != null">#{createBy},</if>
+            <if test="createTime != null">#{createTime},</if>
+         </trim>
+    </insert>
+
+    <update id="updateBizKnowledgeBaseFile" parameterType="BizKnowledgeBaseFile">
+        update biz_knowledge_base_file
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="knowledgeBaseId != null">knowledge_base_id = #{knowledgeBaseId},</if>
+            <if test="fileName != null and fileName != ''">file_name = #{fileName},</if>
+            <if test="filePath != null and filePath != ''">file_path = #{filePath},</if>
+            <if test="vectorIds != null and vectorIds != ''">vector_ids = #{vectorIds},</if>
+            <if test="status != null and status != ''">`status` = #{status},</if>
+            <if test="wordAmount != null and wordAmount != ''">word_amount = #{wordAmount},</if>
+            <if test="fileSize != null">file_size = #{fileSize},</if>
+            <if test="createBy != null">create_by = #{createBy},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteBizKnowledgeBaseFileById" parameterType="Long">
+        delete from biz_knowledge_base_file where id = #{id}
+    </delete>
+
+    <delete id="deleteBizKnowledgeBaseFileByIds" parameterType="String">
+        delete from biz_knowledge_base_file where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+    <select id="selectSysUserKbDocCount" resultType="java.lang.Long">
+        select
+            count(*)
+        from
+            biz_knowledge_base kb left join biz_knowledge_base_file kbf on kb.id = kbf.knowledge_base_id
+        where
+            kb.sys_user_id = #{sysUserId}
+    </select>
+    <select id="selectBizKnowledgeBaseFileIds" parameterType="BizKnowledgeBaseFile" resultMap="BizKnowledgeBaseFileResult">
+        <include refid="selectBizKnowledgeBaseFileVo"/>
+        where knowledge_base_id = #{knowledgeBaseId}
+        and  file_name =#{fileName}
+        and  file_path =#{filePath}
+        and  status =0
+        and  create_time =#{createTime}
+        and  create_by =#{createBy}
+    </select>
+</mapper>

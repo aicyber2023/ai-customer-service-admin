@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.digitalemployee.system.mapper.SysUserDeConfigMapper">
+    
+    <resultMap type="SysUserDeConfig" id="SysUserDeConfigResult">
+        <result property="id"    column="id"    />
+        <result property="sysUserId"    column="sys_user_id"    />
+        <result property="employeeAmount"    column="employee_amount"    />
+        <result property="sessionAmount"    column="session_amount"    />
+        <result property="knowledgeBaseAmount"    column="knowledge_base_amount"    />
+        <result property="knowledgeBaseDocAmount"    column="knowledge_base_doc_amount"    />
+        <result property="knowledgeBaseDocWordAmount"    column="knowledge_base_doc_word_amount"    />
+        <result property="startDate"    column="start_date"    />
+        <result property="expireDate"    column="expire_date"    />
+        <result property="status"    column="status"    />
+        <result property="type"    column="type"    />
+    </resultMap>
+
+    <sql id="selectSysUserDeConfigVo">
+        select id, sys_user_id, employee_amount, session_amount, knowledge_base_amount, knowledge_base_doc_amount, knowledge_base_doc_word_amount, start_date, expire_date, start_date, type from sys_user_de_config
+    </sql>
+
+    <select id="selectSysUserDeConfigList" parameterType="SysUserDeConfig" resultMap="SysUserDeConfigResult">
+        <include refid="selectSysUserDeConfigVo"/>
+        <where>  
+            <if test="sysUserId != null "> and sys_user_id = #{sysUserId}</if>
+            <if test="employeeAmount != null "> and employee_amount = #{employeeAmount}</if>
+            <if test="sessionAmount != null "> and session_amount = #{sessionAmount}</if>
+            <if test="knowledgeBaseAmount != null "> and knowledge_base_amount = #{knowledgeBaseAmount}</if>
+            <if test="knowledgeBaseDocAmount != null "> and knowledge_base_doc_amount = #{knowledgeBaseDocAmount}</if>
+            <if test="knowledgeBaseDocWordAmount != null "> and knowledge_base_doc_word_amount = #{knowledgeBaseDocWordAmount}</if>
+            <if test="startDate != null "> and start_date = #{startDate}</if>
+            <if test="expireDate != null "> and expire_date = #{expireDate}</if>
+            <if test="status != null "> and status = #{status}</if>
+            <if test="type != null "> and type = #{type}</if>
+        </where>
+    </select>
+    
+    <select id="selectSysUserDeConfigById" parameterType="Long" resultMap="SysUserDeConfigResult">
+        <include refid="selectSysUserDeConfigVo"/>
+        where id = #{id}
+    </select>
+        
+    <insert id="insertSysUserDeConfig" parameterType="SysUserDeConfig" useGeneratedKeys="true" keyProperty="id">
+        insert into sys_user_de_config
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="sysUserId != null">sys_user_id,</if>
+            <if test="employeeAmount != null">employee_amount,</if>
+            <if test="sessionAmount != null">session_amount,</if>
+            <if test="knowledgeBaseAmount != null">knowledge_base_amount,</if>
+            <if test="knowledgeBaseDocAmount != null">knowledge_base_doc_amount,</if>
+            <if test="knowledgeBaseDocWordAmount != null">knowledge_base_doc_word_amount,</if>
+            <if test="startDate != null">start_date,</if>
+            <if test="expireDate != null">expire_date,</if>
+            <if test="status != null">status,</if>
+            <if test="type != null">type,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="sysUserId != null">#{sysUserId},</if>
+            <if test="employeeAmount != null">#{employeeAmount},</if>
+            <if test="sessionAmount != null">#{sessionAmount},</if>
+            <if test="knowledgeBaseAmount != null">#{knowledgeBaseAmount},</if>
+            <if test="knowledgeBaseDocAmount != null">#{knowledgeBaseDocAmount},</if>
+            <if test="knowledgeBaseDocWordAmount != null">#{knowledgeBaseDocWordAmount},</if>
+            <if test="startDate != null">#{start_date},</if>
+            <if test="expireDate != null">#{expire_date},</if>
+            <if test="status != null">#{status},</if>
+            <if test="type != null">#{type},</if>
+         </trim>
+    </insert>
+
+    <update id="updateSysUserDeConfig" parameterType="SysUserDeConfig">
+        update sys_user_de_config
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="sysUserId != null">sys_user_id = #{sysUserId},</if>
+            <if test="employeeAmount != null">employee_amount = #{employeeAmount},</if>
+            <if test="sessionAmount != null">session_amount = #{sessionAmount},</if>
+            <if test="knowledgeBaseAmount != null">knowledge_base_amount = #{knowledgeBaseAmount},</if>
+            <if test="knowledgeBaseDocAmount != null">knowledge_base_doc_amount = #{knowledgeBaseDocAmount},</if>
+            <if test="knowledgeBaseDocWordAmount != null">knowledge_base_doc_word_amount = #{knowledgeBaseDocWordAmount},</if>
+            <if test="startDate != null">start_date = #{startDate},</if>
+            <if test="expireDate != null">expire_date = #{expireDate},</if>
+            <if test="status != null">status = #{status},</if>
+            <if test="type != null">type = #{type},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteSysUserDeConfigById" parameterType="Long">
+        delete from sys_user_de_config where id = #{id}
+    </delete>
+
+    <delete id="deleteSysUserDeConfigByIds" parameterType="String">
+        delete from sys_user_de_config where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>

@@ -1,0 +1,2 @@
+Application Version: ${digitalemployee.version}
+Spring Boot Version: ${spring-boot.version}

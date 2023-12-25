@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.digitalemployee.business.mapper.BizUserMapper">
+    
+    <resultMap type="BizUser" id="BizUserResult">
+        <result property="id"    column="id"    />
+        <result property="sysUserId"    column="sys_user_id"    />
+        <result property="nickName"    column="nick_name"    />
+        <result property="password"    column="password"    />
+        <result property="status"    column="status"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateBy"    column="update_by"    />
+        <result property="updateTime"    column="update_time"    />
+        <result property="remark"    column="remark"    />
+        <result property="avatar"    column="avatar"    />
+        <result property="avatarContentType"    column="avatar_content_type"    />
+        <result property="name"    column="name"    />
+        <result property="deptId"    column="dept_id"    />
+        <result property="userId"    column="user_id"    />
+    </resultMap>
+
+    <sql id="selectBizUserVo">
+        select id, sys_user_id, nick_name, password, status, create_by, create_time, update_by, update_time, remark,
+               avatar, avatar_content_type, name , user_id, dept_id from biz_user u
+    </sql>
+
+    <select id="selectBizUserListNew" parameterType="BizUser" resultMap="BizUserResult">
+        select u.id, u.sys_user_id, u.nick_name, u.password, u.status, u.create_by, u.create_time, u.update_by, u.update_time, u.remark,
+               u.avatar, u.avatar_content_type, u.name , u.user_id, u.dept_id
+        from biz_user u left join sys_user su on u.sys_user_id = su.user_id
+        <where>
+            su.user_id is not null
+            <if test="sysUserId != null "> and u.sys_user_id = #{sysUserId}</if>
+            <if test="nickName != null  and nickName != ''"> and u.nick_name like concat('%', #{nickName}, '%')</if>
+            <if test="password != null  and password != ''"> and u.password = #{password}</if>
+            <if test="status != null "> and u.status = #{status}</if>
+            <if test="avatar != null  and avatar != ''"> and u.avatar = #{avatar}</if>
+            <if test="avatarContentType != null  and avatarContentType != ''"> and u.avatar_content_type = #{avatarContentType}</if>
+            <if test="name != null  and name != ''"> and u.name like concat('%', #{name}, '%')</if>
+            <!-- 权限过滤 -->
+            ${params.dataScope}
+        </where>
+    </select>
+
+    <select id="selectBizUserList" parameterType="BizUser" resultMap="BizUserResult">
+        <include refid="selectBizUserVo"/>
+        <where>
+            <if test="sysUserId != null "> and sys_user_id = #{sysUserId}</if>
+            <if test="nickName != null  and nickName != ''"> and nick_name like concat('%', #{nickName}, '%')</if>
+            <if test="password != null  and password != ''"> and password = #{password}</if>
+            <if test="status != null "> and status = #{status}</if>
+            <if test="avatar != null  and avatar != ''"> and avatar = #{avatar}</if>
+            <if test="avatarContentType != null  and avatarContentType != ''"> and avatar_content_type = #{avatarContentType}</if>
+            <if test="name != null  and name != ''"> and name like concat('%', #{name}, '%')</if>
+            <!-- 权限过滤 -->
+            ${params.dataScope}
+        </where>
+    </select>
+    
+    <select id="selectBizUserById" parameterType="Long" resultMap="BizUserResult">
+        <include refid="selectBizUserVo"/>
+        where id = #{id}
+    </select>
+        
+    <insert id="insertBizUser" parameterType="BizUser" useGeneratedKeys="true" keyProperty="id">
+        insert into biz_user
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="sysUserId != null">sys_user_id,</if>
+            <if test="nickName != null and nickName != ''">nick_name,</if>
+            <if test="password != null and password != ''">password,</if>
+            <if test="status != null">status,</if>
+            <if test="createBy != null">create_by,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateBy != null">update_by,</if>
+            <if test="updateTime != null">update_time,</if>
+            <if test="remark != null">remark,</if>
+            <if test="avatar != null">avatar,</if>
+            <if test="avatarContentType != null">avatar_content_type,</if>
+            <if test="name != null">name,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="sysUserId != null">#{sysUserId},</if>
+            <if test="nickName != null and nickName != ''">#{nickName},</if>
+            <if test="password != null and password != ''">#{password},</if>
+            <if test="status != null">#{status},</if>
+            <if test="createBy != null">#{createBy},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateBy != null">#{updateBy},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+            <if test="remark != null">#{remark},</if>
+            <if test="avatar != null">#{avatar},</if>
+            <if test="avatarContentType != null">#{avatarContentType},</if>
+            <if test="name != null">#{name},</if>
+         </trim>
+    </insert>
+
+    <update id="updateBizUser" parameterType="BizUser">
+        update biz_user
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="sysUserId != null">sys_user_id = #{sysUserId},</if>
+            <if test="nickName != null and nickName != ''">nick_name = #{nickName},</if>
+            <if test="password != null and password != ''">password = #{password},</if>
+            <if test="status != null">status = #{status},</if>
+            <if test="createBy != null">create_by = #{createBy},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateBy != null">update_by = #{updateBy},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+            <if test="remark != null">remark = #{remark},</if>
+            <if test="avatar != null">avatar = #{avatar},</if>
+            <if test="avatarContentType != null">avatar_content_type = #{avatarContentType},</if>
+            <if test="name != null">name = #{name},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteBizUserById" parameterType="Long">
+        delete from biz_user where id = #{id}
+    </delete>
+
+    <delete id="deleteBizUserByIds" parameterType="String">
+        delete from biz_user where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>

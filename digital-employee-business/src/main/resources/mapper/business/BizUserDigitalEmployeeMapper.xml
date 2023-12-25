@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.digitalemployee.business.mapper.BizUserDigitalEmployeeMapper">
+    
+    <resultMap type="BizUserDigitalEmployee" id="BizUserDigitalEmployeeResult">
+        <result property="id"    column="id"    />
+        <result property="userId"    column="user_id"    />
+        <result property="digitalEmployeeId"    column="digital_employee_id"    />
+    </resultMap>
+
+    <sql id="selectBizUserDigitalEmployeeVo">
+        select id, user_id, digital_employee_id from biz_user_digital_employee
+    </sql>
+
+    <select id="selectBizUserDigitalEmployeeList" parameterType="BizUserDigitalEmployee" resultMap="BizUserDigitalEmployeeResult">
+        <include refid="selectBizUserDigitalEmployeeVo"/>
+        <where>  
+            <if test="userId != null "> and user_id = #{userId}</if>
+            <if test="digitalEmployeeId != null "> and digital_employee_id = #{digitalEmployeeId}</if>
+        </where>
+    </select>
+    
+    <select id="selectBizUserDigitalEmployeeById" parameterType="Long" resultMap="BizUserDigitalEmployeeResult">
+        <include refid="selectBizUserDigitalEmployeeVo"/>
+        where id = #{id}
+    </select>
+        
+    <insert id="insertBizUserDigitalEmployee" parameterType="BizUserDigitalEmployee" useGeneratedKeys="true" keyProperty="id">
+        insert into biz_user_digital_employee
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="userId != null">user_id,</if>
+            <if test="digitalEmployeeId != null">digital_employee_id,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="userId != null">#{userId},</if>
+            <if test="digitalEmployeeId != null">#{digitalEmployeeId},</if>
+         </trim>
+    </insert>
+
+    <update id="updateBizUserDigitalEmployee" parameterType="BizUserDigitalEmployee">
+        update biz_user_digital_employee
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="userId != null">user_id = #{userId},</if>
+            <if test="digitalEmployeeId != null">digital_employee_id = #{digitalEmployeeId},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteBizUserDigitalEmployeeById" parameterType="Long">
+        delete from biz_user_digital_employee where id = #{id}
+    </delete>
+
+    <delete id="deleteBizUserDigitalEmployeeByIds" parameterType="String">
+        delete from biz_user_digital_employee where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>

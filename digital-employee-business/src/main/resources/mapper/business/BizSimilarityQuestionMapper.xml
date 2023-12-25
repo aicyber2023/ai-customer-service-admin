@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.digitalemployee.business.mapper.BizSimilarityQuestionMapper">
+    
+    <resultMap type="BizSimilarityQuestion" id="BizSimilarityQuestionResult">
+        <result property="id"    column="id"    />
+        <result property="questionAnswerId"    column="question_answer_id"    />
+        <result property="similarityQuestion"    column="similarity_question"    />
+    </resultMap>
+
+    <sql id="selectBizSimilarityQuestionVo">
+        select id, question_answer_id, similarity_question from biz_similarity_question
+    </sql>
+
+    <select id="selectBizSimilarityQuestionList" parameterType="BizSimilarityQuestion" resultMap="BizSimilarityQuestionResult">
+        <include refid="selectBizSimilarityQuestionVo"/>
+        <where>  
+            <if test="questionAnswerId != null "> and question_answer_id = #{questionAnswerId}</if>
+            <if test="similarityQuestion != null  and similarityQuestion != ''"> and similarity_question = #{similarityQuestion}</if>
+        </where>
+    </select>
+
+
+    <select id="selectBizSimilarityQuestionListById" parameterType="BizSimilarityQuestion" resultMap="BizSimilarityQuestionResult">
+        <include refid="selectBizSimilarityQuestionVo"/>
+        <where>
+            <if test="questionAnswerId != null "> and question_answer_id = #{questionAnswerId}</if>
+        </where>
+    </select>
+    
+    <select id="selectBizSimilarityQuestionById" parameterType="Long" resultMap="BizSimilarityQuestionResult">
+        <include refid="selectBizSimilarityQuestionVo"/>
+        where id = #{id}
+    </select>
+
+    <select id="selectBizSimilarityQuestion" resultMap="BizSimilarityQuestionResult">
+        <include refid="selectBizSimilarityQuestionVo"/>
+        where question_answer_id = #{questionAnswerId}
+        and  similarity_question = #{similarityQuestion}
+    </select>
+        
+    <insert id="insertBizSimilarityQuestion" parameterType="BizSimilarityQuestion" useGeneratedKeys="true" keyProperty="id">
+        insert into biz_similarity_question
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="questionAnswerId != null">question_answer_id,</if>
+            <if test="similarityQuestion != null">similarity_question,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="questionAnswerId != null">#{questionAnswerId},</if>
+            <if test="similarityQuestion != null">#{similarityQuestion},</if>
+         </trim>
+    </insert>
+
+    <update id="updateBizSimilarityQuestion" parameterType="BizSimilarityQuestion">
+        update biz_similarity_question
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="questionAnswerId != null">question_answer_id = #{questionAnswerId},</if>
+            <if test="similarityQuestion != null">similarity_question = #{similarityQuestion},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteBizSimilarityQuestionById" parameterType="Long">
+        delete from biz_similarity_question where id = #{id}
+    </delete>
+
+    <delete id="deleteBizSimilarityQuestionByIds" parameterType="String">
+        delete from biz_similarity_question where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+    <insert id="batchSimilarityQuestion" parameterType="java.util.List">
+        insert into biz_similarity_question (question_answer_id,similarity_question) values
+        <foreach collection="list" item="item" separator=",">
+            (#{item.questionAnswerId}, #{item.similarityQuestion})
+        </foreach>
+    </insert>
+
+</mapper>

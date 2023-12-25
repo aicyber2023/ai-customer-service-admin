@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.digitalemployee.business.mapper.BizOrderMapper">
+    
+    <resultMap type="BizOrder" id="BizOrderResult">
+        <result property="id"    column="id"    />
+        <result property="sysUserId"    column="sys_user_id"    />
+        <result property="productId"    column="product_id"    />
+        <result property="amount"    column="amount"    />
+        <result property="employeeAmount"    column="employee_amount"    />
+        <result property="sessionAmount"    column="session_amount"    />
+        <result property="knowledgeBaseAmount"    column="knowledge_base_amount"    />
+        <result property="knowledgeBaseDocAmount"    column="knowledge_base_doc_amount"    />
+        <result property="knowledgeBaseDocWordAmount"    column="knowledge_base_doc_word_amount"    />
+        <result property="status"    column="status"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateBy"    column="update_by"    />
+        <result property="updateTime"    column="update_time"    />
+        <result property="remark"    column="remark"    />
+        <result property="days"    column="days"    />
+    </resultMap>
+
+    <sql id="selectBizOrderVo">
+        select id, sys_user_id, product_id, amount, employee_amount, session_amount, knowledge_base_amount, knowledge_base_doc_amount, knowledge_base_doc_word_amount, status, create_by, create_time, update_by, update_time, remark, days from biz_order
+    </sql>
+
+    <select id="selectBizOrderList" parameterType="BizOrder" resultMap="BizOrderResult">
+        <include refid="selectBizOrderVo"/>
+        <where>  
+            <if test="sysUserId != null  and sysUserId != ''"> and sys_user_id = #{sysUserId}</if>
+            <if test="productId != null "> and product_id = #{productId}</if>
+            <if test="amount != null "> and amount = #{amount}</if>
+            <if test="employeeAmount != null "> and employee_amount = #{employeeAmount}</if>
+            <if test="sessionAmount != null "> and session_amount = #{sessionAmount}</if>
+            <if test="knowledgeBaseAmount != null "> and knowledge_base_amount = #{knowledgeBaseAmount}</if>
+            <if test="knowledgeBaseDocAmount != null "> and knowledge_base_doc_amount = #{knowledgeBaseDocAmount}</if>
+            <if test="knowledgeBaseDocWordAmount != null "> and knowledge_base_doc_word_amount = #{knowledgeBaseDocWordAmount}</if>
+            <if test="status != null "> and status = #{status}</if>
+            <if test="days != null "> and days = #{days}</if>
+        </where>
+    </select>
+    
+    <select id="selectBizOrderById" parameterType="Long" resultMap="BizOrderResult">
+        <include refid="selectBizOrderVo"/>
+        where id = #{id}
+    </select>
+        
+    <insert id="insertBizOrder" parameterType="BizOrder" useGeneratedKeys="true" keyProperty="id">
+        insert into biz_order
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="sysUserId != null and sysUserId != ''">sys_user_id,</if>
+            <if test="productId != null">product_id,</if>
+            <if test="amount != null">amount,</if>
+            <if test="employeeAmount != null">employee_amount,</if>
+            <if test="sessionAmount != null">session_amount,</if>
+            <if test="knowledgeBaseAmount != null">knowledge_base_amount,</if>
+            <if test="knowledgeBaseDocAmount != null">knowledge_base_doc_amount,</if>
+            <if test="knowledgeBaseDocWordAmount != null">knowledge_base_doc_word_amount,</if>
+            <if test="status != null">status,</if>
+            <if test="createBy != null">create_by,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateBy != null">update_by,</if>
+            <if test="updateTime != null">update_time,</if>
+            <if test="remark != null">remark,</if>
+            <if test="days != null">days,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="sysUserId != null and sysUserId != ''">#{sysUserId},</if>
+            <if test="productId != null">#{productId},</if>
+            <if test="amount != null">#{amount},</if>
+            <if test="employeeAmount != null">#{employeeAmount},</if>
+            <if test="sessionAmount != null">#{sessionAmount},</if>
+            <if test="knowledgeBaseAmount != null">#{knowledgeBaseAmount},</if>
+            <if test="knowledgeBaseDocAmount != null">#{knowledgeBaseDocAmount},</if>
+            <if test="knowledgeBaseDocWordAmount != null">#{knowledgeBaseDocWordAmount},</if>
+            <if test="status != null">#{status},</if>
+            <if test="createBy != null">#{createBy},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateBy != null">#{updateBy},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+            <if test="remark != null">#{remark},</if>
+            <if test="days != null">#{days},</if>
+         </trim>
+    </insert>
+
+    <update id="updateBizOrder" parameterType="BizOrder">
+        update biz_order
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="sysUserId != null and sysUserId != ''">sys_user_id = #{sysUserId},</if>
+            <if test="productId != null">product_id = #{productId},</if>
+            <if test="amount != null">amount = #{amount},</if>
+            <if test="employeeAmount != null">employee_amount = #{employeeAmount},</if>
+            <if test="sessionAmount != null">session_amount = #{sessionAmount},</if>
+            <if test="knowledgeBaseAmount != null">knowledge_base_amount = #{knowledgeBaseAmount},</if>
+            <if test="knowledgeBaseDocAmount != null">knowledge_base_doc_amount = #{knowledgeBaseDocAmount},</if>
+            <if test="knowledgeBaseDocWordAmount != null">knowledge_base_doc_word_amount = #{knowledgeBaseDocWordAmount},</if>
+            <if test="status != null">status = #{status},</if>
+            <if test="createBy != null">create_by = #{createBy},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateBy != null">update_by = #{updateBy},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+            <if test="remark != null">remark = #{remark},</if>
+            <if test="days != null">days = #{days},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteBizOrderById" parameterType="Long">
+        delete from biz_order where id = #{id}
+    </delete>
+
+    <delete id="deleteBizOrderByIds" parameterType="String">
+        delete from biz_order where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>
