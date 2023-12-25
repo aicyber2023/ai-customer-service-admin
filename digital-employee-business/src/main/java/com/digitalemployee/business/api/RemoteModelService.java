@@ -4,12 +4,14 @@ import cn.hutool.http.*;
 import cn.hutool.json.JSONUtil;
 import com.digitalemployee.business.api.domain.AppendFileResponse;
 import com.digitalemployee.business.api.domain.BaseResponse;
+import com.digitalemployee.business.api.domain.QAParam;
 import com.digitalemployee.business.api.domain.QAResponse;
 import com.digitalemployee.business.modules.config.ChatResourcesConfig;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.HashMap;
 import java.util.Map;
 
 @Component
@@ -26,6 +28,15 @@ public class RemoteModelService {
     public QAResponse qa(Map<String, Object> param) {
         final String url = chatResourcesConfig.getQaRemoteUrl();
         QAResponse response = post(url, param, QAResponse.class);
+        if (response != null && !response.getSuccessful()) {
+            throw new RuntimeException(url + "远程服务调用异常：" + response.getMessage());
+        }
+        return response;
+    }
+
+    public QAResponse qa(QAParam param) {
+        final String url = chatResourcesConfig.getQaRemoteUrl();
+        QAResponse response = post(url, JSONUtil.toJsonStr(param), QAResponse.class);
         if (response != null && !response.getSuccessful()) {
             throw new RuntimeException(url + "远程服务调用异常：" + response.getMessage());
         }

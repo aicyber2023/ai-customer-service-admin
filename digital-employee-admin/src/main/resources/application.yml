@@ -145,7 +145,7 @@ train:
 
 ai:
   testPath: D:/temp/qa_auto_test/%s/
-  qaUrlPrefix: https://718395e20o.zicp.fun
+  qaUrlPrefix: http://116.204.112.29:7090
   qaRemoteUrl: /qa.do
   qaAppendFileUrl: /upload-texts.do?append=true&collection=
   qaAppendTextUrl: /append-texts.do

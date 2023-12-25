@@ -7,6 +7,7 @@ import cn.hutool.core.util.StrUtil;
 import cn.hutool.core.util.ZipUtil;
 import cn.hutool.json.JSONUtil;
 import com.digitalemployee.business.api.RemoteModelService;
+import com.digitalemployee.business.api.domain.QAParam;
 import com.digitalemployee.business.api.domain.QAResponse;
 import com.digitalemployee.common.annotation.Anonymous;
 import lombok.Data;
@@ -119,16 +120,16 @@ public class AutoTestController {
      * 发送问题，获取答案
      */
     private void sendQa(String collection, List<QAFile> qaFileList) {
-        Map<String, Object> paramMap = new HashMap<>();
-        paramMap.put("collection", collection);
+        QAParam qaParam = QAParam.initQAParam(collection, null);
+
         // 发送问题
         log.info("调用QA远程接口 START...");
         long start = System.currentTimeMillis();
         qaFileList.forEach(qaFile -> {
             List<Question> questions = qaFile.getQuestions();
             questions.forEach(question -> {
-                paramMap.put("question", question.getQuestion());
-                QAResponse qa = remoteModelService.qa(paramMap);
+                qaParam.setQuestion(question.getQuestion());
+                QAResponse qa = remoteModelService.qa(qaParam);
                 question.setResult(qa);
             });
         });

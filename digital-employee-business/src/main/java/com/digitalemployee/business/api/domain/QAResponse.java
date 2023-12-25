@@ -19,4 +19,7 @@ public class QAResponse extends BaseResponse{
      */
     private String prompt;
 
+    /** 模型名称 */
+    private String model_name;
+
 }
