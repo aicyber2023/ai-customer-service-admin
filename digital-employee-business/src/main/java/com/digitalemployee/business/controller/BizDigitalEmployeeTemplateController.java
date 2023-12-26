@@ -4,6 +4,8 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.digitalemployee.business.domain.BizDigitalEmployeeTemplate;
 import com.digitalemployee.business.domain.BizDigitalEmployeeTemplateContext;
+import com.digitalemployee.business.modules.de.domain.BizDigitalEmployeeTemplateProcedure;
+import com.digitalemployee.business.modules.de.service.IBizDigitalEmployeeTemplateProcedureService;
 import com.digitalemployee.business.service.IBizDigitalEmployeeTemplateContextService;
 import com.digitalemployee.business.service.IBizDigitalEmployeeTemplateService;
 import com.digitalemployee.business.utils.HttpUtils;
@@ -19,7 +21,6 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.*;
-import java.util.function.Function;
 import java.util.stream.Collectors;
 
 /**
@@ -36,6 +37,7 @@ public class BizDigitalEmployeeTemplateController extends BaseController {
     private final IBizDigitalEmployeeTemplateService bizDigitalEmployeeTemplateService;
 
     private final IBizDigitalEmployeeTemplateContextService contextService;
+    private final IBizDigitalEmployeeTemplateProcedureService procedureService;
 
     /**
      * 查询数字员工模板列表
@@ -52,7 +54,7 @@ public class BizDigitalEmployeeTemplateController extends BaseController {
     @GetMapping("/selectList")
     public AjaxResult selectList(BizDigitalEmployeeTemplate bizDigitalEmployeeTemplate) {
         List<BizDigitalEmployeeTemplate> data = bizDigitalEmployeeTemplateService.selectBizDigitalEmployeeTemplateList(bizDigitalEmployeeTemplate);
-        this.selectTemplateContext(data);
+        this.selectTemplateData(data);
         return success(data);
     }
 
@@ -65,13 +67,20 @@ public class BizDigitalEmployeeTemplateController extends BaseController {
         return success(bizDigitalEmployeeTemplateService.selectUsedTemplateList(userId));
     }
 
-    private void selectTemplateContext(List<BizDigitalEmployeeTemplate> data) {
+    private void selectTemplateData(List<BizDigitalEmployeeTemplate> data) {
         List<Long> idList = data.stream().map(BizDigitalEmployeeTemplate::getId).collect(Collectors.toList());
+
         LambdaQueryWrapper<BizDigitalEmployeeTemplateContext> wrapper = Wrappers.lambdaQuery();
         wrapper.in(BizDigitalEmployeeTemplateContext::getTemplateId, idList);
         List<BizDigitalEmployeeTemplateContext> contexts = contextService.list(wrapper);
         Map<Long, List<BizDigitalEmployeeTemplateContext>> map = contexts.stream().collect(Collectors.groupingBy(BizDigitalEmployeeTemplateContext::getTemplateId));
         data.forEach(template -> template.setContext(map.get(template.getId())));
+
+        LambdaQueryWrapper<BizDigitalEmployeeTemplateProcedure> procedureWrapper = Wrappers.lambdaQuery();
+        procedureWrapper.in(BizDigitalEmployeeTemplateProcedure::getTemplateId, idList);
+        List<BizDigitalEmployeeTemplateProcedure> procedureList = procedureService.list(procedureWrapper);
+        Map<Long, List<BizDigitalEmployeeTemplateProcedure>> procedureMap = procedureList.stream().collect(Collectors.groupingBy(BizDigitalEmployeeTemplateProcedure::getTemplateId));
+        data.forEach(template -> template.setProcedureList(procedureMap.get(template.getId())));
     }
 
     /**

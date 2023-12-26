@@ -10,6 +10,9 @@ import com.digitalemployee.business.domain.BizDigitalEmployeeTemplateContext;
 import com.digitalemployee.business.mapper.BizDigitalEmployeeMapper;
 import com.digitalemployee.business.mapper.BizDigitalEmployeeTemplateContextMapper;
 import com.digitalemployee.business.mapper.BizDigitalEmployeeTemplateMapper;
+import com.digitalemployee.business.modules.de.domain.BizDigitalEmployeeProcedure;
+import com.digitalemployee.business.modules.de.domain.BizDigitalEmployeeTemplateProcedure;
+import com.digitalemployee.business.modules.de.mapper.BizDigitalEmployeeTemplateProcedureMapper;
 import com.digitalemployee.business.service.IBizDigitalEmployeeTemplateService;
 import com.digitalemployee.common.exception.base.BaseException;
 import lombok.RequiredArgsConstructor;
@@ -36,6 +39,8 @@ public class BizDigitalEmployeeTemplateServiceImpl extends ServiceImpl<BizDigita
 
     private final BizDigitalEmployeeTemplateContextMapper bizDigitalEmployeeTemplateContextMapper;
 
+    private final BizDigitalEmployeeTemplateProcedureMapper bizDigitalEmployeeTemplateProcedureMapper;
+
     private final BizDigitalEmployeeMapper digitalEmployeeMapper;
 
     /**
@@ -47,8 +52,13 @@ public class BizDigitalEmployeeTemplateServiceImpl extends ServiceImpl<BizDigita
     @Override
     public BizDigitalEmployeeTemplate selectBizDigitalEmployeeTemplateById(Long id) {
         BizDigitalEmployeeTemplate template = bizDigitalEmployeeTemplateMapper.selectBizDigitalEmployeeTemplateById(id);
+        if (template == null) {
+            return null;
+        }
         List<BizDigitalEmployeeTemplateContext> contextList = selectContextListByTemplateId(id);
         template.setContext(contextList);
+        List<BizDigitalEmployeeTemplateProcedure> procedureList = selectProcedureListByTemplateId(id);
+        template.setProcedureList(procedureList);
         return template;
     }
 
@@ -79,6 +89,7 @@ public class BizDigitalEmployeeTemplateServiceImpl extends ServiceImpl<BizDigita
     public BizDigitalEmployeeTemplate insertBizDigitalEmployeeTemplate(BizDigitalEmployeeTemplate bizDigitalEmployeeTemplate) {
         bizDigitalEmployeeTemplateMapper.insertBizDigitalEmployeeTemplate(bizDigitalEmployeeTemplate);
         this.saveTemplateContext(bizDigitalEmployeeTemplate);
+        this.saveTemplateProcedure(bizDigitalEmployeeTemplate);
         return bizDigitalEmployeeTemplate;
     }
 
@@ -92,6 +103,7 @@ public class BizDigitalEmployeeTemplateServiceImpl extends ServiceImpl<BizDigita
     @Transactional(rollbackFor = Exception.class)
     public int updateBizDigitalEmployeeTemplate(BizDigitalEmployeeTemplate bizDigitalEmployeeTemplate) {
         this.saveTemplateContext(bizDigitalEmployeeTemplate);
+        this.saveTemplateProcedure(bizDigitalEmployeeTemplate);
         return bizDigitalEmployeeTemplateMapper.updateBizDigitalEmployeeTemplate(bizDigitalEmployeeTemplate);
     }
 
@@ -174,8 +186,17 @@ public class BizDigitalEmployeeTemplateServiceImpl extends ServiceImpl<BizDigita
         return wrapper.eq(BizDigitalEmployeeTemplateContext::getTemplateId, templateId);
     }
 
+    public LambdaQueryWrapper<BizDigitalEmployeeTemplateProcedure> generateProcedureWrapper(Long templateId) {
+        LambdaQueryWrapper<BizDigitalEmployeeTemplateProcedure> wrapper = Wrappers.lambdaQuery();
+        return wrapper.eq(BizDigitalEmployeeTemplateProcedure::getTemplateId, templateId);
+    }
+
     public List<BizDigitalEmployeeTemplateContext> selectContextListByTemplateId(Long templateId) {
         return bizDigitalEmployeeTemplateContextMapper.selectList(this.generateContextWrapper(templateId));
+    }
+
+    public List<BizDigitalEmployeeTemplateProcedure> selectProcedureListByTemplateId(Long templateId) {
+        return bizDigitalEmployeeTemplateProcedureMapper.selectList(this.generateProcedureWrapper(templateId));
     }
 
     public void saveTemplateContext(BizDigitalEmployeeTemplate bizDigitalEmployeeTemplate) {
@@ -189,6 +210,20 @@ public class BizDigitalEmployeeTemplateServiceImpl extends ServiceImpl<BizDigita
                 o.setTemplateId(templateId);
                 o.setDate(new Date());
                 bizDigitalEmployeeTemplateContextMapper.insert(o);
+            });
+        }
+    }
+
+    public void saveTemplateProcedure(BizDigitalEmployeeTemplate bizDigitalEmployeeTemplate) {
+        Long templateId = bizDigitalEmployeeTemplate.getId();
+        // 删除旧数据
+        bizDigitalEmployeeTemplateProcedureMapper.delete(this.generateProcedureWrapper(templateId));
+        // 保存context
+        List<BizDigitalEmployeeTemplateProcedure> procedureList = bizDigitalEmployeeTemplate.getProcedureList();
+        if (CollectionUtils.isNotEmpty(procedureList)) {
+            procedureList.forEach(o -> {
+                o.setTemplateId(templateId);
+                bizDigitalEmployeeTemplateProcedureMapper.insert(o);
             });
         }
     }

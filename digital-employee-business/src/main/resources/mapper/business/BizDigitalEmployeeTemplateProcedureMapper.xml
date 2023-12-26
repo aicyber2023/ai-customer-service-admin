@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.digitalemployee.business.modules.de.mapper.BizDigitalEmployeeTemplateProcedureMapper">
+    
+    <resultMap type="BizDigitalEmployeeTemplateProcedure" id="BizDigitalEmployeeTemplateProcedureResult">
+        <result property="id"    column="id"    />
+        <result property="templateId"    column="template_id"    />
+        <result property="content"    column="content"    />
+        <result property="type"    column="type"    />
+        <result property="enable"    column="enable"    />
+    </resultMap>
+
+    <sql id="selectBizDigitalEmployeeTemplateProcedureVo">
+        select id, template_id, content, type, enable from biz_digital_employee_template_procedure
+    </sql>
+
+    <select id="selectBizDigitalEmployeeTemplateProcedureList" parameterType="com.digitalemployee.business.modules.de.domain.BizDigitalEmployeeTemplateProcedure" resultMap="BizDigitalEmployeeTemplateProcedureResult">
+        <include refid="selectBizDigitalEmployeeTemplateProcedureVo"/>
+        <where>  
+            <if test="templateId != null "> and template_id = #{templateId}</if>
+            <if test="content != null  and content != ''"> and content = #{content}</if>
+            <if test="type != null "> and type = #{type}</if>
+            <if test="enable != null "> and enable = #{enable}</if>
+        </where>
+    </select>
+    
+    <select id="selectBizDigitalEmployeeTemplateProcedureById" parameterType="Long" resultMap="BizDigitalEmployeeTemplateProcedureResult">
+        <include refid="selectBizDigitalEmployeeTemplateProcedureVo"/>
+        where id = #{id}
+    </select>
+        
+    <insert id="insertBizDigitalEmployeeTemplateProcedure" parameterType="com.digitalemployee.business.modules.de.domain.BizDigitalEmployeeTemplateProcedure" useGeneratedKeys="true" keyProperty="id">
+        insert into biz_digital_employee_template_procedure
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="templateId != null">template_id,</if>
+            <if test="content != null and content != ''">content,</if>
+            <if test="type != null">type,</if>
+            <if test="enable != null">enable,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="templateId != null">#{templateId},</if>
+            <if test="content != null and content != ''">#{content},</if>
+            <if test="type != null">#{type},</if>
+            <if test="enable != null">#{enable},</if>
+         </trim>
+    </insert>
+
+    <update id="updateBizDigitalEmployeeTemplateProcedure" parameterType="com.digitalemployee.business.modules.de.domain.BizDigitalEmployeeTemplateProcedure">
+        update biz_digital_employee_template_procedure
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="templateId != null">template_id = #{templateId},</if>
+            <if test="content != null and content != ''">content = #{content},</if>
+            <if test="type != null">type = #{type},</if>
+            <if test="enable != null">enable = #{enable},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteBizDigitalEmployeeTemplateProcedureById" parameterType="Long">
+        delete from biz_digital_employee_template_procedure where id = #{id}
+    </delete>
+
+    <delete id="deleteBizDigitalEmployeeTemplateProcedureByIds" parameterType="String">
+        delete from biz_digital_employee_template_procedure where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>

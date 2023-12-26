@@ -7,6 +7,8 @@ import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.digitalemployee.business.domain.*;
 import com.digitalemployee.business.mapper.*;
+import com.digitalemployee.business.modules.de.domain.BizDigitalEmployeeProcedure;
+import com.digitalemployee.business.modules.de.mapper.BizDigitalEmployeeProcedureMapper;
 import com.digitalemployee.business.service.IBizDigitalEmployeeService;
 import com.digitalemployee.business.service.IBizKnowledgeBaseService;
 import com.digitalemployee.common.annotation.DataScope;
@@ -36,6 +38,7 @@ public class BizDigitalEmployeeServiceImpl extends ServiceImpl<BizDigitalEmploye
     private final BizDigitalEmployeeMapper bizDigitalEmployeeMapper;
 
     private final BizDigitalEmployeeContextMapper bizDigitalEmployeeContextMapper;
+    private final BizDigitalEmployeeProcedureMapper bizDigitalEmployeeProcedureMapper;
 
     private final BizKnowledgeBaseMapper knowledgeBaseMapper;
     private final BizKnowledgeBaseFileMapper knowledgeBaseFileMapper;
@@ -56,6 +59,8 @@ public class BizDigitalEmployeeServiceImpl extends ServiceImpl<BizDigitalEmploye
         BizDigitalEmployee digitalEmployee = bizDigitalEmployeeMapper.selectBizDigitalEmployeeById(id);
         List<BizDigitalEmployeeContext> context = selectContextListByDigitalEmployeeId(id);
         digitalEmployee.setContext(context);
+        List<BizDigitalEmployeeProcedure> procedureList = selectProcedureListByDigitalEmployeeId(id);
+        digitalEmployee.setProcedureList(procedureList);
         return digitalEmployee;
     }
 
@@ -93,6 +98,7 @@ public class BizDigitalEmployeeServiceImpl extends ServiceImpl<BizDigitalEmploye
         bizDigitalEmployeeMapper.insert(bizDigitalEmployee);
         bizDigitalEmployee.setEmployeeKey(IdUtils.fastUUID());
         this.saveContext(bizDigitalEmployee);
+        this.saveProcedureList(bizDigitalEmployee);
         return bizDigitalEmployee;
     }
 
@@ -127,6 +133,7 @@ public class BizDigitalEmployeeServiceImpl extends ServiceImpl<BizDigitalEmploye
     @Transactional(rollbackFor = Exception.class)
     public int updateBizDigitalEmployee(BizDigitalEmployee bizDigitalEmployee) {
         this.saveContext(bizDigitalEmployee);
+        this.saveProcedureList(bizDigitalEmployee);
         return bizDigitalEmployeeMapper.updateById(bizDigitalEmployee);
     }
 
@@ -212,8 +219,17 @@ public class BizDigitalEmployeeServiceImpl extends ServiceImpl<BizDigitalEmploye
         return wrapper.eq(BizDigitalEmployeeContext::getDigitalEmployeeId, digitalEmployeeId);
     }
 
+    private LambdaQueryWrapper<BizDigitalEmployeeProcedure> generateProcedureWrapper(Long digitalEmployeeId) {
+        LambdaQueryWrapper<BizDigitalEmployeeProcedure> wrapper = Wrappers.lambdaQuery();
+        return wrapper.eq(BizDigitalEmployeeProcedure::getDigitalEmployeeId, digitalEmployeeId);
+    }
+
     private List<BizDigitalEmployeeContext> selectContextListByDigitalEmployeeId(Long digitalEmployeeId) {
         return bizDigitalEmployeeContextMapper.selectList(this.generateContextWrapper(digitalEmployeeId));
+    }
+
+    private List<BizDigitalEmployeeProcedure> selectProcedureListByDigitalEmployeeId(Long digitalEmployeeId) {
+        return bizDigitalEmployeeProcedureMapper.selectList(this.generateProcedureWrapper(digitalEmployeeId));
     }
 
     private void saveContext(BizDigitalEmployee bizDigitalEmployee) {
@@ -229,6 +245,22 @@ public class BizDigitalEmployeeServiceImpl extends ServiceImpl<BizDigitalEmploye
                 o.setDigitalEmployeeId(digitalEmployeeId);
                 o.setDate(new Date());
                 bizDigitalEmployeeContextMapper.insert(o);
+            });
+        }
+    }
+
+    private void saveProcedureList(BizDigitalEmployee bizDigitalEmployee) {
+        Long digitalEmployeeId = bizDigitalEmployee.getId();
+        Long templateId = bizDigitalEmployee.getTemplateId();
+        // 删除旧数据
+        bizDigitalEmployeeProcedureMapper.delete(this.generateProcedureWrapper(digitalEmployeeId));
+        // 保存context
+        List<BizDigitalEmployeeProcedure> procedureList = bizDigitalEmployee.getProcedureList();
+        if (CollectionUtils.isNotEmpty(procedureList)) {
+            procedureList.forEach(o -> {
+                o.setTemplateId(templateId);
+                o.setDigitalEmployeeId(digitalEmployeeId);
+                bizDigitalEmployeeProcedureMapper.insert(o);
             });
         }
     }

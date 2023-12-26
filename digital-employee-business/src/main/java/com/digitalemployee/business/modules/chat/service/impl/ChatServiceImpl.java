@@ -11,6 +11,8 @@ import com.digitalemployee.business.mapper.BizUserMapper;
 import com.digitalemployee.business.modules.chat.domain.ChatLoginBody;
 import com.digitalemployee.business.modules.chat.domain.DigitalEmployee;
 import com.digitalemployee.business.modules.chat.service.ChatService;
+import com.digitalemployee.business.modules.de.domain.BizDigitalEmployeeProcedure;
+import com.digitalemployee.business.modules.de.mapper.BizDigitalEmployeeProcedureMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
@@ -29,6 +31,7 @@ public class ChatServiceImpl implements ChatService {
     private final BizDigitalEmployeeMapper digitalEmployeeMapper;
 
     private final BizDigitalEmployeeContextMapper digitalEmployeeContextMapper;
+    private final BizDigitalEmployeeProcedureMapper digitalEmployeeProcedureMapper;
 
     @Override
     public BizUser getUserInfo(Long userId) {
@@ -71,6 +74,11 @@ public class ChatServiceImpl implements ChatService {
         List<BizDigitalEmployeeContext> contextList = digitalEmployeeContextMapper.selectList(employeeContextWrapper);
         Map<Long, List<BizDigitalEmployeeContext>> contextMap = contextList.stream().collect(Collectors.groupingBy(BizDigitalEmployeeContext::getDigitalEmployeeId));
 
+        LambdaQueryWrapper<BizDigitalEmployeeProcedure> procedureWrapper = Wrappers.lambdaQuery();
+        procedureWrapper.in(BizDigitalEmployeeProcedure::getDigitalEmployeeId, digitalEmployeeMap.keySet());
+        List<BizDigitalEmployeeProcedure> procedureList = digitalEmployeeProcedureMapper.selectList(procedureWrapper);
+        Map<Long, List<BizDigitalEmployeeProcedure>> procedureMap = procedureList.stream().collect(Collectors.groupingBy(BizDigitalEmployeeProcedure::getDigitalEmployeeId));
+
         // 处理结果
         // digitalEmployeeList.forEach(de -> de.setContext(contextMap.get(de.getId())));
         return digitalEmployeeList.stream().map(de -> {
@@ -81,6 +89,13 @@ public class ChatServiceImpl implements ChatService {
                 context = new ArrayList<>();
             }
             employee.setContext(context);
+
+            List<BizDigitalEmployeeProcedure> tempProcedureList = procedureMap.get(de.getId());
+            if (tempProcedureList == null) {
+                tempProcedureList = new ArrayList<>();
+            }
+            employee.setProcedureList(tempProcedureList);
+
             employee.initModelConfig();
             return employee;
         }).collect(Collectors.toList());

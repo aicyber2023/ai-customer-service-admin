@@ -36,13 +36,19 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="deptId"    column="dept_id"    />
         <result property="userId"    column="user_id"    />
         <result property="proactivelyGreet"    column="proactively_greet"    />
+        <result property="chatType"    column="chat_type"    />
+        <result property="qaRadius"    column="qa_radius"    />
+        <result property="kbRadius"    column="kb_radius"    />
+        <result property="modelSwitch"    column="model_switch"    />
     </resultMap>
 
     <sql id="selectBizDigitalEmployeeVo">
         select id, template_id, sys_user_id, knowledge_base_id, avatar, avatar_content_type, name, model, temperature,
                max_tokens, presence_penalty, frequency_penalty, send_memory, history_message_count, compress_message_length_threshold,
                lang, builtin, status, create_by, create_time, update_by, update_time, remark, greeting,
-               company_avatar, company_avatar_content_type, company_name, employee_key, user_id, dept_id, proactively_greet  from biz_digital_employee de
+               company_avatar, company_avatar_content_type, company_name, employee_key, user_id, dept_id, proactively_greet,
+               chat_type, qa_radius, kb_radius, model_switch
+        from biz_digital_employee de
     </sql>
 
     <select id="selectBizDigitalEmployeeList" parameterType="BizDigitalEmployee" resultMap="BizDigitalEmployeeResult">
@@ -72,6 +78,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="companyName != null and companyName != '' "> and company_name = #{companyName}</if>
             <if test="employeeKey != null and employeeKey != '' "> and employee_key = #{employeeKey}</if>
             <if test="proactivelyGreet != null"> and proactively_greet = #{proactivelyGreet}</if>
+            <if test="chatType != null"> and chat_type = #{chatType}</if>
+            <if test="modelSwitch != null"> and model_switch = #{modelSwitch}</if>
             <!-- 权限过滤 -->
             ${params.dataScope}
         </where>
@@ -113,6 +121,10 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="companyName != null">company_name,</if>
             <if test="employeeKey != null">employee_key,</if>
             <if test="proactivelyGreet != null">proactively_greet,</if>
+            <if test="chatType != null">chat_type,</if>
+            <if test="qaRadius != null">qa_radius,</if>
+            <if test="kbRadius != null">kb_radius,</if>
+            <if test="modelSwitch != null">model_switch,</if>
          </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
             <if test="templateId != null">#{templateId},</if>
@@ -143,6 +155,10 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="companyName != null">#{companyName},</if>
             <if test="employeeKey != null">#{employeeKey},</if>
             <if test="proactivelyGreet != null">#{proactivelyGreet},</if>
+            <if test="chatType != null">#{chatType},</if>
+            <if test="qaRadius != null">#{qaRadius},</if>
+            <if test="kbRadius != null">#{kbRadius},</if>
+            <if test="modelSwitch != null">#{modelSwitch},</if>
          </trim>
     </insert>
 
@@ -177,6 +193,10 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="companyName != null">company_name = #{companyName},</if>
             <if test="employeeKey != null">employee_key = #{employeeKey},</if>
             <if test="proactivelyGreet != null">proactively_greet = #{proactivelyGreet},</if>
+            <if test="chatType != null">chat_type = #{chatType},</if>
+            <if test="qaRadius != null">qa_radius = #{qaRadius},</if>
+            <if test="kbRadius != null">kb_radius = #{kbRadius},</if>
+            <if test="modelSwitch != null">model_switch = #{modelSwitch},</if>
         </trim>
         where id = #{id}
     </update>

@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
+import com.digitalemployee.business.modules.de.domain.BizDigitalEmployeeTemplateProcedure;
 import com.digitalemployee.common.annotation.Excel;
 import com.digitalemployee.common.core.domain.BaseEntity;
 import lombok.Data;
@@ -139,9 +140,22 @@ public class BizDigitalEmployeeTemplate extends BaseEntity {
     /** 是否主动打招呼 */
     private Integer proactivelyGreet;
 
+    /** 对话类型 0-问答 1-文档 2-问答+文档 */
+    private Integer chatType;
+    /** 问答相似度范围 */
+    private BigDecimal qaRadius;
+    /** 文档相似度范围 */
+    private BigDecimal kbRadius;
+    /** 模型开关 0-使用话术 1-使用模型 */
+    private Integer modelSwitch;
+
+
     /** contextList */
     @TableField(exist = false)
     private List<BizDigitalEmployeeTemplateContext> context;
+
+    @TableField(exist = false)
+    private List<BizDigitalEmployeeTemplateProcedure> procedureList;
 
     public Integer getProactivelyGreet() {
         if (proactivelyGreet == null) {
