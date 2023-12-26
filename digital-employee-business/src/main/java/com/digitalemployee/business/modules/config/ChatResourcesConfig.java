@@ -40,6 +40,10 @@ public class ChatResourcesConfig {
     /** 添加文本 */
     @Value(value = "${ai.qaUrlPrefix}${ai.qaAppendTextUrl}")
     private String qaAppendTextUrl;
+    /** 添加问答文本 */
+    @Value(value = "${ai.qaUrlPrefix}${ai.qaAppendQaUrl}")
+    private String qaAppendQaUrl;
+
 
     /** 删除集合 */
     @Value(value = "${ai.qaUrlPrefix}${ai.qaDropCollectionUrl}")

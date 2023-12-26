@@ -29,7 +29,7 @@ public class BizQuestionFile extends BaseEntity
 
     /** $column.columnComment */
     @Excel(name = "${comment}", readConverterExp = "$column.readConverterExp()")
-    private Long questionId;
+    private String questionId;
 
     /** 文件名称 */
     @Excel(name = "文件名称")
@@ -65,16 +65,16 @@ public class BizQuestionFile extends BaseEntity
     {
         return digitalEmployeeId;
     }
-    public void setQuestionId(Long questionId) 
-    {
+
+    public String getQuestionId() {
+        return questionId;
+    }
+
+    public void setQuestionId(String questionId) {
         this.questionId = questionId;
     }
 
-    public Long getQuestionId() 
-    {
-        return questionId;
-    }
-    public void setFileName(String fileName) 
+    public void setFileName(String fileName)
     {
         this.fileName = fileName;
     }

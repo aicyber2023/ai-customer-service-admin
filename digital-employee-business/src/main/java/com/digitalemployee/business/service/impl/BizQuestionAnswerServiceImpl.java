@@ -261,6 +261,17 @@ public class BizQuestionAnswerServiceImpl extends ServiceImpl<BizQuestionAnswerM
             if (!similarityList.isEmpty()) {
                 bizSimilarityQuestionMapper.batchSimilarityQuestion(similarityList);
             }
+            List<Long> idList = new ArrayList<>();
+            for (BizQuestionAnswer questionAnswer : resList) {
+                if(questionAnswer.getId()!=null){
+                    idList.add(questionAnswer.getId());
+                }
+            }
+            //获取问答id的集合
+            List<String> stringList = idList.stream().map(String::valueOf).collect(Collectors.toList());
+//            String s = StringUtils.strip(stringList.toString(), "[]");
+            String s = StringUtils.join(stringList,",");
+
             //保存问答文件
             BizDigitalEmployee digitalEmployee = bizDigitalEmployeeMapper.selectBizDigitalEmployeeById(digitalEmployeeId);
             if (digitalEmployee == null) {
@@ -275,6 +286,7 @@ public class BizQuestionAnswerServiceImpl extends ServiceImpl<BizQuestionAnswerM
             questionFile.setFilePath(path);
             questionFile.setCreateBy(username);
             questionFile.setCreateTime(new Date());
+            questionFile.setQuestionId(s);
             BizQuestionFile bizQuestionFile = bizQuestionFileMapper.selectOneBizQuestionFile(questionFile);
             if (bizQuestionFile != null) {
                 throw new BaseException("文件名称已存在");

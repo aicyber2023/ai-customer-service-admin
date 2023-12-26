@@ -149,5 +149,6 @@ ai:
   qaRemoteUrl: /qa.do
   qaAppendFileUrl: /upload-texts.do?append=true&collection=
   qaAppendTextUrl: /append-texts.do
+  qaAppendQaUrl: /append-qa.do
   qaDropCollectionUrl: /drop-collection.do
   qaDropVectorsUrl: /drop-vectors.do

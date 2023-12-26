@@ -5,20 +5,20 @@ import cn.hutool.core.io.file.FileWriter;
 import cn.hutool.core.lang.UUID;
 import cn.hutool.core.util.StrUtil;
 import cn.hutool.core.util.ZipUtil;
+import cn.hutool.json.JSONObject;
 import cn.hutool.json.JSONUtil;
+import com.alibaba.fastjson2.JSON;
 import com.digitalemployee.business.api.RemoteModelService;
-import com.digitalemployee.business.api.domain.QAParam;
-import com.digitalemployee.business.api.domain.QAResponse;
+import com.digitalemployee.business.api.domain.*;
 import com.digitalemployee.common.annotation.Anonymous;
+import com.digitalemployee.common.core.domain.AjaxResult;
+import com.digitalemployee.common.exception.base.BaseException;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.poi.ss.usermodel.*;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestPart;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletResponse;
@@ -60,6 +60,122 @@ public class AutoTestController {
         qaFileList.forEach(QAFile::closeWb);
     }
 
+    /**
+     * 文档上传接口
+     */
+    @Anonymous
+    @PostMapping("/uploadTexts")
+    public AjaxResult uploadTexts(@RequestPart("collection") String collection, @RequestParam("files") MultipartFile[] files) {
+        if (files == null || files.length == 0) {
+            throw new BaseException("未选择文件");
+        }
+        HashMap<String, Object> paramMaps = new HashMap<>(4);
+        paramMaps.put("collection", collection);
+        List<String> list = new ArrayList<>();
+        for (MultipartFile file : files) {
+            // 将MultipartFile转换为File
+            paramMaps.put("file", this.multipartFileToFile(file));
+
+            log.info("调用文档上传远程接口 START...");
+            long start = System.currentTimeMillis();
+            AppendTextsResponse appendTexts = remoteModelService.appendFile(collection, paramMaps);
+            List<String> ids = appendTexts.getIds();
+            log.info("调用文档上传远程接口 END...共耗时 {} 毫秒", System.currentTimeMillis() - start);
+
+            list.addAll(ids);
+        }
+        //返回重复数据的id
+        List<String> duplicates = list.stream()
+                .filter(n -> Collections.frequency(list, n) > 1).distinct().collect(Collectors.toList());
+        return AjaxResult.success(duplicates);
+    }
+
+    /**
+     * 调用添加文本远程接口
+     * @param textVo
+     * @return
+     */
+    @Anonymous
+    @PostMapping("/appendTexts")
+    public AjaxResult appendTexts(@RequestBody TextVo textVo) {
+        String jsonString = JSON.toJSONString(textVo);
+
+        log.info("调用添加文本远程接口 START...");
+        long start = System.currentTimeMillis();
+        AppendTextsResponse appendTexts = remoteModelService.appendText(jsonString);
+        List<String> list = appendTexts.getIds();
+        log.info("调用添加文本远程接口 END...共耗时 {} 毫秒", System.currentTimeMillis() - start);
+
+        //返回重复数据的id
+        List<String> duplicates = list.stream()
+                .filter(n -> Collections.frequency(list, n) > 1).distinct().collect(Collectors.toList());
+        return AjaxResult.success(duplicates);
+    }
+
+    /**
+     * 调用添加文本问答远程接口
+     * @param collection
+     * @param question
+     * @param answer
+     * @return
+     */
+    @Anonymous
+    @PostMapping("/appendQa")
+    public AjaxResult appendQa(@RequestPart("collection") String collection, @RequestPart("question") String question, @RequestPart("answer") String answer) {
+        JSONObject paramMap = JSONUtil.createObj();
+        paramMap.put("collection", collection);
+        paramMap.put("question", question);
+        paramMap.put("answer", answer);
+        log.info("调用添加文本问答远程接口 START...");
+        long start = System.currentTimeMillis();
+        AppendQaResponse appendTexts = remoteModelService.appendQa(paramMap);
+        String id = appendTexts.getId();
+        log.info("调用添加文本问答远程接口 END...共耗时 {} 毫秒", System.currentTimeMillis() - start);
+        return AjaxResult.success();
+    }
+
+    /**
+     * 调用删除集合远程接口
+     * @param collection
+     * @return
+     */
+    @Anonymous
+    @PostMapping("/deleteCollection")
+    public AjaxResult deleteCollection(String collection) {
+        JSONObject paramMap = JSONUtil.createObj();
+        paramMap.put("collection", collection);
+        BaseResponse response = remoteModelService.dropCollection(paramMap);
+        return AjaxResult.success(response);
+    }
+
+    /**
+     * 调用删除集合远程接口
+     * @param collectionvo
+     * @return
+     */
+    @Anonymous
+    @PostMapping("/deleteVectors")
+    public AjaxResult deleteVectors(@RequestBody CollectionVo collectionvo) {
+        String jsonString = JSON.toJSONString(collectionvo);
+        BaseResponse response = remoteModelService.dropVectors(jsonString);
+        return AjaxResult.success(response);
+    }
+
+    private File multipartFileToFile(MultipartFile multiFile) {
+        // 获取文件名
+        String fileName = multiFile.getOriginalFilename();
+        // 获取文件后缀
+        String prefix = fileName.substring(fileName.lastIndexOf("."));
+        // 若须要防止生成的临时文件重复,能够在文件名后添加随机码
+        try {
+            File file = File.createTempFile(fileName, prefix);
+            multiFile.transferTo(file);
+            return file;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
 
     /**
      * 保存临时文件到本地

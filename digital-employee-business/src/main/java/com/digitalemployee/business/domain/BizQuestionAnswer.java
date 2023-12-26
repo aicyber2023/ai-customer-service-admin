@@ -34,6 +34,10 @@ public class BizQuestionAnswer extends BaseEntity
     @Excel(name = "数字员工ID")
     private Long digitalEmployeeId;
 
+    /** 数字员工ID */
+    @Excel(name = "远程知识库名称")
+    private Long collectionId;
+
     /** 问题 */
     @Excel(name = "问题")
     private String question;
@@ -104,7 +108,15 @@ public class BizQuestionAnswer extends BaseEntity
         this.createType = createType;
     }
 
-    public Integer getCreateType() 
+    public Long getCollectionId() {
+        return collectionId;
+    }
+
+    public void setCollectionId(Long collectionId) {
+        this.collectionId = collectionId;
+    }
+
+    public Integer getCreateType()
     {
         return createType;
     }
