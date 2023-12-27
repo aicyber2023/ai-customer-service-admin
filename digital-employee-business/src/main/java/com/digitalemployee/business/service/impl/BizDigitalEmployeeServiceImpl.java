@@ -1,12 +1,19 @@
 package com.digitalemployee.business.service.impl;
 
-import cn.hutool.core.util.IdUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.digitalemployee.business.domain.*;
-import com.digitalemployee.business.mapper.*;
+import com.digitalemployee.business.domain.BizDigitalEmployee;
+import com.digitalemployee.business.domain.BizDigitalEmployeeContext;
+import com.digitalemployee.business.domain.BizKnowledgeBase;
+import com.digitalemployee.business.domain.BizKnowledgeBaseFile;
+import com.digitalemployee.business.mapper.BizDigitalEmployeeContextMapper;
+import com.digitalemployee.business.mapper.BizDigitalEmployeeMapper;
+import com.digitalemployee.business.mapper.BizKnowledgeBaseFileMapper;
+import com.digitalemployee.business.mapper.BizKnowledgeBaseMapper;
+import com.digitalemployee.business.modules.chatsession.domain.BizSessionRecord;
+import com.digitalemployee.business.modules.chatsession.mapper.BizSessionRecordMapper;
 import com.digitalemployee.business.modules.de.domain.BizDigitalEmployeeProcedure;
 import com.digitalemployee.business.modules.de.mapper.BizDigitalEmployeeProcedureMapper;
 import com.digitalemployee.business.service.IBizDigitalEmployeeService;

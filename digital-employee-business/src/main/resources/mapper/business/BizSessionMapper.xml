@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.digitalemployee.business.modules.chatsession.mapper.BizSessionMapper">
+    
+    <resultMap type="BizSession" id="BizSessionResult">
+        <result property="id"    column="id"    />
+        <result property="digitalEmployeeId"    column="digital_employee_id"    />
+        <result property="topic"    column="topic"    />
+        <result property="sessionType"    column="session_type"    />
+        <result property="testUserId"    column="test_user_id"    />
+        <result property="ip"    column="ip"    />
+        <result property="cookie"    column="cookie"    />
+        <result property="recordAmount"    column="record_amount"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateBy"    column="update_by"    />
+        <result property="updateTime"    column="update_time"    />
+        <result property="remark"    column="remark"    />
+        <result property="userId"    column="user_id"    />
+        <result property="deptId"    column="dept_id"    />
+    </resultMap>
+
+    <sql id="selectBizSessionVo">
+        select id, digital_employee_id, topic, session_type, test_user_id, ip, cookie, record_amount, create_by,
+               create_time, update_by, update_time, remark, user_id, dept_id
+        from biz_session s
+    </sql>
+
+    <select id="selectBizSessionList" parameterType="BizSession" resultMap="BizSessionResult">
+        <include refid="selectBizSessionVo"/>
+        <where>  
+            <if test="digitalEmployeeId != null "> and digital_employee_id = #{digitalEmployeeId}</if>
+            <if test="topic != null  and topic != ''"> and topic = #{topic}</if>
+            <if test="sessionType != null "> and session_type = #{sessionType}</if>
+            <if test="testUserId != null "> and test_user_id = #{testUserId}</if>
+            <if test="ip != null  and ip != ''"> and ip = #{ip}</if>
+            <if test="cookie != null  and cookie != ''"> and cookie = #{cookie}</if>
+            <if test="recordAmount != null "> and record_amount = #{recordAmount}</if>
+            <if test="userId != null "> and user_id = #{userId}</if>
+            <if test="deptId != null "> and dept_id = #{deptId}</if>
+            <!-- 权限过滤 -->
+            ${params.dataScope}
+        </where>
+    </select>
+    
+    <select id="selectBizSessionById" parameterType="Long" resultMap="BizSessionResult">
+        <include refid="selectBizSessionVo"/>
+        where id = #{id}
+    </select>
+        
+    <insert id="insertBizSession" parameterType="BizSession" useGeneratedKeys="true" keyProperty="id">
+        insert into biz_session
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="digitalEmployeeId != null">digital_employee_id,</if>
+            <if test="topic != null">topic,</if>
+            <if test="sessionType != null">session_type,</if>
+            <if test="testUserId != null">test_user_id,</if>
+            <if test="ip != null and ip != ''">ip,</if>
+            <if test="cookie != null and cookie != ''">cookie,</if>
+            <if test="recordAmount != null">record_amount,</if>
+            <if test="createBy != null">create_by,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateBy != null">update_by,</if>
+            <if test="updateTime != null">update_time,</if>
+            <if test="remark != null">remark,</if>
+            <if test="userId != null">user_id,</if>
+            <if test="deptId != null">dept_id,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="digitalEmployeeId != null">#{digitalEmployeeId},</if>
+            <if test="topic != null">#{topic},</if>
+            <if test="sessionType != null">#{sessionType},</if>
+            <if test="testUserId != null">#{testUserId},</if>
+            <if test="ip != null and ip != ''">#{ip},</if>
+            <if test="cookie != null and cookie != ''">#{cookie},</if>
+            <if test="recordAmount != null">#{recordAmount},</if>
+            <if test="createBy != null">#{createBy},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateBy != null">#{updateBy},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+            <if test="remark != null">#{remark},</if>
+            <if test="userId != null">#{userId},</if>
+            <if test="deptId != null">#{deptId},</if>
+         </trim>
+    </insert>
+
+    <update id="updateBizSession" parameterType="BizSession">
+        update biz_session
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="digitalEmployeeId != null">digital_employee_id = #{digitalEmployeeId},</if>
+            <if test="topic != null">topic = #{topic},</if>
+            <if test="sessionType != null">session_type = #{sessionType},</if>
+            <if test="testUserId != null">test_user_id = #{testUserId},</if>
+            <if test="ip != null and ip != ''">ip = #{ip},</if>
+            <if test="cookie != null and cookie != ''">cookie = #{cookie},</if>
+            <if test="recordAmount != null">record_amount = #{recordAmount},</if>
+            <if test="createBy != null">create_by = #{createBy},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateBy != null">update_by = #{updateBy},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+            <if test="remark != null">remark = #{remark},</if>
+            <if test="userId != null">user_id = #{userId},</if>
+            <if test="deptId != null">dept_id = #{deptId},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteBizSessionById" parameterType="Long">
+        delete from biz_session where id = #{id}
+    </delete>
+
+    <delete id="deleteBizSessionByIds" parameterType="String">
+        delete from biz_session where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>

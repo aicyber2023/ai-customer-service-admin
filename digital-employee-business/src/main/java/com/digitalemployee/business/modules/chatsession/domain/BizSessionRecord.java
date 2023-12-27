@@ -1,6 +1,5 @@
-package com.digitalemployee.business.domain;
+package com.digitalemployee.business.modules.chatsession.domain;
 
-import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.digitalemployee.common.annotation.Excel;
 import com.digitalemployee.common.core.domain.BaseEntity;
@@ -14,7 +13,7 @@ import java.util.Date;
  * 对话详单对象 biz_session_record
  *
  * @author aicyber
- * @date 2023-08-22
+ * @date 2023-12-27
  */
 @Data
 @EqualsAndHashCode(callSuper = true)
@@ -28,10 +27,10 @@ public class BizSessionRecord extends BaseEntity {
     private Long id;
 
     /**
-     * 用户ID
+     * 会话ID
      */
-    @Excel(name = "用户ID")
-    private Long userId;
+    @Excel(name = "会话ID")
+    private Long sessionId;
 
     /**
      * 角色ID
@@ -78,16 +77,28 @@ public class BizSessionRecord extends BaseEntity {
     private Long tokens;
 
     /**
+     * 状态 0-错误 1-正常
+     */
+    @Excel(name = "状态 0-错误 1-正常")
+    private Long status;
+
+    /**
+     * 错误信息
+     */
+    @Excel(name = "错误信息")
+    private String errorMessage;
+
+    /**
+     * 用户ID
+     */
+    @Excel(name = "用户ID")
+    private Long userId;
+
+    /**
      * 是否缓存（0：是 1：否）
      */
     @Excel(name = "是否缓存", readConverterExp = "0=：是,1=：否")
     private Long cacheFlag;
-
-    /**
-     * 状态
-     */
-    @Excel(name = "状态")
-    private Long status;
 
     /**
      * 错误码
@@ -95,11 +106,17 @@ public class BizSessionRecord extends BaseEntity {
     @Excel(name = "错误码")
     private Long errorCode;
 
+    /**
+     * $column.columnComment
+     */
+    @Excel(name = "${comment}", readConverterExp = "$column.readConverterExp()")
+    private Long roleId;
+
+    /**
+     * $column.columnComment
+     */
+    @Excel(name = "${comment}", readConverterExp = "$column.readConverterExp()")
     private String ip;
 
-    @TableField(exist = false)
-    private String nickName;
 
-    @TableField(exist = false)
-    private Long sysUserId;
 }

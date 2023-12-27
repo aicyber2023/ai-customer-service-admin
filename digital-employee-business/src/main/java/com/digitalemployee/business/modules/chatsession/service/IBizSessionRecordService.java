@@ -1,19 +1,17 @@
-package com.digitalemployee.business.mapper;
+package com.digitalemployee.business.modules.chatsession.service;
 
-import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import com.digitalemployee.business.domain.BizSessionRecord;
-import org.apache.ibatis.annotations.Mapper;
+import com.baomidou.mybatisplus.extension.service.IService;
+import com.digitalemployee.business.modules.chatsession.domain.BizSessionRecord;
 
 import java.util.List;
 
 /**
- * 对话详单Mapper接口
+ * 对话详单Service接口
  *
  * @author aicyber
- * @date 2023-08-22
+ * @date 2023-12-27
  */
-@Mapper
-public interface BizSessionRecordMapper extends BaseMapper<BizSessionRecord> {
+public interface IBizSessionRecordService extends IService<BizSessionRecord> {
     /**
      * 查询对话详单
      *
@@ -29,8 +27,6 @@ public interface BizSessionRecordMapper extends BaseMapper<BizSessionRecord> {
      * @return 对话详单集合
      */
     List<BizSessionRecord> selectBizSessionRecordList(BizSessionRecord bizSessionRecord);
-
-    List<BizSessionRecord> selectBizSessionRecordListNew(BizSessionRecord bizSessionRecord);
 
     /**
      * 新增对话详单
@@ -49,18 +45,18 @@ public interface BizSessionRecordMapper extends BaseMapper<BizSessionRecord> {
     int updateBizSessionRecord(BizSessionRecord bizSessionRecord);
 
     /**
-     * 删除对话详单
+     * 批量删除对话详单
+     *
+     * @param ids 需要删除的对话详单主键集合
+     * @return 结果
+     */
+    int deleteBizSessionRecordByIds(Long[] ids);
+
+    /**
+     * 删除对话详单信息
      *
      * @param id 对话详单主键
      * @return 结果
      */
     int deleteBizSessionRecordById(Long id);
-
-    /**
-     * 批量删除对话详单
-     *
-     * @param ids 需要删除的数据主键集合
-     * @return 结果
-     */
-    int deleteBizSessionRecordByIds(Long[] ids);
 }

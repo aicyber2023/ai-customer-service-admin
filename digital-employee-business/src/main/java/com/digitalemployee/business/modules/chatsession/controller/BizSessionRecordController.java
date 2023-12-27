@@ -1,85 +1,65 @@
-package com.digitalemployee.business.controller;
+package com.digitalemployee.business.modules.chatsession.controller;
 
-import com.digitalemployee.business.domain.BizSessionRecord;
-import com.digitalemployee.business.service.IBizSessionRecordService;
-import com.digitalemployee.common.annotation.Log;
+import com.digitalemployee.business.modules.chatsession.domain.BizSessionRecord;
+import com.digitalemployee.business.modules.chatsession.service.IBizSessionRecordService;
 import com.digitalemployee.common.core.controller.BaseController;
-import com.digitalemployee.common.core.domain.AjaxResult;
 import com.digitalemployee.common.core.page.TableDataInfo;
-import com.digitalemployee.common.enums.BusinessType;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
-import java.util.Date;
 import java.util.List;
 
 /**
  * 对话详单Controller
  *
  * @author aicyber
- * @date 2023-08-22
+ * @date 2023-12-27
  */
 @RestController
-@RequestMapping("/de/sessionRecord")
+@RequestMapping("/de/seesionRecord")
 @RequiredArgsConstructor
 public class BizSessionRecordController extends BaseController {
 
     private final IBizSessionRecordService bizSessionRecordService;
 
-    /**
-     * 查询对话详单列表
-     */
-    @PreAuthorize("@ss.hasPermi('de:sessionRecord:list')")
     @GetMapping("/list")
     public TableDataInfo list(BizSessionRecord bizSessionRecord) {
-        Long userId = getUserId();
-        bizSessionRecord.getParams().put("sysUserId", userId);
+        // TODO: 2023/12/27 查询条件
         startPage();
-        List<BizSessionRecord> list = bizSessionRecordService.selectBizSessionRecordListNew(bizSessionRecord);
+        List<BizSessionRecord> list = bizSessionRecordService.selectBizSessionRecordList(bizSessionRecord);
         return getDataTable(list);
     }
 
-    /**
-     * 获取对话详单详细信息
-     */
-    @PreAuthorize("@ss.hasPermi('de:sessionRecord:query')")
+/*
+
+    @PreAuthorize("@ss.hasPermi('check:record:query')")
     @GetMapping(value = "/{id}")
     public AjaxResult getInfo(@PathVariable("id") Long id) {
         return success(bizSessionRecordService.selectBizSessionRecordById(id));
     }
 
-    /**
-     * 新增对话详单
-     */
-    @PreAuthorize("@ss.hasPermi('de:sessionRecord:add')")
+    @PreAuthorize("@ss.hasPermi('check:record:add')")
     @Log(title = "对话详单", businessType = BusinessType.INSERT)
     @PostMapping
     public AjaxResult add(@RequestBody BizSessionRecord bizSessionRecord) {
-        bizSessionRecord.setCreateTime(new Date());
-        bizSessionRecord.setCreateBy(String.valueOf(getUserId()));
         return toAjax(bizSessionRecordService.insertBizSessionRecord(bizSessionRecord));
     }
 
-    /**
-     * 修改对话详单
-     */
-    @PreAuthorize("@ss.hasPermi('de:sessionRecord:edit')")
+    @PreAuthorize("@ss.hasPermi('check:record:edit')")
     @Log(title = "对话详单", businessType = BusinessType.UPDATE)
     @PutMapping
     public AjaxResult edit(@RequestBody BizSessionRecord bizSessionRecord) {
-        bizSessionRecord.setUpdateTime(new Date());
-        bizSessionRecord.setUpdateBy(String.valueOf(getUserId()));
         return toAjax(bizSessionRecordService.updateBizSessionRecord(bizSessionRecord));
     }
 
-    /**
-     * 删除对话详单
-     */
-    @PreAuthorize("@ss.hasPermi('de:sessionRecord:remove')")
+    @PreAuthorize("@ss.hasPermi('check:record:remove')")
     @Log(title = "对话详单", businessType = BusinessType.DELETE)
     @DeleteMapping("/{ids}")
     public AjaxResult remove(@PathVariable Long[] ids) {
         return toAjax(bizSessionRecordService.deleteBizSessionRecordByIds(ids));
     }
+*/
+
 }

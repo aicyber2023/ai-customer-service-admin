@@ -1,6 +1,7 @@
 package com.digitalemployee.business.api.domain;
 
-import com.digitalemployee.business.domain.BizSessionRecord;
+
+import com.digitalemployee.business.modules.chatsession.domain.BizSessionRecord;
 import lombok.Data;
 
 import java.math.BigDecimal;
@@ -14,9 +15,13 @@ public class QAParam {
     public static final double DEFAULT_TEMPERATURE = 2.0;
     public static final double DEFAULT_PRESENCE_PENALTY = 1.5;
     public static final double DEFAULT_FREQUENCY_PENALTY = 0.8;
-    /** 集合名称 */
+    /**
+     * 集合名称
+     */
     private String collection;
-    /** 问题 */
+    /**
+     * 问题
+     */
     private String question;
 
     private Double radius;

@@ -15,7 +15,6 @@ import lombok.Data;
 @Data
 @TableName("biz_digital_employee_template_procedure")
 public class BizDigitalEmployeeTemplateProcedure {
-    private static final long serialVersionUID = 1L;
 
     /**
      * 主键

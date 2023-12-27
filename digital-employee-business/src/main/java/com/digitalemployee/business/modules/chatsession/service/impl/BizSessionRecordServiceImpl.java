@@ -1,9 +1,9 @@
-package com.digitalemployee.business.service.impl;
+package com.digitalemployee.business.modules.chatsession.service.impl;
 
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.digitalemployee.business.domain.BizSessionRecord;
-import com.digitalemployee.business.mapper.BizSessionRecordMapper;
-import com.digitalemployee.business.service.IBizSessionRecordService;
+import com.digitalemployee.business.modules.chatsession.domain.BizSessionRecord;
+import com.digitalemployee.business.modules.chatsession.mapper.BizSessionRecordMapper;
+import com.digitalemployee.business.modules.chatsession.service.IBizSessionRecordService;
 import com.digitalemployee.common.utils.DateUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -14,11 +14,13 @@ import java.util.List;
  * 对话详单Service业务层处理
  *
  * @author aicyber
- * @date 2023-08-22
+ * @date 2023-12-27
  */
 @Service
 @RequiredArgsConstructor
-public class BizSessionRecordServiceImpl extends ServiceImpl<BizSessionRecordMapper, BizSessionRecord> implements IBizSessionRecordService {
+public class BizSessionRecordServiceImpl
+        extends ServiceImpl<BizSessionRecordMapper, BizSessionRecord>
+        implements IBizSessionRecordService {
 
     private final BizSessionRecordMapper bizSessionRecordMapper;
 
@@ -42,11 +44,6 @@ public class BizSessionRecordServiceImpl extends ServiceImpl<BizSessionRecordMap
     @Override
     public List<BizSessionRecord> selectBizSessionRecordList(BizSessionRecord bizSessionRecord) {
         return bizSessionRecordMapper.selectBizSessionRecordList(bizSessionRecord);
-    }
-
-    @Override
-    public List<BizSessionRecord> selectBizSessionRecordListNew(BizSessionRecord bizSessionRecord) {
-        return bizSessionRecordMapper.selectBizSessionRecordListNew(bizSessionRecord);
     }
 
     /**

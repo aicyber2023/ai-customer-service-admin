@@ -1,5 +1,7 @@
 package com.digitalemployee.business.modules.de.service.impl;
 
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.digitalemployee.business.modules.de.domain.BizDigitalEmployeeProcedure;
 import com.digitalemployee.business.modules.de.mapper.BizDigitalEmployeeProcedureMapper;
@@ -88,4 +90,12 @@ public class BizDigitalEmployeeProcedureServiceImpl
     public int deleteBizDigitalEmployeeProcedureById(Long id) {
         return bizDigitalEmployeeProcedureMapper.deleteBizDigitalEmployeeProcedureById(id);
     }
+
+    @Override
+    public BizDigitalEmployeeProcedure selectProcedureByDeId(Long deId) {
+        LambdaQueryWrapper<BizDigitalEmployeeProcedure> wrapper = Wrappers.lambdaQuery();
+        wrapper.eq(BizDigitalEmployeeProcedure::getDigitalEmployeeId, deId).eq(BizDigitalEmployeeProcedure::getEnable, 1);
+        return this.getOne(wrapper);
+    }
+
 }

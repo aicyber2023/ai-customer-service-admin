@@ -60,4 +60,6 @@ public interface IBizDigitalEmployeeProcedureService extends IService<BizDigital
      * @return 结果
      */
     int deleteBizDigitalEmployeeProcedureById(Long id);
+
+    BizDigitalEmployeeProcedure selectProcedureByDeId(Long deId);
 }
