@@ -119,6 +119,14 @@ public class BizDigitalEmployeeTemplateController extends BaseController {
         return toAjax(bizDigitalEmployeeTemplateService.updateBizDigitalEmployeeTemplate(bizDigitalEmployeeTemplate));
     }
 
+    @GetMapping("/updateTemplateStatus")
+    public AjaxResult updateTemplateStatus(Long templateId, Integer status) {
+        BizDigitalEmployeeTemplate template = new BizDigitalEmployeeTemplate();
+        template.setId(templateId);
+        template.setStatus(status);
+        return AjaxResult.success(bizDigitalEmployeeTemplateService.updateById(template));
+    }
+
     /**
      * 删除数字员工模板
      */
