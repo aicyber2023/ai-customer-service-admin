@@ -20,7 +20,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.util.*;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 /**
@@ -124,6 +126,8 @@ public class BizDigitalEmployeeTemplateController extends BaseController {
         BizDigitalEmployeeTemplate template = new BizDigitalEmployeeTemplate();
         template.setId(templateId);
         template.setStatus(status);
+        template.setUpdateTime(new Date());
+        template.setUpdateBy(String.valueOf(getUserId()));
         return AjaxResult.success(bizDigitalEmployeeTemplateService.updateById(template));
     }
 
