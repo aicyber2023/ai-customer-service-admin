@@ -33,6 +33,12 @@ public class ChatResourcesConfig {
     @Value(value = "${ai.qaUrlPrefix}${ai.qaRemoteUrl}")
     private String qaRemoteUrl;
 
+    @Value(value = "${ai.qaUrlPrefix}${ai.qaSearchTextUrl}")
+    private String qaSearchTextUrl;
+
+    @Value(value = "${ai.qaUrlPrefix}${ai.qaChatUrl}")
+    private String qaChatUrl;
+
     /** 添加文档 */
     @Value(value = "${ai.qaUrlPrefix}${ai.qaAppendFileUrl}")
     private String qaAppendFileUrl;

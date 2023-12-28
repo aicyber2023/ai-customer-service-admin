@@ -83,6 +83,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <!-- 权限过滤 -->
             ${params.dataScope}
         </where>
+        order by create_time desc
     </select>
     
     <select id="selectBizDigitalEmployeeById" parameterType="Long" resultMap="BizDigitalEmployeeResult">

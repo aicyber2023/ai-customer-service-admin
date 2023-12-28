@@ -74,13 +74,13 @@ public class BizSessionRecord extends BaseEntity {
      * Token数
      */
     @Excel(name = "Token数")
-    private Long tokens;
+    private Integer tokens;
 
     /**
      * 状态 0-错误 1-正常
      */
     @Excel(name = "状态 0-错误 1-正常")
-    private Long status;
+    private Integer status;
 
     /**
      * 错误信息

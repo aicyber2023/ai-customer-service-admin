@@ -39,11 +39,17 @@ public class RemoteModelService {
      */
     public QAResponse qa(QAParam param) {
         final String url = chatResourcesConfig.getQaRemoteUrl();
-        QAResponse response = post(url, JSONUtil.toJsonStr(param), QAResponse.class);
-        if (response != null && !response.getSuccessful()) {
-            throw new RuntimeException(url + "远程服务调用异常：" + response.getMessage());
-        }
-        return response;
+        return post(url, JSONUtil.toJsonStr(param), QAResponse.class);
+    }
+
+    public QAResponse searchText(QAParam param) {
+        final String url = chatResourcesConfig.getQaSearchTextUrl();
+        return post(url, JSONUtil.toJsonStr(param), QAResponse.class);
+    }
+
+    public AiChatResponse chat(ChatParam param) {
+        final String url = chatResourcesConfig.getQaChatUrl();
+        return post(url, JSONUtil.toJsonStr(param), AiChatResponse.class);
     }
 
     /**

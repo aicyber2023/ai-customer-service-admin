@@ -147,6 +147,8 @@ ai:
   testPath: D:/temp/qa_auto_test/%s/
   qaUrlPrefix: http://116.204.112.29:7090
   qaRemoteUrl: /qa.do
+  qaSearchTextUrl: /search-text.do
+  qaChatUrl: /chat.do
   qaAppendFileUrl: /upload-texts.do?append=true&collection=
   qaAppendTextUrl: /append-texts.do
   qaAppendQaUrl: /append-qa.do

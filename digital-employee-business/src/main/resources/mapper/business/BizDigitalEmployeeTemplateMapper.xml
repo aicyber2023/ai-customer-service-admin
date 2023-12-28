@@ -72,6 +72,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="chatType != null"> and chat_type = #{chatType}</if>
             <if test="modelSwitch != null"> and model_switch = #{modelSwitch}</if>
         </where>
+        order by create_time desc
     </select>
     
     <select id="selectBizDigitalEmployeeTemplateById" parameterType="Long" resultMap="BizDigitalEmployeeTemplateResult">

@@ -130,7 +130,7 @@ public class BizDigitalEmployeeTemplateServiceImpl extends ServiceImpl<BizDigita
 
     private boolean isUsed(List<Long> idList) {
         LambdaQueryWrapper<BizDigitalEmployee> wrapper = Wrappers.lambdaQuery();
-        wrapper.in(BizDigitalEmployee::getTemplateId, idList);
+        wrapper.in(BizDigitalEmployee::getTemplateId, idList).ne(BizDigitalEmployee::getStatus, 2);
         return digitalEmployeeMapper.selectCount(wrapper) > 0;
     }
 

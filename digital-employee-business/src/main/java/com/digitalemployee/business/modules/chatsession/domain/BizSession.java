@@ -1,10 +1,13 @@
 package com.digitalemployee.business.modules.chatsession.domain;
 
+import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.digitalemployee.common.annotation.Excel;
 import com.digitalemployee.common.core.domain.BaseEntity;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+
+import java.util.List;
 
 /**
  * 会话session对象 biz_session
@@ -63,7 +66,7 @@ public class BizSession extends BaseEntity {
      * 对话条数
      */
     @Excel(name = "对话条数")
-    private Long recordAmount;
+    private Integer recordAmount;
 
     /**
      * 用户ID
@@ -76,5 +79,8 @@ public class BizSession extends BaseEntity {
      */
     @Excel(name = "企业id")
     private Long deptId;
+
+    @TableField(exist = false)
+    private List<BizSessionRecord> recordList;
 
 }
