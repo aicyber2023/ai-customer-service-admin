@@ -45,7 +45,6 @@ public class BizSessionController extends BaseController {
     @Log(title = "会话session", businessType = BusinessType.DELETE)
     @DeleteMapping("/{ids}")
     public AjaxResult remove(@PathVariable Long[] ids) {
-        // TODO: 2023/12/27 删除关联的会话详单
         return toAjax(bizSessionService.deleteBizSessionByIds(ids));
     }
 

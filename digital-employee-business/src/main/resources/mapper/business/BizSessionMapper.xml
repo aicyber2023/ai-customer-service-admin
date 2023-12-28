@@ -44,6 +44,29 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             ${params.dataScope}
         </where>
     </select>
+
+    <select id="selectBizSessionListNew" parameterType="BizSession" resultType="BizSession">
+        select s.id, s.digital_employee_id, s.topic, s.session_type, s.test_user_id, s.ip, s.cookie, s.record_amount,
+               s.create_by, s.create_time, s.update_by, s.update_time, s.remark, s.user_id, s.dept_id,
+               de.name AS de_name,
+               u.nick_name AS test_user_name
+        from biz_session s
+            left join biz_digital_employee de on s.digital_employee_id = de.id
+            left join sys_user u on s.test_user_id = u.user_id
+        <where>
+            <if test="digitalEmployeeId != null "> and s.digital_employee_id = #{digitalEmployeeId}</if>
+            <if test="topic != null  and topic != ''"> and s.topic = #{topic}</if>
+            <if test="sessionType != null "> and s.session_type = #{sessionType}</if>
+            <if test="testUserId != null "> and s.test_user_id = #{testUserId}</if>
+            <if test="ip != null  and ip != ''"> and s.ip = #{ip}</if>
+            <if test="cookie != null  and cookie != ''"> and s.cookie = #{cookie}</if>
+            <if test="recordAmount != null "> and s.record_amount = #{recordAmount}</if>
+            <if test="userId != null "> and s.user_id = #{userId}</if>
+            <if test="deptId != null "> and s.dept_id = #{deptId}</if>
+            <!-- 权限过滤 -->
+            ${params.dataScope}
+        </where>
+    </select>
     
     <select id="selectBizSessionById" parameterType="Long" resultMap="BizSessionResult">
         <include refid="selectBizSessionVo"/>

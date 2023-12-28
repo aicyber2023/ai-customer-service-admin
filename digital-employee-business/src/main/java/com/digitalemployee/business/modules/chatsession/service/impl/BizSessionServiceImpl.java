@@ -1,14 +1,20 @@
 package com.digitalemployee.business.modules.chatsession.service.impl;
 
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.digitalemployee.business.modules.chatsession.domain.BizSession;
+import com.digitalemployee.business.modules.chatsession.domain.BizSessionRecord;
 import com.digitalemployee.business.modules.chatsession.mapper.BizSessionMapper;
+import com.digitalemployee.business.modules.chatsession.mapper.BizSessionRecordMapper;
 import com.digitalemployee.business.modules.chatsession.service.IBizSessionService;
 import com.digitalemployee.common.annotation.DataScope;
 import com.digitalemployee.common.utils.DateUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -24,6 +30,8 @@ public class BizSessionServiceImpl
         implements IBizSessionService {
 
     private final BizSessionMapper bizSessionMapper;
+
+    private final BizSessionRecordMapper bizSessionRecordMapper;
 
     /**
      * 查询会话session
@@ -45,7 +53,7 @@ public class BizSessionServiceImpl
     @Override
     @DataScope(deptAlias = "s", userAlias = "s")
     public List<BizSession> selectBizSessionList(BizSession bizSession) {
-        return bizSessionMapper.selectBizSessionList(bizSession);
+        return bizSessionMapper.selectBizSessionListNew(bizSession);
     }
 
     /**
@@ -79,8 +87,11 @@ public class BizSessionServiceImpl
      * @return 结果
      */
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public int deleteBizSessionByIds(Long[] ids) {
-        return bizSessionMapper.deleteBizSessionByIds(ids);
+        bizSessionRecordMapper.deleteBatchIds(Arrays.asList(ids));
+        int i = bizSessionMapper.deleteBizSessionByIds(ids);
+        return i;
     }
 
     /**

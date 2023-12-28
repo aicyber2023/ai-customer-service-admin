@@ -29,6 +29,7 @@ public interface BizSessionMapper extends BaseMapper<BizSession> {
      * @return 会话session集合
      */
     List<BizSession> selectBizSessionList(BizSession bizSession);
+    List<BizSession> selectBizSessionListNew(BizSession bizSession);
 
     /**
      * 新增会话session
