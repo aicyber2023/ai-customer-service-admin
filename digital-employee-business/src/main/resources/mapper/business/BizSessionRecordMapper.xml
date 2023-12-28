@@ -17,6 +17,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="status"    column="status"    />
         <result property="errorMessage"    column="error_message"    />
         <result property="remark"    column="remark"    />
+        <result property="chatType"    column="chat_type"    />
+        <result property="hitStatus"    column="hit_status"    />
         <result property="userId"    column="user_id"    />
         <result property="cacheFlag"    column="cache_flag"    />
         <result property="errorCode"    column="error_code"    />
@@ -29,7 +31,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </resultMap>
 
     <sql id="selectBizSessionRecordVo">
-        select id, session_id, digital_employee_id, send_time, return_time, response_interval, input_text, output_text, tokens, status, error_message, remark, user_id, cache_flag, error_code, create_by, create_time, update_by, update_time, role_id, ip from biz_session_record
+        select id, session_id, digital_employee_id, send_time, return_time, response_interval, input_text, output_text, tokens, status, error_message, remark, chat_type, hit_status user_id, cache_flag, error_code, create_by, create_time, update_by, update_time, role_id, ip from biz_session_record
     </sql>
 
     <select id="selectBizSessionRecordList" parameterType="BizSessionRecord" resultMap="BizSessionRecordResult">
@@ -45,6 +47,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="tokens != null "> and tokens = #{tokens}</if>
             <if test="status != null "> and status = #{status}</if>
             <if test="errorMessage != null  and errorMessage != ''"> and error_message = #{errorMessage}</if>
+            <if test="chatType != null "> and chat_type = #{chatType}</if>
+            <if test="hitStatus != null "> and hit_status = #{hitStatus}</if>
             <if test="userId != null "> and user_id = #{userId}</if>
             <if test="cacheFlag != null "> and cache_flag = #{cacheFlag}</if>
             <if test="errorCode != null "> and error_code = #{errorCode}</if>
@@ -72,6 +76,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="status != null">status,</if>
             <if test="errorMessage != null">error_message,</if>
             <if test="remark != null">remark,</if>
+            <if test="chatType != null">chat_type,</if>
+            <if test="hitStatus != null">hit_status,</if>
             <if test="userId != null">user_id,</if>
             <if test="cacheFlag != null">cache_flag,</if>
             <if test="errorCode != null">error_code,</if>
@@ -94,6 +100,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="status != null">#{status},</if>
             <if test="errorMessage != null">#{errorMessage},</if>
             <if test="remark != null">#{remark},</if>
+            <if test="chatType != null">#{chatType},</if>
+            <if test="hitStatus != null">#{hitStatus},</if>
             <if test="userId != null">#{userId},</if>
             <if test="cacheFlag != null">#{cacheFlag},</if>
             <if test="errorCode != null">#{errorCode},</if>
@@ -120,6 +128,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="status != null">status = #{status},</if>
             <if test="errorMessage != null">error_message = #{errorMessage},</if>
             <if test="remark != null">remark = #{remark},</if>
+            <if test="chatType != null">chat_type = #{chatType},</if>
+            <if test="hitStatus != null">hit_status = #{hitStatus},</if>
             <if test="userId != null">user_id = #{userId},</if>
             <if test="cacheFlag != null">cache_flag = #{cacheFlag},</if>
             <if test="errorCode != null">error_code = #{errorCode},</if>
