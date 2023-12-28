@@ -86,6 +86,7 @@ public class BizSession extends BaseEntity {
     @TableField(exist = false)
     private List<BizSessionRecord> recordList;
 
+    /**  */
     @TableField(exist = false)
     private String testUserName;
 

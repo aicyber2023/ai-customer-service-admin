@@ -49,7 +49,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         select s.id, s.digital_employee_id, s.topic, s.session_type, s.test_user_id, s.ip, s.cookie, s.record_amount,
                s.create_by, s.create_time, s.update_by, s.update_time, s.remark, s.user_id, s.dept_id,
                de.name AS de_name,
-               u.nick_name AS test_user_name
+               IF(s.test_user_id is null, '访客', u.user_name) AS test_user_name
         from biz_session s
             left join biz_digital_employee de on s.digital_employee_id = de.id
             left join sys_user u on s.test_user_id = u.user_id
