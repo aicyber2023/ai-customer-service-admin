@@ -1,6 +1,8 @@
 package com.digitalemployee.business.modules.chatsession.domain;
 
+import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
+import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.digitalemployee.common.annotation.Excel;
 import com.digitalemployee.common.core.domain.BaseEntity;
@@ -24,6 +26,7 @@ public class BizSession extends BaseEntity {
     /**
      * ID
      */
+    @TableId(type = IdType.AUTO)
     private Long id;
 
     /**

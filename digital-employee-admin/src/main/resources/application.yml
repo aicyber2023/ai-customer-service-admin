@@ -154,3 +154,4 @@ ai:
   qaAppendQaUrl: /append-qa.do
   qaDropCollectionUrl: /drop-collection.do
   qaDropVectorsUrl: /drop-vectors.do
+  defaultProcedure: 非常抱歉，我还没学到相关知识。

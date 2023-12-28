@@ -1,5 +1,8 @@
 package com.digitalemployee.business.modules.chatsession.domain;
 
+import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableField;
+import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.digitalemployee.common.annotation.Excel;
 import com.digitalemployee.common.core.domain.BaseEntity;
@@ -21,9 +24,8 @@ import java.util.Date;
 public class BizSessionRecord extends BaseEntity {
     private static final long serialVersionUID = 1L;
 
-    /**
-     * ID
-     */
+
+    @TableId(type = IdType.AUTO)
     private Long id;
 
     /**
@@ -41,14 +43,14 @@ public class BizSessionRecord extends BaseEntity {
     /**
      * 发送时间
      */
-    @JsonFormat(pattern = "yyyy-MM-dd")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     @Excel(name = "发送时间", width = 30, dateFormat = "yyyy-MM-dd")
     private Date sendTime;
 
     /**
      * 返回时间
      */
-    @JsonFormat(pattern = "yyyy-MM-dd")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     @Excel(name = "返回时间", width = 30, dateFormat = "yyyy-MM-dd")
     private Date returnTime;
 

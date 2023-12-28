@@ -59,4 +59,7 @@ public class ChatResourcesConfig {
     @Value(value = "${ai.qaUrlPrefix}${ai.qaDropVectorsUrl}")
     private String qaDropVectorsUrl;
 
+    @Value(value = "${ai.defaultProcedure}")
+    private String defaultProcedure;
+
 }
