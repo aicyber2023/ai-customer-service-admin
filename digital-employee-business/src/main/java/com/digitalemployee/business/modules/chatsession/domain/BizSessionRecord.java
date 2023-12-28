@@ -118,5 +118,11 @@ public class BizSessionRecord extends BaseEntity {
     @Excel(name = "${comment}", readConverterExp = "$column.readConverterExp()")
     private String ip;
 
+    /** 对话类型(知识库支持) 0-问答 1-文档 2-问答+文档 */
+    private Integer chatType;
+
+    /** 命中情况 0-问答 1-文档 2-未命中 */
+    private Integer hitStatus;
+
 
 }
