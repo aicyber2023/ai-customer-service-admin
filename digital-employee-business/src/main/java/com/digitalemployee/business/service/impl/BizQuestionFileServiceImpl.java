@@ -128,23 +128,28 @@ public class BizQuestionFileServiceImpl extends ServiceImpl<BizQuestionFileMappe
                 List<Long> idList = new ArrayList<>();
                 List<Long> similarityIdList = new ArrayList<>();
                 for (String s : questionIdArray) {
-                    Long QuestionAnswerId = Long.parseLong(s);
-                    BizQuestionAnswer questionAnswer = bizQuestionAnswerMapper.selectBizQuestionAnswerById(QuestionAnswerId);
-                    if (questionAnswer != null) {
-                        idList.add(questionAnswer.getId());
+                    if(!s.equals("")){
+                        Long QuestionAnswerId = Long.parseLong(s);
+                        BizQuestionAnswer questionAnswer = bizQuestionAnswerMapper.selectBizQuestionAnswerById(QuestionAnswerId);
+                        if (questionAnswer != null) {
+                            idList.add(questionAnswer.getId());
+                        }
+                        List<BizSimilarityQuestion> similarityQuestionList = bizSimilarityQuestionMapper.selectBizSimilarityQuestionListById(QuestionAnswerId);
+                        similarityQuestionList.forEach(item -> {
+                            similarityIdList.add(item.getId());
+                        });
                     }
-
-                    List<BizSimilarityQuestion> similarityQuestionList = bizSimilarityQuestionMapper.selectBizSimilarityQuestionListById(QuestionAnswerId);
-                    similarityQuestionList.forEach(item -> {
-                        similarityIdList.add(item.getId());
-                    });
                 }
-                //删除相关问答库
-                Long[] idListArray = idList.toArray(new Long[idList.size()]);
-                bizQuestionAnswerMapper.deleteBizQuestionAnswerByIds(idListArray);
-                //删除相关相似问
-                Long[] similarityIdListArray = similarityIdList.toArray(new Long[similarityIdList.size()]);
-                bizSimilarityQuestionMapper.deleteBizSimilarityQuestionByIds(similarityIdListArray);
+                if(idList.size()!=0){
+                    //删除相关问答库
+                    Long[] idListArray = idList.toArray(new Long[idList.size()]);
+                    bizQuestionAnswerMapper.deleteBizQuestionAnswerByIds(idListArray);
+                }
+                if(similarityIdList.size()!=0){
+                    //删除相关相似问
+                    Long[] similarityIdListArray = similarityIdList.toArray(new Long[similarityIdList.size()]);
+                    bizSimilarityQuestionMapper.deleteBizSimilarityQuestionByIds(similarityIdListArray);
+                }
             }
         }
         //删除问答库文件

@@ -1,5 +1,6 @@
 package com.digitalemployee.business.domain;
 
+import com.digitalemployee.business.utils.ReadExcelUtils;
 import com.digitalemployee.business.vo.QuestionAnswersVo;
 import com.digitalemployee.common.exception.base.BaseException;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
@@ -55,11 +56,11 @@ public class ReadExcel {
     public List<BizQuestionAnswer> getExcelInfo(MultipartFile mFile) throws IOException {
         List<BizQuestionAnswer> questionAnswersVoList = new ArrayList<>();
         String fileName = mFile.getOriginalFilename();//获取文件名
-        if (!validateExcel(fileName)) {// 验证文件名是否合格
+        if (!ReadExcelUtils.validateExcel(fileName)) {// 验证文件名是否合格
             throw new BaseException("该文件格式错误，请上传正确的excel格式文件");
         }
         boolean isExcel2003 = true;// 根据文件名判断文件是2003版本还是2007版本
-        if (isExcel2007(fileName)) {
+        if (ReadExcelUtils.isExcel2007(fileName)) {
             isExcel2003 = false;
         }
         questionAnswersVoList = createExcel(mFile.getInputStream(), isExcel2003);
@@ -137,30 +138,6 @@ public class ReadExcel {
             }
         }
         return bizQuestionAnswerList;
-    }
-
-    /**
-     * 验证EXCEL文件
-     *
-     * @param filePath
-     * @return
-     */
-    public boolean validateExcel(String filePath) {
-        if (filePath == null || !(isExcel2003(filePath) || isExcel2007(filePath))) {
-            errorMsg = "文件名不是excel格式";
-            return false;
-        }
-        return true;
-    }
-
-    // @描述：是否是2003的excel，返回true是2003
-    public static boolean isExcel2003(String filePath) {
-        return filePath.matches("^.+\\.(?i)(xls)$");
-    }
-
-    //@描述：是否是2007的excel，返回true是2007
-    public static boolean isExcel2007(String filePath) {
-        return filePath.matches("^.+\\.(?i)(xlsx)$");
     }
 
     public static void readTree(Sheet sheet, int rowIndex, String parentValue) {

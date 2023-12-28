@@ -269,7 +269,6 @@ public class BizQuestionAnswerServiceImpl extends ServiceImpl<BizQuestionAnswerM
             }
             //获取问答id的集合
             List<String> stringList = idList.stream().map(String::valueOf).collect(Collectors.toList());
-//            String s = StringUtils.strip(stringList.toString(), "[]");
             String s = StringUtils.join(stringList,",");
 
             //保存问答文件

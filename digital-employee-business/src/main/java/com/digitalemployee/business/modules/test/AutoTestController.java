@@ -26,7 +26,10 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -65,33 +68,20 @@ public class AutoTestController {
      */
     @Anonymous
     @PostMapping("/uploadTexts")
-    public AjaxResult uploadTexts(@RequestPart("collection") String collection, @RequestParam("files") MultipartFile[] files) {
+    public AjaxResult uploadTexts(@RequestPart("collection") String collection, @RequestParam("files") MultipartFile[] files) throws Exception {
         if (files == null || files.length == 0) {
             throw new BaseException("未选择文件");
         }
-        HashMap<String, Object> paramMaps = new HashMap<>(4);
-        paramMaps.put("collection", collection);
-        List<String> list = new ArrayList<>();
-        for (MultipartFile file : files) {
-            // 将MultipartFile转换为File
-            paramMaps.put("file", this.multipartFileToFile(file));
-
-            log.info("调用文档上传远程接口 START...");
-            long start = System.currentTimeMillis();
-            AppendTextsResponse appendTexts = remoteModelService.appendFile(collection, paramMaps);
-            List<String> ids = appendTexts.getIds();
-            log.info("调用文档上传远程接口 END...共耗时 {} 毫秒", System.currentTimeMillis() - start);
-
-            list.addAll(ids);
-        }
-        //返回重复数据的id
-        List<String> duplicates = list.stream()
-                .filter(n -> Collections.frequency(list, n) > 1).distinct().collect(Collectors.toList());
-        return AjaxResult.success(duplicates);
+        log.info("调用文档上传远程接口 START...");
+        long start = System.currentTimeMillis();
+        List<QuestionAnswerVo> list = remoteModelService.readExcel(collection, files);
+        log.info("调用文档上传远程接口 END...共耗时 {} 毫秒", System.currentTimeMillis() - start);
+        return AjaxResult.success(list);
     }
 
     /**
      * 调用添加文本远程接口
+     *
      * @param textVo
      * @return
      */
@@ -99,21 +89,21 @@ public class AutoTestController {
     @PostMapping("/appendTexts")
     public AjaxResult appendTexts(@RequestBody TextVo textVo) {
         String jsonString = JSON.toJSONString(textVo);
-
+        List<String> textList = textVo.getText_list();
+        //对上传的text_list进行重复数据提取
+        List<String> repeatList = textList.stream().collect(Collectors.groupingBy(e -> e, Collectors.counting()))
+                .entrySet().stream().filter(e -> e.getValue() > 1)
+                .map(Map.Entry::getKey).collect(Collectors.toList());
         log.info("调用添加文本远程接口 START...");
         long start = System.currentTimeMillis();
-        AppendTextsResponse appendTexts = remoteModelService.appendText(jsonString);
-        List<String> list = appendTexts.getIds();
+        remoteModelService.appendText(jsonString);
         log.info("调用添加文本远程接口 END...共耗时 {} 毫秒", System.currentTimeMillis() - start);
-
-        //返回重复数据的id
-        List<String> duplicates = list.stream()
-                .filter(n -> Collections.frequency(list, n) > 1).distinct().collect(Collectors.toList());
-        return AjaxResult.success(duplicates);
+        return AjaxResult.success(repeatList);
     }
 
     /**
      * 调用添加文本问答远程接口
+     *
      * @param collection
      * @param question
      * @param answer
@@ -128,14 +118,14 @@ public class AutoTestController {
         paramMap.put("answer", answer);
         log.info("调用添加文本问答远程接口 START...");
         long start = System.currentTimeMillis();
-        AppendQaResponse appendTexts = remoteModelService.appendQa(paramMap);
-        String id = appendTexts.getId();
+        remoteModelService.appendQa(paramMap);
         log.info("调用添加文本问答远程接口 END...共耗时 {} 毫秒", System.currentTimeMillis() - start);
         return AjaxResult.success();
     }
 
     /**
      * 调用删除集合远程接口
+     *
      * @param collection
      * @return
      */
@@ -150,6 +140,7 @@ public class AutoTestController {
 
     /**
      * 调用删除集合远程接口
+     *
      * @param collectionvo
      * @return
      */
@@ -159,22 +150,6 @@ public class AutoTestController {
         String jsonString = JSON.toJSONString(collectionvo);
         BaseResponse response = remoteModelService.dropVectors(jsonString);
         return AjaxResult.success(response);
-    }
-
-    private File multipartFileToFile(MultipartFile multiFile) {
-        // 获取文件名
-        String fileName = multiFile.getOriginalFilename();
-        // 获取文件后缀
-        String prefix = fileName.substring(fileName.lastIndexOf("."));
-        // 若须要防止生成的临时文件重复,能够在文件名后添加随机码
-        try {
-            File file = File.createTempFile(fileName, prefix);
-            multiFile.transferTo(file);
-            return file;
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return null;
     }
 
     /**
