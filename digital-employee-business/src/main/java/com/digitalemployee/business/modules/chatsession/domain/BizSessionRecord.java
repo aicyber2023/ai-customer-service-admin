@@ -137,7 +137,7 @@ public class BizSessionRecord extends BaseEntity {
     @TableField(exist = false)
     private Integer responseIntervalStart;
     @TableField(exist = false)
-    private Integer responseIntervalEND;
+    private Integer responseIntervalEnd;
 
     // 关键词
     @TableField(exist = false)
