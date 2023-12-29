@@ -9,6 +9,7 @@ import com.digitalemployee.common.core.domain.BaseEntity;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -94,4 +95,25 @@ public class BizSession extends BaseEntity {
     @TableField(exist = false)
     private String deName;
 
+    // 查询条件 START ----------
+
+    // 对话条数范围
+    @TableField(exist = false)
+    private Integer recordAmountStart;
+    @TableField(exist = false)
+    private Integer recordAmountEnd;
+
+    // 创建时间范围
+    @TableField(exist = false)
+    private Date createTimeStart;
+    @TableField(exist = false)
+    private Date createTimeEnd;
+
+    // 最近对话时间范围
+    @TableField(exist = false)
+    private Date updateTimeStart;
+    @TableField(exist = false)
+    private Date updateTimeEnd;
+
+    // 查询条件 END ----------
 }

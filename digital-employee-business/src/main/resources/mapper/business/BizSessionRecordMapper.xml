@@ -39,14 +39,14 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <where>  
             <if test="sessionId != null "> and session_id = #{sessionId}</if>
             <if test="digitalEmployeeId != null "> and digital_employee_id = #{digitalEmployeeId}</if>
-            <if test="sendTime != null "> and send_time = #{sendTime}</if>
+            <!-- <if test="sendTime != null "> and send_time = #{sendTime}</if> -->
             <if test="returnTime != null "> and return_time = #{returnTime}</if>
-            <if test="responseInterval != null "> and response_interval = #{responseInterval}</if>
-            <if test="inputText != null  and inputText != ''"> and input_text = #{inputText}</if>
-            <if test="outputText != null  and outputText != ''"> and output_text = #{outputText}</if>
+<!--            <if test="responseInterval != null "> and response_interval = #{responseInterval}</if>-->
+            <!--  <if test="inputText != null  and inputText != ''"> and input_text = #{inputText}</if> -->
+            <!-- <if test="outputText != null  and outputText != ''"> and output_text = #{outputText}</if> -->
             <if test="tokens != null "> and tokens = #{tokens}</if>
             <if test="status != null "> and status = #{status}</if>
-            <if test="errorMessage != null  and errorMessage != ''"> and error_message = #{errorMessage}</if>
+            <if test="errorMessage != null  and errorMessage != ''"> and error_message like concat('%', #{errorMessage}, '%')</if>
             <if test="chatType != null "> and chat_type = #{chatType}</if>
             <if test="hitStatus != null "> and hit_status = #{hitStatus}</if>
             <if test="userId != null "> and user_id = #{userId}</if>
@@ -54,7 +54,16 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="errorCode != null "> and error_code = #{errorCode}</if>
             <if test="roleId != null "> and role_id = #{roleId}</if>
             <if test="ip != null  and ip != ''"> and ip = #{ip}</if>
+
+            <!-- 发送时间范围 -->
+            <if test="sendTimeStart != null and sendTimeEnd != null">and send_time between #{sendTimeStart} and #{sendTimeEnd}</if>
+            <!-- 响应间隔范围 -->
+            <if test="responseIntervalStart != null and responseIntervalEND != null">and response_interval &gt;= #{responseIntervalStart} and response_interval &gt;= #{responseIntervalEND}</if>
+            <!-- 关键词 -->
+            <if test="keyword != null  and keyword != ''"> and (input_text like concat('%', #{keyword}, '%') or output_text like concat('%', #{keyword}, '%'))</if>
+
         </where>
+        order by send_time desc
     </select>
     
     <select id="selectBizSessionRecordById" parameterType="Long" resultMap="BizSessionRecordResult">

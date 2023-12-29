@@ -1,10 +1,7 @@
 package com.digitalemployee.business.modules.chatsession.service.impl;
 
-import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
-import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.digitalemployee.business.modules.chatsession.domain.BizSession;
-import com.digitalemployee.business.modules.chatsession.domain.BizSessionRecord;
 import com.digitalemployee.business.modules.chatsession.mapper.BizSessionMapper;
 import com.digitalemployee.business.modules.chatsession.mapper.BizSessionRecordMapper;
 import com.digitalemployee.business.modules.chatsession.service.IBizSessionService;

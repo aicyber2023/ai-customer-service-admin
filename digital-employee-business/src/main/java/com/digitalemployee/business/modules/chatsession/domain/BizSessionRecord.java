@@ -127,4 +127,23 @@ public class BizSessionRecord extends BaseEntity {
     private Integer hitStatus;
 
 
+    // 发送时间范围
+    @TableField(exist = false)
+    private Date sendTimeStart;
+    @TableField(exist = false)
+    private Date sendTimeEnd;
+
+    // 响应间隔范围
+    @TableField(exist = false)
+    private Integer responseIntervalStart;
+    @TableField(exist = false)
+    private Integer responseIntervalEND;
+
+    // 关键词
+    @TableField(exist = false)
+    private String keyword;
+
+    // 查询条件 END ----------
+
+
 }

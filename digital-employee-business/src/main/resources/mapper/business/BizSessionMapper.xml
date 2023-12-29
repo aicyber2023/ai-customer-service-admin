@@ -60,9 +60,17 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="testUserId != null "> and s.test_user_id = #{testUserId}</if>
             <if test="ip != null  and ip != ''"> and s.ip = #{ip}</if>
             <if test="cookie != null  and cookie != ''"> and s.cookie = #{cookie}</if>
-            <if test="recordAmount != null "> and s.record_amount = #{recordAmount}</if>
+            <!-- <if test="recordAmount != null "> and s.record_amount = #{recordAmount}</if> -->
             <if test="userId != null "> and s.user_id = #{userId}</if>
             <if test="deptId != null "> and s.dept_id = #{deptId}</if>
+
+            <!-- 对话条数范围 -->
+            <if test="recordAmountStart != null and recordAmountEnd != null">and s.record_amount &gt;= #{recordAmountStart} and s.record_amount &lt;= #{recordAmountEnd}</if>
+            <!-- 创建时间范围 -->
+            <if test="createTimeStart != null and createTimeEnd != null">and s.create_time between #{createTimeStart} and #{createTimeEnd}</if>
+            <!-- 最近对话时间范围 -->
+            <if test="updateTimeStart != null and updateTimeEnd != null">and s.update_time between #{updateTimeStart} and #{updateTimeEnd}</if>
+
             <!-- 权限过滤 -->
             ${params.dataScope}
         </where>

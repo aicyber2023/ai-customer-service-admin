@@ -32,7 +32,6 @@ public class BizSessionController extends BaseController {
     @PreAuthorize("@ss.hasPermi('check:session:list')")
     @GetMapping("/list")
     public TableDataInfo list(BizSession bizSession) {
-        // TODO: 2023/12/27 查询条件 + 关联表数据查询
         startPage();
         List<BizSession> list = bizSessionService.selectBizSessionList(bizSession);
         return getDataTable(list);

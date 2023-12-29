@@ -18,7 +18,7 @@ import java.util.List;
  * @date 2023-12-27
  */
 @RestController
-@RequestMapping("/de/seesionRecord")
+@RequestMapping("/de/sessionRecord")
 @RequiredArgsConstructor
 public class BizSessionRecordController extends BaseController {
 
