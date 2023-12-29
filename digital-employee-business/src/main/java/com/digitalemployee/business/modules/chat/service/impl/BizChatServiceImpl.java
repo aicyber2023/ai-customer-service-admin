@@ -1,8 +1,11 @@
 package com.digitalemployee.business.modules.chat.service.impl;
 
+import cn.hutool.core.codec.Base64;
 import cn.hutool.core.collection.CollUtil;
+import cn.hutool.core.lang.TypeReference;
 import cn.hutool.core.util.IdUtil;
 import cn.hutool.extra.servlet.ServletUtil;
+import cn.hutool.json.JSONUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.digitalemployee.business.api.RemoteModelService;
@@ -32,10 +35,8 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Date;
-import java.util.List;
+import java.nio.charset.StandardCharsets;
+import java.util.*;
 
 @Service
 @RequiredArgsConstructor
@@ -70,6 +71,7 @@ public class BizChatServiceImpl implements BizChatService {
         ChatDataDTO chatData = new ChatDataDTO();
         chatData.setUserInput(chatRequest.getUserInput());
         chatData.setLoginUserId(loginUserId);
+        chatData.initCookieToken();
         // 数字员工
         BizDigitalEmployee de = this.getDigitalEmployee(digitalEmployeeId);
         chatData.setDigitalEmployee(de);
@@ -79,7 +81,7 @@ public class BizChatServiceImpl implements BizChatService {
         // ip
         chatData.setClientIp(ServletUtil.getClientIP(request));
         // cookie token
-        chatData.setClientToken(this.getCookie(request, response));
+        chatData.setClientToken(this.getCookie(chatData.getCookieToken(), chatData.getTokenMapKey(), request, response));
         // procedure
         if (chatData.useProcedure()) {
             chatData.setProcedure(this.getProcedure(digitalEmployeeId));
@@ -119,15 +121,31 @@ public class BizChatServiceImpl implements BizChatService {
         return knowledgeBase;
     }
 
-    private String getCookie(HttpServletRequest request, HttpServletResponse response) {
-        String cookieName = "chat_user_token";
-        Cookie cookie = ServletUtil.getCookie(request, cookieName);
+    private String getCookie(String cookieToken, String mapKey, HttpServletRequest request, HttpServletResponse response) {
+        Cookie cookie = ServletUtil.getCookie(request, cookieToken);
         if (cookie == null) {
-            cookie = new Cookie(cookieName, IdUtil.fastSimpleUUID());
-            cookie.setMaxAge(-1);
-            response.addCookie(cookie);
+            Map<String, String> tokenMap = new HashMap<>();
+            return initCookie(tokenMap, mapKey, cookieToken, response);
         }
-        return cookie.getValue();
+
+        String cookieValue = cookie.getValue();
+        String jsonString = new String(Base64.decode(cookieValue.getBytes(StandardCharsets.UTF_8)));
+        Map<String, String> bean = JSONUtil.toBean(jsonString, new TypeReference<HashMap<String, String>>() {}, true);
+        if (!bean.containsKey(mapKey)) {
+            return initCookie(bean, mapKey, cookieToken, response);
+        }
+
+        return bean.get((mapKey));
+    }
+
+    private String initCookie(Map<String, String> tokenMap, String mapKey, String cookieToken, HttpServletResponse response) {
+        String value = IdUtil.fastSimpleUUID();
+        tokenMap.put(mapKey, value);
+        String encodedToken = Base64.encode(JSONUtil.toJsonStr(tokenMap).getBytes(StandardCharsets.UTF_8));
+        Cookie cookie = new Cookie(cookieToken, encodedToken);
+        cookie.setMaxAge(-1);
+        response.addCookie(cookie);
+        return value;
     }
 
     private String getProcedure(Long digitalEmployeeId) {
@@ -273,6 +291,44 @@ public class BizChatServiceImpl implements BizChatService {
             record.setOutputText(aiChatResponse.getOutput());
         }
 
+    }
+
+    @Override
+    public List<BizSessionRecord> xxx(BizChatRequest param, Long loginUserId, HttpServletRequest request, HttpServletResponse response) {
+        Long digitalEmployeeId = param.getDigitalEmployeeId();
+        if (digitalEmployeeId == null) {
+            return new ArrayList<>();
+        }
+
+        // TODO: 2023/12/28 path
+        // TODO: 2023/12/28 存map到value
+
+        String clientIP = ServletUtil.getClientIP(request);
+        Cookie cookie = ServletUtil.getCookie(request, ChatDataDTO.CHAT_USER_TOKEN);
+        if (cookie == null) {
+            return new ArrayList<>();
+        }
+        String clientToken = cookie.getValue();
+
+        LambdaQueryWrapper<BizSession> wrapper = Wrappers.lambdaQuery();
+        wrapper.eq(BizSession::getDigitalEmployeeId, digitalEmployeeId)
+                .eq(BizSession::getIp, clientIP)
+                .eq(BizSession::getCookie, clientToken)
+                .eq(loginUserId != null, BizSession::getTestUserId, loginUserId);
+        List<BizSession> sessionList = sessionService.list(wrapper);
+        if (sessionList.size() > 1) {
+            throw new BaseException("会话数据异常，请联系管理员");
+        }
+        if (sessionList.isEmpty()) {
+            return new ArrayList<>();
+        }
+
+        BizSession session = sessionList.get(0);
+        LambdaQueryWrapper<BizSessionRecord> sessionRecordWrapper = Wrappers.lambdaQuery();
+        sessionRecordWrapper
+                .eq(BizSessionRecord::getSessionId, session.getId())
+                .orderByDesc(BizSessionRecord::getSendTime);
+        return CollUtil.reverse(sessionRecordService.list(sessionRecordWrapper));
     }
 
 }

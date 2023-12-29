@@ -13,6 +13,8 @@ import java.util.List;
 @Data
 public class ChatDataDTO {
 
+    public static final String CHAT_USER_TOKEN = "chat_user_token";
+    public static final String CHAT_USER_TOKEN_TEST = "chat_user_token_test";
     public static final String DEFAULT_PROCEDURE = "非常抱歉，我还没学到相关知识。";
     /**
      * 数字员工
@@ -48,6 +50,9 @@ public class ChatDataDTO {
      * 登录人用户ID
      */
     private Long loginUserId;
+
+    /** cookie token */
+    private String cookieToken;
 
     /**
      * 会话
@@ -171,4 +176,20 @@ public class ChatDataDTO {
     }
 
 
+    public void initCookieToken() {
+        if (isTest()) {
+            cookieToken = CHAT_USER_TOKEN_TEST;
+        } else {
+            cookieToken = CHAT_USER_TOKEN;
+        }
+
+    }
+
+    public String getTokenMapKey() {
+        if (isTest()) {
+            return loginUserId + "-" + digitalEmployee;
+        } else {
+            return String.valueOf(digitalEmployee.getId());
+        }
+    }
 }
