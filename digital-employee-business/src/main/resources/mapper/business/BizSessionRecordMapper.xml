@@ -31,7 +31,10 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </resultMap>
 
     <sql id="selectBizSessionRecordVo">
-        select id, session_id, digital_employee_id, send_time, return_time, response_interval, input_text, output_text, tokens, status, error_message, remark, chat_type, hit_status user_id, cache_flag, error_code, create_by, create_time, update_by, update_time, role_id, ip from biz_session_record
+        select id, session_id, digital_employee_id, send_time, return_time, response_interval, input_text, output_text,
+               tokens, status, error_message, remark, chat_type, hit_status, user_id, cache_flag, error_code, create_by,
+               create_time, update_by, update_time, role_id, ip
+        from biz_session_record
     </sql>
 
     <select id="selectBizSessionRecordList" parameterType="BizSessionRecord" resultMap="BizSessionRecordResult">
