@@ -36,7 +36,7 @@ public class BizQuestionAnswer extends BaseEntity
 
     /** 数字员工ID */
     @Excel(name = "远程知识库名称")
-    private Long collectionId;
+    private String collectionId;
 
     /** 问题 */
     @Excel(name = "问题")
@@ -108,11 +108,11 @@ public class BizQuestionAnswer extends BaseEntity
         this.createType = createType;
     }
 
-    public Long getCollectionId() {
+    public String getCollectionId() {
         return collectionId;
     }
 
-    public void setCollectionId(Long collectionId) {
+    public void setCollectionId(String collectionId) {
         this.collectionId = collectionId;
     }
 

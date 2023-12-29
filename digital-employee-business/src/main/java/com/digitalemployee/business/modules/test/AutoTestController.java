@@ -10,6 +10,9 @@ import cn.hutool.json.JSONUtil;
 import com.alibaba.fastjson2.JSON;
 import com.digitalemployee.business.api.RemoteModelService;
 import com.digitalemployee.business.api.domain.*;
+import com.digitalemployee.business.domain.BizKnowledgeBase;
+import com.digitalemployee.business.service.IBizKnowledgeBaseService;
+import com.digitalemployee.business.service.IBizQuestionAnswerService;
 import com.digitalemployee.common.annotation.Anonymous;
 import com.digitalemployee.common.core.domain.AjaxResult;
 import com.digitalemployee.common.exception.base.BaseException;
@@ -45,6 +48,10 @@ public class AutoTestController {
     private String rawTempPath;
 
     private final RemoteModelService remoteModelService;
+
+    private final IBizKnowledgeBaseService bizKnowledgeBaseService;
+
+    private final IBizQuestionAnswerService bizQuestionAnswerService;
 
     @Anonymous
     @PostMapping("/qABatchTest")
@@ -104,16 +111,21 @@ public class AutoTestController {
     /**
      * 调用添加文本问答远程接口
      *
-     * @param collection
+     * @param digitalEmployeeId
      * @param question
      * @param answer
      * @return
      */
     @Anonymous
     @PostMapping("/appendQa")
-    public AjaxResult appendQa(@RequestPart("collection") String collection, @RequestPart("question") String question, @RequestPart("answer") String answer) {
+    public AjaxResult appendQa(@RequestParam("digitalEmployeeId") Long digitalEmployeeId, @RequestPart("question") String question, @RequestPart("answer") String answer) {
+        Long knowledgeBaseId = bizKnowledgeBaseService.getKnowledgeBaseIdByDeId(digitalEmployeeId);
+        BizKnowledgeBase knowledgeBase = bizKnowledgeBaseService.getById(knowledgeBaseId);
+        if (knowledgeBase == null) {
+            throw new RuntimeException("知识库不存在");
+        }
         JSONObject paramMap = JSONUtil.createObj();
-        paramMap.put("collection", collection);
+        paramMap.put("collection", knowledgeBase.getCollectionNameQa());
         paramMap.put("question", question);
         paramMap.put("answer", answer);
         log.info("调用添加文本问答远程接口 START...");

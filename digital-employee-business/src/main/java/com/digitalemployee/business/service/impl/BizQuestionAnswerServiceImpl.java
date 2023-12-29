@@ -251,35 +251,40 @@ public class BizQuestionAnswerServiceImpl extends ServiceImpl<BizQuestionAnswerM
                 bizQuestionAnswer.setCreateType(0);
                 String question = bizQuestionAnswer.getQuestion();
                 bizQuestionAnswer.setQuestion(question.replace("？", ""));
-                BizQuestionAnswer questionAnswer = bizQuestionAnswerMapper.selectOneBizQuestionAnswer(bizQuestionAnswer);
-                if (questionAnswer == null) {
+//                BizQuestionAnswer questionAnswer = bizQuestionAnswerMapper.selectOneBizQuestionAnswer(bizQuestionAnswer);
+//                if (questionAnswer == null) {
                     resList.add(bizQuestionAnswer);
-                }
+//                }
+            }
+            for (BizQuestionAnswer questionAnswer : resList) {
+                list.forEach(item ->{
+                    questionAnswer.setCollectionId(item);
+                });
             }
             //问答数据批量插入
             if (!resList.isEmpty()) {
                 bizQuestionAnswerMapper.insertBatchQuestionAnswer(resList);
             }
             //相似问数据数据库查重，如果数据库存在则不插入
-            List<BizSimilarityQuestion> similarityList = new ArrayList<>();
-            for (BizQuestionAnswer bizQuestionAnswer : resList) {
-                List<BizSimilarityQuestion> similarityQuestionList = bizQuestionAnswer.getSimilarityQuestionList();
-                for (BizSimilarityQuestion bizSimilarityQuestion : similarityQuestionList) {
-                    BizSimilarityQuestion dbSimilarityQuestion = bizSimilarityQuestionMapper.selectBizSimilarityQuestion(bizQuestionAnswer.getId(), bizSimilarityQuestion.getSimilarityQuestion());
-                    if (dbSimilarityQuestion == null) {
-                        if (bizQuestionAnswer.getId() != null && !"".equals(bizSimilarityQuestion.getSimilarityQuestion())) {
-                            BizSimilarityQuestion similarityQuestion = new BizSimilarityQuestion();
-                            similarityQuestion.setQuestionAnswerId(bizQuestionAnswer.getId());
-                            similarityQuestion.setSimilarityQuestion(bizSimilarityQuestion.getSimilarityQuestion());
-                            similarityList.add(similarityQuestion);
-                        }
-                    }
-                }
-            }
-            //相似问批量插入
-            if (!similarityList.isEmpty()) {
-                bizSimilarityQuestionMapper.batchSimilarityQuestion(similarityList);
-            }
+//            List<BizSimilarityQuestion> similarityList = new ArrayList<>();
+//            for (BizQuestionAnswer bizQuestionAnswer : resList) {
+//                List<BizSimilarityQuestion> similarityQuestionList = bizQuestionAnswer.getSimilarityQuestionList();
+//                for (BizSimilarityQuestion bizSimilarityQuestion : similarityQuestionList) {
+//                    BizSimilarityQuestion dbSimilarityQuestion = bizSimilarityQuestionMapper.selectBizSimilarityQuestion(bizQuestionAnswer.getId(), bizSimilarityQuestion.getSimilarityQuestion());
+//                    if (dbSimilarityQuestion == null) {
+//                        if (bizQuestionAnswer.getId() != null && !"".equals(bizSimilarityQuestion.getSimilarityQuestion())) {
+//                            BizSimilarityQuestion similarityQuestion = new BizSimilarityQuestion();
+//                            similarityQuestion.setQuestionAnswerId(bizQuestionAnswer.getId());
+//                            similarityQuestion.setSimilarityQuestion(bizSimilarityQuestion.getSimilarityQuestion());
+//                            similarityList.add(similarityQuestion);
+//                        }
+//                    }
+//                }
+//            }
+//            //相似问批量插入
+//            if (!similarityList.isEmpty()) {
+//                bizSimilarityQuestionMapper.batchSimilarityQuestion(similarityList);
+//            }
             List<Long> idList = new ArrayList<>();
             for (BizQuestionAnswer questionAnswer : resList) {
                 if(questionAnswer.getId()!=null){
