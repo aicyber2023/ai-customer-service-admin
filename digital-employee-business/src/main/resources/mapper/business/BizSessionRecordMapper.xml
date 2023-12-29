@@ -61,7 +61,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <!-- 发送时间范围 -->
             <if test="sendTimeStart != null and sendTimeEnd != null">and send_time between #{sendTimeStart} and #{sendTimeEnd}</if>
             <!-- 响应间隔范围 -->
-            <if test="responseIntervalStart != null and responseIntervalEND != null">and response_interval &gt;= #{responseIntervalStart} and response_interval &gt;= #{responseIntervalEND}</if>
+            <if test="responseIntervalStart != null and responseIntervalEnd != null">and response_interval &gt;= #{responseIntervalStart} and response_interval &lt;= #{responseIntervalEnd}</if>
             <!-- 关键词 -->
             <if test="keyword != null  and keyword != ''"> and (input_text like concat('%', #{keyword}, '%') or output_text like concat('%', #{keyword}, '%'))</if>
 
