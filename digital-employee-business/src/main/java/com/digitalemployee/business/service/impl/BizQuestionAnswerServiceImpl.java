@@ -1,5 +1,7 @@
 package com.digitalemployee.business.service.impl;
 
+import cn.hutool.json.JSONObject;
+import cn.hutool.json.JSONUtil;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.digitalemployee.business.api.RemoteModelService;
 import com.digitalemployee.business.domain.*;
@@ -16,6 +18,7 @@ import com.digitalemployee.common.utils.StringUtils;
 import com.digitalemployee.common.utils.file.FileUploadUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -53,6 +56,7 @@ public class BizQuestionAnswerServiceImpl extends ServiceImpl<BizQuestionAnswerM
 
     private final RemoteModelService remoteModelService;
 
+
     /**
      * 查询问答库
      *
@@ -62,15 +66,7 @@ public class BizQuestionAnswerServiceImpl extends ServiceImpl<BizQuestionAnswerM
     @Override
     public BizQuestionAnswer selectBizQuestionAnswerById(Long id) {
         BizQuestionAnswer bizQuestionAnswer = bizQuestionAnswerMapper.selectBizQuestionAnswerById(id);
-        if (bizQuestionAnswer != null) {
-//            List<BizSimilarityQuestion> bizSimilarityQuestions = bizSimilarityQuestionMapper.selectBizSimilarityQuestionListById(bizQuestionAnswer.getId());
-//            if (!bizSimilarityQuestions.isEmpty()) {
-//                bizSimilarityQuestions = bizSimilarityQuestions.stream().distinct().collect(Collectors.toList());
-//                bizQuestionAnswer.setSimilarityQuestionList(bizSimilarityQuestions);
-//            } else {
-//                bizQuestionAnswer.setSimilarityQuestionList(new ArrayList<>());
-//            }
-        } else {
+        if (bizQuestionAnswer == null) {
             throw new BaseException("该数据不存在");
         }
         return bizQuestionAnswer;
@@ -89,9 +85,6 @@ public class BizQuestionAnswerServiceImpl extends ServiceImpl<BizQuestionAnswerM
         List<BizQuestionAnswer> bizQuestionAnswerList = bizQuestionAnswerMapper.selectBizQuestionAnswerList(bizQuestionAnswer, startTime, endTime);
         if (!bizQuestionAnswerList.isEmpty()) {
             for (BizQuestionAnswer questionAnswer : bizQuestionAnswerList) {
-//                List<BizSimilarityQuestion> similarityQuestionList = bizSimilarityQuestionMapper.selectBizSimilarityQuestionListById(questionAnswer.getId());
-//                similarityQuestionList = similarityQuestionList.stream().distinct().collect(Collectors.toList());
-//                questionAnswer.setSimilarityQuestionList(similarityQuestionList);
                 list.add(questionAnswer);
             }
         }
@@ -121,14 +114,6 @@ public class BizQuestionAnswerServiceImpl extends ServiceImpl<BizQuestionAnswerM
         int j = 0;
         if (i > 0) {
             List<BizSimilarityQuestion> similarityList = new ArrayList<>();
-//            List<BizSimilarityQuestion> similarityQuestionList = bizQuestionAnswer.getSimilarityQuestionList();
-//            similarityQuestionList = similarityQuestionList.stream().distinct().collect(Collectors.toList());
-//            if (!similarityQuestionList.isEmpty()) {
-//                for (BizSimilarityQuestion bizSimilarityQuestion : similarityQuestionList) {
-//                    bizSimilarityQuestion.setQuestionAnswerId(bizQuestionAnswer.getId());
-//                    similarityList.add(bizSimilarityQuestion);
-//                }
-//            }
             if (!similarityList.isEmpty()) {
                 j = bizSimilarityQuestionMapper.batchSimilarityQuestion(similarityList);
             } else {
@@ -152,44 +137,34 @@ public class BizQuestionAnswerServiceImpl extends ServiceImpl<BizQuestionAnswerM
         bizQuestionAnswer.setUpdateTime(DateUtils.getNowDate());
         BizQuestionAnswer questionAnswer = bizQuestionAnswerMapper.selectBizQuestionAnswer(bizQuestionAnswer);
         if (questionAnswer != null) {
-            throw new BaseException("该问答数据已存在");
+            throw new BaseException("该问答数据已存在,请填写新的问答数据");
         }
         int i = bizQuestionAnswerMapper.updateBizQuestionAnswer(bizQuestionAnswer);
         //根据id找到collectionid,
-//        String collectionId = questionAnswer.getCollectionId();
+        BizQuestionAnswer questionAnswerDB = bizQuestionAnswerMapper.selectBizQuestionAnswerById(bizQuestionAnswer.getId());
+        String collectionId = questionAnswerDB.getCollectionId();
         // 调用远程删除接口删除，
-//        remoteModelService.dropVectors()
+        Long knowledgeBaseId = bizKnowledgeBaseService.getKnowledgeBaseIdByDeId(bizQuestionAnswer.getDigitalEmployeeId());
+        BizKnowledgeBase knowledgeBase = bizKnowledgeBaseService.getById(knowledgeBaseId);
+        if (knowledgeBase == null) {
+            throw new RuntimeException("知识库不存在");
+        }
+        List<String> collectionList = new ArrayList<>();
+        collectionList.add(collectionId);
+        String collectionNameQa = knowledgeBase.getCollectionNameQa();
+        JSONObject paramMap = JSONUtil.createObj();
+        paramMap.put("collection", collectionNameQa);
+        paramMap.put("ids", collectionList);
+//        remoteModelService.dropVectors(paramMap);
         // 调用远程插入接口
-//        int j = 0;
-//        if (i > 0) {
-//            List<BizSimilarityQuestion> newSimilarityQuestionList = new ArrayList<>();
-//            List<BizSimilarityQuestion> similarityQuestionList = bizQuestionAnswer.getSimilarityQuestionList();
-//            similarityQuestionList = similarityQuestionList.stream().distinct().collect(Collectors.toList());
-//            List<BizSimilarityQuestion> similarityList = bizSimilarityQuestionMapper.selectBizSimilarityQuestionListById(bizQuestionAnswer.getId());
-//            if (!similarityList.isEmpty()) {
-//                List<Long> ids = new ArrayList<>();
-//                for (BizSimilarityQuestion bizSimilarityQuestion : similarityList) {
-//                    ids.add(bizSimilarityQuestion.getId());
-//                }
-//                Long[] array = ids.toArray(new Long[0]);
-//                bizSimilarityQuestionMapper.deleteBizSimilarityQuestionByIds(array);
-//            }
-//            //先全部删除，在重新添加
-//            if (!similarityQuestionList.isEmpty()) {
-//                for (BizSimilarityQuestion bizSimilarityQuestion : similarityQuestionList) {
-//                    bizSimilarityQuestion.setQuestionAnswerId(bizQuestionAnswer.getId());
-//                    newSimilarityQuestionList.add(bizSimilarityQuestion);
-//                }
-//                if (!newSimilarityQuestionList.isEmpty()) {
-//                    j = bizSimilarityQuestionMapper.batchSimilarityQuestion(newSimilarityQuestionList);
-//                } else {
-//                    j = 1;
-//                }
-//            } else {
-//                j = 1;
-//            }
-//        }
-//        if (i > 0 && j > 0) {
+        JSONObject param = JSONUtil.createObj();
+        param.put("collection", knowledgeBase.getCollectionNameQa());
+        param.put("question", bizQuestionAnswer.getQuestion());
+        param.put("answer", bizQuestionAnswer.getAnswer());
+        log.info("调用添加文本问答远程接口 START...");
+        long start = System.currentTimeMillis();
+        remoteModelService.appendQa(param);
+        log.info("调用添加文本问答远程接口 END...共耗时 {} 毫秒", System.currentTimeMillis() - start);
         if (i > 0) {
             return 1;
         }
@@ -242,36 +217,9 @@ public class BizQuestionAnswerServiceImpl extends ServiceImpl<BizQuestionAnswerM
                 bizQuestionAnswer.setCreateType(0);
                 String question = bizQuestionAnswer.getQuestion();
                 bizQuestionAnswer.setQuestion(question.replace("？", ""));
-//                BizQuestionAnswer questionAnswer = bizQuestionAnswerMapper.selectOneBizQuestionAnswer(bizQuestionAnswer);
-//                if (questionAnswer == null) {
                 resList.add(bizQuestionAnswer);
-//                }
             }
             newList.addAll(resList);
-//            //问答数据批量插入
-//            if (!resList.isEmpty()) {
-//                bizQuestionAnswerMapper.insertBatchQuestionAnswer(resList);
-//            }
-            //相似问数据数据库查重，如果数据库存在则不插入
-//            List<BizSimilarityQuestion> similarityList = new ArrayList<>();
-//            for (BizQuestionAnswer bizQuestionAnswer : resList) {
-//                List<BizSimilarityQuestion> similarityQuestionList = bizQuestionAnswer.getSimilarityQuestionList();
-//                for (BizSimilarityQuestion bizSimilarityQuestion : similarityQuestionList) {
-//                    BizSimilarityQuestion dbSimilarityQuestion = bizSimilarityQuestionMapper.selectBizSimilarityQuestion(bizQuestionAnswer.getId(), bizSimilarityQuestion.getSimilarityQuestion());
-//                    if (dbSimilarityQuestion == null) {
-//                        if (bizQuestionAnswer.getId() != null && !"".equals(bizSimilarityQuestion.getSimilarityQuestion())) {
-//                            BizSimilarityQuestion similarityQuestion = new BizSimilarityQuestion();
-//                            similarityQuestion.setQuestionAnswerId(bizQuestionAnswer.getId());
-//                            similarityQuestion.setSimilarityQuestion(bizSimilarityQuestion.getSimilarityQuestion());
-//                            similarityList.add(similarityQuestion);
-//                        }
-//                    }
-//                }
-//            }
-//            //相似问批量插入
-//            if (!similarityList.isEmpty()) {
-//                bizSimilarityQuestionMapper.batchSimilarityQuestion(similarityList);
-//            }
             List<Long> idList = new ArrayList<>();
             for (BizQuestionAnswer questionAnswer : resList) {
                 if (questionAnswer.getId() != null) {
