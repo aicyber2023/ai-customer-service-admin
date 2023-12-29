@@ -37,6 +37,9 @@ public interface IBizQuestionAnswerService extends IService<BizQuestionAnswer>
                                                         @Param("startTime") Date startTime,
                                                         @Param("endTime") Date endTime);
 
+
+    List<BizQuestionAnswer> selectBizQuestionAnswerListBydeId(Long digitalEmployeeId);
+
     /**
      * 新增问答库
      * 

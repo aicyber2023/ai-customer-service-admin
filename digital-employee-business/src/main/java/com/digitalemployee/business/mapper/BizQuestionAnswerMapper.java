@@ -34,6 +34,7 @@ public interface BizQuestionAnswerMapper  extends BaseMapper<BizQuestionAnswer>
     List<BizQuestionAnswer> selectBizQuestionAnswerList(@Param("bizQuestionAnswer") BizQuestionAnswer bizQuestionAnswer,
                                                         @Param("startTime") Date startTime,
                                                         @Param("endTime") Date endTime);
+    List<BizQuestionAnswer> selectBizQuestionAnswerListBydeId(Long digitalEmployeeId);
 
     /**
      * 根据条件查询单个问答库

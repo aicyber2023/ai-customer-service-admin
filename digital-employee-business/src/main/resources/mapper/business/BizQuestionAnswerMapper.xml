@@ -7,6 +7,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     <resultMap type="BizQuestionAnswer" id="BizQuestionAnswerResult">
         <result property="id"    column="id"    />
         <result property="digitalEmployeeId"    column="digital_employee_id"    />
+        <result property="collectionId"    column="collection_id"    />
         <result property="question"    column="question"    />
         <result property="answer"    column="answer"    />
         <result property="status"    column="status"    />
@@ -19,7 +20,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </resultMap>
 
     <sql id="selectBizQuestionAnswerVo">
-        select id, digital_employee_id, question, answer, status, create_type, create_by, create_time, update_by, update_time, remark from biz_question_answer
+        select id, digital_employee_id,collection_id, question, answer, status, create_type, create_by, create_time, update_by, update_time, remark from biz_question_answer
     </sql>
 
     <select id="selectBizQuestionAnswerList" parameterType="BizQuestionAnswer" resultMap="BizQuestionAnswerResult">
@@ -34,6 +35,13 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
                  and create_time &gt;= #{startTime}
                  and create_time &lt; #{endTime}
              </if>
+        </where>
+    </select>
+
+    <select id="selectBizQuestionAnswerListBydeId" parameterType="BizQuestionAnswer" resultMap="BizQuestionAnswerResult">
+        <include refid="selectBizQuestionAnswerVo"/>
+        <where>
+            <if test="digitalEmployeeId != null "> and digital_employee_id = #{digitalEmployeeId}</if>
         </where>
     </select>
 

@@ -1,10 +1,5 @@
 package com.digitalemployee.business.service.impl;
 
-import com.baomidou.mybatisplus.core.conditions.Wrapper;
-import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.baomidou.mybatisplus.core.toolkit.ObjectUtils;
-import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.digitalemployee.business.api.RemoteModelService;
 import com.digitalemployee.business.domain.*;
@@ -16,25 +11,22 @@ import com.digitalemployee.business.modules.config.ChatResourcesConfig;
 import com.digitalemployee.business.service.IBizKnowledgeBaseService;
 import com.digitalemployee.business.service.IBizQuestionAnswerService;
 //import com.digitalemployee.business.vo.QuestionAnswersVo;
-import com.digitalemployee.common.core.domain.AjaxResult;
 import com.digitalemployee.common.exception.base.BaseException;
 import com.digitalemployee.common.utils.DateUtils;
 import com.digitalemployee.common.utils.StringUtils;
 import com.digitalemployee.common.utils.file.FileUploadUtils;
-import com.github.pagehelper.util.StringUtil;
+import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.multipart.MultipartHttpServletRequest;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.*;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 
@@ -106,6 +98,11 @@ public class BizQuestionAnswerServiceImpl extends ServiceImpl<BizQuestionAnswerM
             }
         }
         return list;
+    }
+
+    @Override
+    public List<BizQuestionAnswer> selectBizQuestionAnswerListBydeId(Long digitalEmployeeId) {
+        return bizQuestionAnswerMapper.selectBizQuestionAnswerListBydeId(digitalEmployeeId);
     }
 
     /**
@@ -243,7 +240,7 @@ public class BizQuestionAnswerServiceImpl extends ServiceImpl<BizQuestionAnswerM
                 bizQuestionAnswer.setQuestion(question.replace("？", ""));
 //                BizQuestionAnswer questionAnswer = bizQuestionAnswerMapper.selectOneBizQuestionAnswer(bizQuestionAnswer);
 //                if (questionAnswer == null) {
-                    resList.add(bizQuestionAnswer);
+                resList.add(bizQuestionAnswer);
 //                }
             }
             newList.addAll(resList);
@@ -273,13 +270,13 @@ public class BizQuestionAnswerServiceImpl extends ServiceImpl<BizQuestionAnswerM
 //            }
             List<Long> idList = new ArrayList<>();
             for (BizQuestionAnswer questionAnswer : resList) {
-                if(questionAnswer.getId()!=null){
+                if (questionAnswer.getId() != null) {
                     idList.add(questionAnswer.getId());
                 }
             }
             //获取问答id的集合
             List<String> stringList = idList.stream().map(String::valueOf).collect(Collectors.toList());
-            String s = StringUtils.join(stringList,",");
+            String s = StringUtils.join(stringList, ",");
 
             //保存问答文件
             BizDigitalEmployee digitalEmployee = bizDigitalEmployeeMapper.selectBizDigitalEmployeeById(digitalEmployeeId);
@@ -315,12 +312,15 @@ public class BizQuestionAnswerServiceImpl extends ServiceImpl<BizQuestionAnswerM
         }
         log.info("调用文档上传远程接口 START...");
         long start = System.currentTimeMillis();
+        List<String> listnew =new ArrayList<>();
         List<String> list = remoteModelService.readExcel(knowledgeBase.getCollectionNameQa(), files);
+        listnew.addAll(list);
         log.info("调用文档上传远程接口 END...共耗时 {} 毫秒", System.currentTimeMillis() - start);
-        for (BizQuestionAnswer questionAnswer : newList) {
-            list.forEach(item ->{
-                questionAnswer.setCollectionId(item);
-            });
+        if (!listnew.isEmpty() && !newList.isEmpty()) {
+            for (int i = 0; i < newList.size(); i++) {
+                BizQuestionAnswer bizQuestionAnswer = newList.get(i);
+                bizQuestionAnswer.setCollectionId(listnew.get(i));
+            }
         }
         //问答数据批量插入
         if (!newList.isEmpty()) {

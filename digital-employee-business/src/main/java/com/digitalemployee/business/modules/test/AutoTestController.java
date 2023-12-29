@@ -11,6 +11,7 @@ import com.alibaba.fastjson2.JSON;
 import com.digitalemployee.business.api.RemoteModelService;
 import com.digitalemployee.business.api.domain.*;
 import com.digitalemployee.business.domain.BizKnowledgeBase;
+import com.digitalemployee.business.domain.BizQuestionAnswer;
 import com.digitalemployee.business.service.IBizKnowledgeBaseService;
 import com.digitalemployee.business.service.IBizQuestionAnswerService;
 import com.digitalemployee.common.annotation.Anonymous;
@@ -149,27 +150,38 @@ public class AutoTestController {
     }
 
     /**
-     * 调用删除集合远程接口
+     * 调用删除向量远程接口
      *
-     * @param collectionvo
+     * @param digitalEmployeeId
      * @return
      */
     @Anonymous
     @PostMapping("/deleteVectors")
-    public AjaxResult deleteVectors(@RequestBody CollectionVo collectionvo) {
-        Long digitalEmployeeId = collectionvo.getDigitalEmployeeId();
+    public AjaxResult deleteVectors(Long digitalEmployeeId) {
         Long knowledgeBaseId = bizKnowledgeBaseService.getKnowledgeBaseIdByDeId(digitalEmployeeId);
         BizKnowledgeBase knowledgeBase = bizKnowledgeBaseService.getById(knowledgeBaseId);
         if (knowledgeBase == null) {
             throw new RuntimeException("知识库不存在");
         }
+        List<String> collectionList = new ArrayList<>();
+        List<Long> idList = new ArrayList<>();
+        List<BizQuestionAnswer> bizQuestionAnswerList = bizQuestionAnswerService.selectBizQuestionAnswerListBydeId(digitalEmployeeId);
+        if (bizQuestionAnswerList.size() != 0) {
+            for (BizQuestionAnswer questionAnswer : bizQuestionAnswerList) {
+                collectionList.add(questionAnswer.getCollectionId());
+                idList.add(questionAnswer.getId());
+            }
+        }
         String collectionNameQa = knowledgeBase.getCollectionNameQa();
         JSONObject paramMap = JSONUtil.createObj();
-        paramMap.put("collection",collectionNameQa);
-        paramMap.put("ids",collectionvo.getIds());
-//        String jsonString = JSON.toJSONString(collectionvo);
+        paramMap.put("collection", collectionNameQa);
+        paramMap.put("ids", collectionList);
+        Long[] idListArray = idList.toArray(new Long[idList.size()]);
+        if (idListArray.length != 0) {
+            bizQuestionAnswerService.deleteBizQuestionAnswerByIds(idListArray);
+        }
         BaseResponse response = remoteModelService.dropVectors(paramMap);
-        return AjaxResult.success(response);
+        return AjaxResult.success();
     }
 
     /**

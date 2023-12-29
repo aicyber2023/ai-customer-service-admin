@@ -12,6 +12,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -24,6 +25,7 @@ public class RemoteModelService {
 
     /**
      * qa接口
+     *
      * @param param param
      * @return QAResponse
      */
@@ -44,6 +46,7 @@ public class RemoteModelService {
 
     /**
      * 上传文件（批量上传问答数据）
+     *
      * @param param
      * @return
      */
@@ -58,6 +61,7 @@ public class RemoteModelService {
 
     /**
      * 添加问答字符串（批量上传问答数据）
+     *
      * @return
      */
     public AppendTextsResponse appendText(String json) {
@@ -71,6 +75,7 @@ public class RemoteModelService {
 
     /**
      * 添加文本问答（上传单条问答数据）
+     *
      * @param param
      * @return
      */
@@ -85,6 +90,7 @@ public class RemoteModelService {
 
     /**
      * 删除集合
+     *
      * @param param
      * @return
      */
@@ -99,6 +105,7 @@ public class RemoteModelService {
 
     /**
      * 删除向量
+     *
      * @param param
      * @return
      */
@@ -113,18 +120,20 @@ public class RemoteModelService {
 
     public List<String> readExcel(@RequestPart("collection") String collection, @Param("files") MultipartFile[] files) throws IOException {
         HashMap<String, Object> paramMaps = new HashMap<>();
-        List<String> ids = null;
+        List<String> idList = new ArrayList<>();
         for (MultipartFile file : files) {
             paramMaps.put("file", this.multipartFileToFile(file));
             AppendTextsResponse appendTexts = this.appendFile(collection, paramMaps);
-            ids = appendTexts.getIds();
+            List<String> ids = appendTexts.getIds();
+            idList.addAll(ids);
         }
-        return ids;
+        return idList;
     }
+
     /**
-     * @Description 将MultipartFile转换为File
      * @param multiFile
      * @return
+     * @Description 将MultipartFile转换为File
      */
     private File multipartFileToFile(MultipartFile multiFile) {
         // 获取文件名
