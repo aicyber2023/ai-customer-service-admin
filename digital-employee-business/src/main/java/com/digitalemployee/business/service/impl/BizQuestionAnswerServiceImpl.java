@@ -6,12 +6,14 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.ObjectUtils;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.digitalemployee.business.api.RemoteModelService;
 import com.digitalemployee.business.domain.*;
 import com.digitalemployee.business.mapper.BizDigitalEmployeeMapper;
 import com.digitalemployee.business.mapper.BizQuestionAnswerMapper;
 import com.digitalemployee.business.mapper.BizQuestionFileMapper;
 import com.digitalemployee.business.mapper.BizSimilarityQuestionMapper;
 import com.digitalemployee.business.modules.config.ChatResourcesConfig;
+import com.digitalemployee.business.service.IBizKnowledgeBaseService;
 import com.digitalemployee.business.service.IBizQuestionAnswerService;
 //import com.digitalemployee.business.vo.QuestionAnswersVo;
 import com.digitalemployee.common.core.domain.AjaxResult;
@@ -21,6 +23,7 @@ import com.digitalemployee.common.utils.StringUtils;
 import com.digitalemployee.common.utils.file.FileUploadUtils;
 import com.github.pagehelper.util.StringUtil;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -41,6 +44,7 @@ import java.util.stream.Collectors;
  * @author aicyber
  * @date 2023-11-27
  */
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class BizQuestionAnswerServiceImpl extends ServiceImpl<BizQuestionAnswerMapper, BizQuestionAnswer> implements IBizQuestionAnswerService {
@@ -55,6 +59,10 @@ public class BizQuestionAnswerServiceImpl extends ServiceImpl<BizQuestionAnswerM
 
     private final ChatResourcesConfig chatResourcesConfig;
 
+    private final IBizKnowledgeBaseService bizKnowledgeBaseService;
+
+    private final RemoteModelService remoteModelService;
+
     /**
      * 查询问答库
      *
@@ -65,13 +73,13 @@ public class BizQuestionAnswerServiceImpl extends ServiceImpl<BizQuestionAnswerM
     public BizQuestionAnswer selectBizQuestionAnswerById(Long id) {
         BizQuestionAnswer bizQuestionAnswer = bizQuestionAnswerMapper.selectBizQuestionAnswerById(id);
         if (bizQuestionAnswer != null) {
-            List<BizSimilarityQuestion> bizSimilarityQuestions = bizSimilarityQuestionMapper.selectBizSimilarityQuestionListById(bizQuestionAnswer.getId());
-            if (!bizSimilarityQuestions.isEmpty()) {
-                bizSimilarityQuestions = bizSimilarityQuestions.stream().distinct().collect(Collectors.toList());
-                bizQuestionAnswer.setSimilarityQuestionList(bizSimilarityQuestions);
-            } else {
-                bizQuestionAnswer.setSimilarityQuestionList(new ArrayList<>());
-            }
+//            List<BizSimilarityQuestion> bizSimilarityQuestions = bizSimilarityQuestionMapper.selectBizSimilarityQuestionListById(bizQuestionAnswer.getId());
+//            if (!bizSimilarityQuestions.isEmpty()) {
+//                bizSimilarityQuestions = bizSimilarityQuestions.stream().distinct().collect(Collectors.toList());
+//                bizQuestionAnswer.setSimilarityQuestionList(bizSimilarityQuestions);
+//            } else {
+//                bizQuestionAnswer.setSimilarityQuestionList(new ArrayList<>());
+//            }
         } else {
             throw new BaseException("该数据不存在");
         }
@@ -91,9 +99,9 @@ public class BizQuestionAnswerServiceImpl extends ServiceImpl<BizQuestionAnswerM
         List<BizQuestionAnswer> bizQuestionAnswerList = bizQuestionAnswerMapper.selectBizQuestionAnswerList(bizQuestionAnswer, startTime, endTime);
         if (!bizQuestionAnswerList.isEmpty()) {
             for (BizQuestionAnswer questionAnswer : bizQuestionAnswerList) {
-                List<BizSimilarityQuestion> similarityQuestionList = bizSimilarityQuestionMapper.selectBizSimilarityQuestionListById(questionAnswer.getId());
-                similarityQuestionList = similarityQuestionList.stream().distinct().collect(Collectors.toList());
-                questionAnswer.setSimilarityQuestionList(similarityQuestionList);
+//                List<BizSimilarityQuestion> similarityQuestionList = bizSimilarityQuestionMapper.selectBizSimilarityQuestionListById(questionAnswer.getId());
+//                similarityQuestionList = similarityQuestionList.stream().distinct().collect(Collectors.toList());
+//                questionAnswer.setSimilarityQuestionList(similarityQuestionList);
                 list.add(questionAnswer);
             }
         }
@@ -118,14 +126,14 @@ public class BizQuestionAnswerServiceImpl extends ServiceImpl<BizQuestionAnswerM
         int j = 0;
         if (i > 0) {
             List<BizSimilarityQuestion> similarityList = new ArrayList<>();
-            List<BizSimilarityQuestion> similarityQuestionList = bizQuestionAnswer.getSimilarityQuestionList();
-            similarityQuestionList = similarityQuestionList.stream().distinct().collect(Collectors.toList());
-            if (!similarityQuestionList.isEmpty()) {
-                for (BizSimilarityQuestion bizSimilarityQuestion : similarityQuestionList) {
-                    bizSimilarityQuestion.setQuestionAnswerId(bizQuestionAnswer.getId());
-                    similarityList.add(bizSimilarityQuestion);
-                }
-            }
+//            List<BizSimilarityQuestion> similarityQuestionList = bizQuestionAnswer.getSimilarityQuestionList();
+//            similarityQuestionList = similarityQuestionList.stream().distinct().collect(Collectors.toList());
+//            if (!similarityQuestionList.isEmpty()) {
+//                for (BizSimilarityQuestion bizSimilarityQuestion : similarityQuestionList) {
+//                    bizSimilarityQuestion.setQuestionAnswerId(bizQuestionAnswer.getId());
+//                    similarityList.add(bizSimilarityQuestion);
+//                }
+//            }
             if (!similarityList.isEmpty()) {
                 j = bizSimilarityQuestionMapper.batchSimilarityQuestion(similarityList);
             } else {
@@ -154,32 +162,32 @@ public class BizQuestionAnswerServiceImpl extends ServiceImpl<BizQuestionAnswerM
         int i = bizQuestionAnswerMapper.updateBizQuestionAnswer(bizQuestionAnswer);
         int j = 0;
         if (i > 0) {
-            List<BizSimilarityQuestion> newSimilarityQuestionList = new ArrayList<>();
-            List<BizSimilarityQuestion> similarityQuestionList = bizQuestionAnswer.getSimilarityQuestionList();
-            similarityQuestionList = similarityQuestionList.stream().distinct().collect(Collectors.toList());
-            List<BizSimilarityQuestion> similarityList = bizSimilarityQuestionMapper.selectBizSimilarityQuestionListById(bizQuestionAnswer.getId());
-            if (!similarityList.isEmpty()) {
-                List<Long> ids = new ArrayList<>();
-                for (BizSimilarityQuestion bizSimilarityQuestion : similarityList) {
-                    ids.add(bizSimilarityQuestion.getId());
-                }
-                Long[] array = ids.toArray(new Long[0]);
-                bizSimilarityQuestionMapper.deleteBizSimilarityQuestionByIds(array);
-            }
-            //先全部删除，在重新添加
-            if (!similarityQuestionList.isEmpty()) {
-                for (BizSimilarityQuestion bizSimilarityQuestion : similarityQuestionList) {
-                    bizSimilarityQuestion.setQuestionAnswerId(bizQuestionAnswer.getId());
-                    newSimilarityQuestionList.add(bizSimilarityQuestion);
-                }
-                if (!newSimilarityQuestionList.isEmpty()) {
-                    j = bizSimilarityQuestionMapper.batchSimilarityQuestion(newSimilarityQuestionList);
-                } else {
-                    j = 1;
-                }
-            } else {
-                j = 1;
-            }
+//            List<BizSimilarityQuestion> newSimilarityQuestionList = new ArrayList<>();
+//            List<BizSimilarityQuestion> similarityQuestionList = bizQuestionAnswer.getSimilarityQuestionList();
+//            similarityQuestionList = similarityQuestionList.stream().distinct().collect(Collectors.toList());
+//            List<BizSimilarityQuestion> similarityList = bizSimilarityQuestionMapper.selectBizSimilarityQuestionListById(bizQuestionAnswer.getId());
+//            if (!similarityList.isEmpty()) {
+//                List<Long> ids = new ArrayList<>();
+//                for (BizSimilarityQuestion bizSimilarityQuestion : similarityList) {
+//                    ids.add(bizSimilarityQuestion.getId());
+//                }
+//                Long[] array = ids.toArray(new Long[0]);
+//                bizSimilarityQuestionMapper.deleteBizSimilarityQuestionByIds(array);
+//            }
+//            //先全部删除，在重新添加
+//            if (!similarityQuestionList.isEmpty()) {
+//                for (BizSimilarityQuestion bizSimilarityQuestion : similarityQuestionList) {
+//                    bizSimilarityQuestion.setQuestionAnswerId(bizQuestionAnswer.getId());
+//                    newSimilarityQuestionList.add(bizSimilarityQuestion);
+//                }
+//                if (!newSimilarityQuestionList.isEmpty()) {
+//                    j = bizSimilarityQuestionMapper.batchSimilarityQuestion(newSimilarityQuestionList);
+//                } else {
+//                    j = 1;
+//                }
+//            } else {
+//                j = 1;
+//            }
         }
         if (i > 0 && j > 0) {
             return 1;
@@ -215,6 +223,17 @@ public class BizQuestionAnswerServiceImpl extends ServiceImpl<BizQuestionAnswerM
         if (bizDigitalEmployee == null) {
             throw new BaseException("该数字员工不存在");
         }
+        //调用远程上传文件接口
+        Long knowledgeBaseId = bizKnowledgeBaseService.getKnowledgeBaseIdByDeId(digitalEmployeeId);
+        BizKnowledgeBase knowledgeBase = bizKnowledgeBaseService.getById(knowledgeBaseId);
+        if (knowledgeBase == null) {
+            throw new RuntimeException("知识库不存在");
+        }
+        log.info("调用文档上传远程接口 START...");
+        long start = System.currentTimeMillis();
+        List<String> list = remoteModelService.readExcel(knowledgeBase.getCollectionNameQa(), files);
+        log.info("调用文档上传远程接口 END...共耗时 {} 毫秒", System.currentTimeMillis() - start);
+
         String result = "";
         for (MultipartFile file : files) {
             //创建处理EXCEL的类
@@ -298,5 +317,9 @@ public class BizQuestionAnswerServiceImpl extends ServiceImpl<BizQuestionAnswerM
             }
         }
         return result;
+    }
+    @Override
+    public List<BizQuestionAnswer> querySimilarQuestionList() {
+        return bizQuestionAnswerMapper.querySimilarQuestionList();
     }
 }

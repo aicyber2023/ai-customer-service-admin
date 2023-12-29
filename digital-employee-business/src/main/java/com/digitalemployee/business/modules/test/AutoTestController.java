@@ -74,7 +74,7 @@ public class AutoTestController {
         }
         log.info("调用文档上传远程接口 START...");
         long start = System.currentTimeMillis();
-        List<QuestionAnswerVo> list = remoteModelService.readExcel(collection, files);
+        List<String> list = remoteModelService.readExcel(collection, files);
         log.info("调用文档上传远程接口 END...共耗时 {} 毫秒", System.currentTimeMillis() - start);
         return AjaxResult.success(list);
     }

@@ -135,5 +135,11 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         </foreach>
     </insert>
 
-
+    <select id="querySimilarQuestionList" resultMap="BizQuestionAnswerResult">
+        select id, digital_employee_id, question, answer, status, create_type, create_by, create_time, update_by, update_time, remark
+        from biz_question_answer
+        where question in
+              (select question from biz_question_answer group by question having count(question)> 1)
+        order by  question
+    </select>
 </mapper>

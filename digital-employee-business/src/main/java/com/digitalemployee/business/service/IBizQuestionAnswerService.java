@@ -74,5 +74,5 @@ public interface IBizQuestionAnswerService extends IService<BizQuestionAnswer>
      */
     String readExcelFile(@Param("files") MultipartFile[] files, @Param("username") String username,@Param("digitalEmployeeId") Long digitalEmployeeId, HttpServletRequest request) throws IOException;
 
-
+    List<BizQuestionAnswer> querySimilarQuestionList();
 }

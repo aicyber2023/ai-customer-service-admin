@@ -102,6 +102,11 @@ public class BizQuestionAnswerController extends BaseController {
         String result = bizQuestionAnswerService.readExcelFile(files, username, digitalEmployeeId,request);
         return success(result);
     }
-
+    @GetMapping("/querySimilarQuestionList")
+    public TableDataInfo querySimilarQuestionList() {
+        startPage();
+        List<BizQuestionAnswer> list = bizQuestionAnswerService.querySimilarQuestionList();
+        return getDataTable(list);
+    }
 
 }
