@@ -6,6 +6,6 @@ import java.util.List;
 
 @Data
 public class CollectionVo {
-    private String collection;
+    private Long digitalEmployeeId;
     private List<String> ids;
 }

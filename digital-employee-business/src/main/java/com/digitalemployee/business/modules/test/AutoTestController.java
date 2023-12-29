@@ -159,8 +159,18 @@ public class AutoTestController {
     @Anonymous
     @PostMapping("/deleteVectors")
     public AjaxResult deleteVectors(@RequestBody CollectionVo collectionvo) {
-        String jsonString = JSON.toJSONString(collectionvo);
-        BaseResponse response = remoteModelService.dropVectors(jsonString);
+        Long digitalEmployeeId = collectionvo.getDigitalEmployeeId();
+        Long knowledgeBaseId = bizKnowledgeBaseService.getKnowledgeBaseIdByDeId(digitalEmployeeId);
+        BizKnowledgeBase knowledgeBase = bizKnowledgeBaseService.getById(knowledgeBaseId);
+        if (knowledgeBase == null) {
+            throw new RuntimeException("知识库不存在");
+        }
+        String collectionNameQa = knowledgeBase.getCollectionNameQa();
+        JSONObject paramMap = JSONUtil.createObj();
+        paramMap.put("collection",collectionNameQa);
+        paramMap.put("ids",collectionvo.getIds());
+//        String jsonString = JSON.toJSONString(collectionvo);
+        BaseResponse response = remoteModelService.dropVectors(paramMap);
         return AjaxResult.success(response);
     }
 

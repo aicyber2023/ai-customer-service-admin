@@ -102,9 +102,9 @@ public class RemoteModelService {
      * @param param
      * @return
      */
-    public BaseResponse dropVectors(String param) {
+    public BaseResponse dropVectors(Map<String, Object> param) {
         final String url = chatResourcesConfig.getDropVectorsUrl();
-        BaseResponse response = post(url, param, BaseResponse.class);
+        BaseResponse response = post(url, param.toString(), BaseResponse.class);
         if (response != null && !response.getSuccessful()) {
             throw new RuntimeException(url + "远程服务调用异常：" + response.getMessage());
         }
