@@ -10,13 +10,10 @@ import com.digitalemployee.business.mapper.BizSimilarityQuestionMapper;
 import com.digitalemployee.business.modules.config.ChatResourcesConfig;
 import com.digitalemployee.business.service.IBizKnowledgeBaseService;
 import com.digitalemployee.business.service.IBizQuestionAnswerService;
-//import com.digitalemployee.business.vo.QuestionAnswersVo;
 import com.digitalemployee.common.exception.base.BaseException;
 import com.digitalemployee.common.utils.DateUtils;
 import com.digitalemployee.common.utils.StringUtils;
 import com.digitalemployee.common.utils.file.FileUploadUtils;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -25,8 +22,9 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
-import java.util.*;
-import java.util.function.Function;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 import java.util.stream.Collectors;
 
 
@@ -157,8 +155,13 @@ public class BizQuestionAnswerServiceImpl extends ServiceImpl<BizQuestionAnswerM
             throw new BaseException("该问答数据已存在");
         }
         int i = bizQuestionAnswerMapper.updateBizQuestionAnswer(bizQuestionAnswer);
-        int j = 0;
-        if (i > 0) {
+        //根据id找到collectionid,
+//        String collectionId = questionAnswer.getCollectionId();
+        // 调用远程删除接口删除，
+//        remoteModelService.dropVectors()
+        // 调用远程插入接口
+//        int j = 0;
+//        if (i > 0) {
 //            List<BizSimilarityQuestion> newSimilarityQuestionList = new ArrayList<>();
 //            List<BizSimilarityQuestion> similarityQuestionList = bizQuestionAnswer.getSimilarityQuestionList();
 //            similarityQuestionList = similarityQuestionList.stream().distinct().collect(Collectors.toList());
@@ -185,8 +188,9 @@ public class BizQuestionAnswerServiceImpl extends ServiceImpl<BizQuestionAnswerM
 //            } else {
 //                j = 1;
 //            }
-        }
-        if (i > 0 && j > 0) {
+//        }
+//        if (i > 0 && j > 0) {
+        if (i > 0) {
             return 1;
         }
         return -1;
@@ -312,7 +316,7 @@ public class BizQuestionAnswerServiceImpl extends ServiceImpl<BizQuestionAnswerM
         }
         log.info("调用文档上传远程接口 START...");
         long start = System.currentTimeMillis();
-        List<String> listnew =new ArrayList<>();
+        List<String> listnew = new ArrayList<>();
         List<String> list = remoteModelService.readExcel(knowledgeBase.getCollectionNameQa(), files);
         listnew.addAll(list);
         log.info("调用文档上传远程接口 END...共耗时 {} 毫秒", System.currentTimeMillis() - start);
@@ -328,6 +332,7 @@ public class BizQuestionAnswerServiceImpl extends ServiceImpl<BizQuestionAnswerM
         }
         return result;
     }
+
     @Override
     public List<BizQuestionAnswer> querySimilarQuestionList() {
         return bizQuestionAnswerMapper.querySimilarQuestionList();
