@@ -223,17 +223,7 @@ public class BizQuestionAnswerServiceImpl extends ServiceImpl<BizQuestionAnswerM
         if (bizDigitalEmployee == null) {
             throw new BaseException("该数字员工不存在");
         }
-        //调用远程上传文件接口
-        Long knowledgeBaseId = bizKnowledgeBaseService.getKnowledgeBaseIdByDeId(digitalEmployeeId);
-        BizKnowledgeBase knowledgeBase = bizKnowledgeBaseService.getById(knowledgeBaseId);
-        if (knowledgeBase == null) {
-            throw new RuntimeException("知识库不存在");
-        }
-        log.info("调用文档上传远程接口 START...");
-        long start = System.currentTimeMillis();
-        List<String> list = remoteModelService.readExcel(knowledgeBase.getCollectionNameQa(), files);
-        log.info("调用文档上传远程接口 END...共耗时 {} 毫秒", System.currentTimeMillis() - start);
-
+        List<BizQuestionAnswer> newList = new ArrayList<>();
         String result = "";
         for (MultipartFile file : files) {
             //创建处理EXCEL的类
@@ -256,15 +246,11 @@ public class BizQuestionAnswerServiceImpl extends ServiceImpl<BizQuestionAnswerM
                     resList.add(bizQuestionAnswer);
 //                }
             }
-            for (BizQuestionAnswer questionAnswer : resList) {
-                list.forEach(item ->{
-                    questionAnswer.setCollectionId(item);
-                });
-            }
-            //问答数据批量插入
-            if (!resList.isEmpty()) {
-                bizQuestionAnswerMapper.insertBatchQuestionAnswer(resList);
-            }
+            newList.addAll(resList);
+//            //问答数据批量插入
+//            if (!resList.isEmpty()) {
+//                bizQuestionAnswerMapper.insertBatchQuestionAnswer(resList);
+//            }
             //相似问数据数据库查重，如果数据库存在则不插入
 //            List<BizSimilarityQuestion> similarityList = new ArrayList<>();
 //            for (BizQuestionAnswer bizQuestionAnswer : resList) {
@@ -320,6 +306,25 @@ public class BizQuestionAnswerServiceImpl extends ServiceImpl<BizQuestionAnswerM
             } else {
                 result = "上传失败";
             }
+        }
+        //调用远程上传文件接口
+        Long knowledgeBaseId = bizKnowledgeBaseService.getKnowledgeBaseIdByDeId(digitalEmployeeId);
+        BizKnowledgeBase knowledgeBase = bizKnowledgeBaseService.getById(knowledgeBaseId);
+        if (knowledgeBase == null) {
+            throw new RuntimeException("知识库不存在");
+        }
+        log.info("调用文档上传远程接口 START...");
+        long start = System.currentTimeMillis();
+        List<String> list = remoteModelService.readExcel(knowledgeBase.getCollectionNameQa(), files);
+        log.info("调用文档上传远程接口 END...共耗时 {} 毫秒", System.currentTimeMillis() - start);
+        for (BizQuestionAnswer questionAnswer : newList) {
+            list.forEach(item ->{
+                questionAnswer.setCollectionId(item);
+            });
+        }
+        //问答数据批量插入
+        if (!newList.isEmpty()) {
+            bizQuestionAnswerMapper.insertBatchQuestionAnswer(newList);
         }
         return result;
     }

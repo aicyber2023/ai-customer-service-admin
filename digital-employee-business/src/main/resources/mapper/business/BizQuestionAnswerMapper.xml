@@ -129,9 +129,9 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </delete>
 
     <insert id="insertBatchQuestionAnswer" parameterType="java.util.List" useGeneratedKeys="true" keyProperty="id">
-        insert into biz_question_answer (digital_employee_id,question, answer,status,create_type,create_by,create_time,update_by,update_time,remark) values
+        insert into biz_question_answer (digital_employee_id,collection_id,question, answer,status,create_type,create_by,create_time,update_by,update_time,remark) values
         <foreach collection="list" item="item" separator=",">
-            (#{item.digitalEmployeeId}, #{item.question}, #{item.answer},1,#{item.createType},#{item.createBy},#{item.createTime},#{item.updateBy},#{item.updateTime},#{item.remark})
+            (#{item.digitalEmployeeId},#{item.collectionId}, #{item.question}, #{item.answer},1,#{item.createType},#{item.createBy},#{item.createTime},#{item.updateBy},#{item.updateTime},#{item.remark})
         </foreach>
     </insert>
 

@@ -56,7 +56,7 @@ public class BizQuestionAnswer extends BaseEntity
 
     /** 相似问 */
 
-    private List<BizSimilarityQuestion> similarityQuestionList;
+//    private List<BizSimilarityQuestion> similarityQuestionList;
 
     public void setId(Long id) 
     {
@@ -121,12 +121,12 @@ public class BizQuestionAnswer extends BaseEntity
         return createType;
     }
 
-
-    public List<BizSimilarityQuestion> getSimilarityQuestionList() {
-        return similarityQuestionList;
-    }
-
-    public void setSimilarityQuestionList(List<BizSimilarityQuestion> similarityQuestionList) {
-        this.similarityQuestionList = similarityQuestionList;
-    }
+//
+//    public List<BizSimilarityQuestion> getSimilarityQuestionList() {
+//        return similarityQuestionList;
+//    }
+//
+//    public void setSimilarityQuestionList(List<BizSimilarityQuestion> similarityQuestionList) {
+//        this.similarityQuestionList = similarityQuestionList;
+//    }
 }

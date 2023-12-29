@@ -111,23 +111,21 @@ public class AutoTestController {
     /**
      * 调用添加文本问答远程接口
      *
-     * @param digitalEmployeeId
-     * @param question
-     * @param answer
+     * @param questionAnswerVo
      * @return
      */
     @Anonymous
     @PostMapping("/appendQa")
-    public AjaxResult appendQa(@RequestParam("digitalEmployeeId") Long digitalEmployeeId, @RequestPart("question") String question, @RequestPart("answer") String answer) {
-        Long knowledgeBaseId = bizKnowledgeBaseService.getKnowledgeBaseIdByDeId(digitalEmployeeId);
+    public AjaxResult appendQa(@RequestBody QuestionAnswerVo questionAnswerVo) {
+        Long knowledgeBaseId = bizKnowledgeBaseService.getKnowledgeBaseIdByDeId(questionAnswerVo.getDigitalEmployeeId());
         BizKnowledgeBase knowledgeBase = bizKnowledgeBaseService.getById(knowledgeBaseId);
         if (knowledgeBase == null) {
             throw new RuntimeException("知识库不存在");
         }
         JSONObject paramMap = JSONUtil.createObj();
         paramMap.put("collection", knowledgeBase.getCollectionNameQa());
-        paramMap.put("question", question);
-        paramMap.put("answer", answer);
+        paramMap.put("question", questionAnswerVo.getQuestion());
+        paramMap.put("answer", questionAnswerVo.getAnswer());
         log.info("调用添加文本问答远程接口 START...");
         long start = System.currentTimeMillis();
         remoteModelService.appendQa(paramMap);
