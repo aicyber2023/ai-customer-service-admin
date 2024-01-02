@@ -1,7 +1,9 @@
 package com.digitalemployee.business.api;
 
 import cn.hutool.http.*;
+import cn.hutool.json.JSONObject;
 import cn.hutool.json.JSONUtil;
+import com.alibaba.fastjson2.JSON;
 import com.digitalemployee.business.api.domain.*;
 import com.digitalemployee.business.modules.config.ChatResourcesConfig;
 import lombok.RequiredArgsConstructor;
@@ -154,6 +156,18 @@ public class RemoteModelService {
     public static <T> T post(String url, String param, Class<T> beanClass) {
         return JSONUtil.toBean(HttpUtil.post(url, param), beanClass);
     }
+    public static <T> T post2(String url, String param, Class<T> beanClass) {
+        try (HttpResponse result = HttpRequest.post(url)
+                .header(Header.CONTENT_TYPE, ContentType.JSON.getValue())
+                .body(param)
+                .execute()) {
+            String body = result.body();
+            return JSONUtil.toBean(body, beanClass);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
 
     public static <T> T post(String url, Map<String, Object> param, Class<T> beanClass) {
         return JSONUtil.toBean(HttpUtil.post(url, param), beanClass);

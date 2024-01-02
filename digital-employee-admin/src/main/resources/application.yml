@@ -138,7 +138,7 @@ chat:
   knowledgeFilePath: D:/data/temp/de/upload
   questionAnswerFilePath: D:/data/temp/de/questionAnswerUpload
   uploadTextUrl: http://116.204.83.155:9090/upload-text.do?append=true&collection=
-  dropVectorsUrl: http://116.204.83.155:9090/drop-vectors.do
+  dropVectorsUrl: http://116.204.112.29:7090/drop-vectors.do
 
 train:
   tempPath: D:/temp/train_test/tmp/

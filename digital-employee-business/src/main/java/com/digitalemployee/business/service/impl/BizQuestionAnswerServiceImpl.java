@@ -24,9 +24,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 
@@ -143,31 +141,33 @@ public class BizQuestionAnswerServiceImpl extends ServiceImpl<BizQuestionAnswerM
         //根据数字员工id找到collectionid,
         BizQuestionAnswer questionAnswerDB = bizQuestionAnswerMapper.selectBizQuestionAnswerById(bizQuestionAnswer.getId());
         String collectionId = questionAnswerDB.getCollectionId();
-        // 调用远程删除接口删除要修改的数据
-        Long knowledgeBaseId = bizKnowledgeBaseService.getKnowledgeBaseIdByDeId(bizQuestionAnswer.getDigitalEmployeeId());
-        BizKnowledgeBase knowledgeBase = bizKnowledgeBaseService.getById(knowledgeBaseId);
-        if (knowledgeBase == null) {
-            throw new RuntimeException("知识库不存在");
+        if(collectionId == null){
+            // 调用远程删除接口删除要修改的数据
+            Long knowledgeBaseId = bizKnowledgeBaseService.getKnowledgeBaseIdByDeId(bizQuestionAnswer.getDigitalEmployeeId());
+            BizKnowledgeBase knowledgeBase = bizKnowledgeBaseService.getById(knowledgeBaseId);
+            if (knowledgeBase == null) {
+                throw new RuntimeException("知识库不存在");
+            }
+            List<String> collectionList = new ArrayList<>();
+            collectionList.add(collectionId);
+            String collectionNameQa = knowledgeBase.getCollectionNameQa();
+            JSONObject paramMap = new JSONObject();
+            paramMap.put("collection", collectionNameQa);
+            paramMap.put("ids", collectionList);
+            log.info("调用删除向量远程接口 START...");
+            long startRemove = System.currentTimeMillis();
+            remoteModelService.dropVectors(paramMap);
+            log.info("调用删除向量远程接口 END...共耗时 {} 毫秒", System.currentTimeMillis() - startRemove);
+            // 调用远程插入接口插入新修改的数据
+            JSONObject param = JSONUtil.createObj();
+            param.put("collection", knowledgeBase.getCollectionNameQa());
+            param.put("question", bizQuestionAnswer.getQuestion());
+            param.put("answer", bizQuestionAnswer.getAnswer());
+            log.info("调用添加文本问答远程接口 START...");
+            long start = System.currentTimeMillis();
+            remoteModelService.appendQa(param);
+            log.info("调用添加文本问答远程接口 END...共耗时 {} 毫秒", System.currentTimeMillis() - start);
         }
-        List<String> collectionList = new ArrayList<>();
-        collectionList.add(collectionId);
-        String collectionNameQa = knowledgeBase.getCollectionNameQa();
-        JSONObject paramMap = JSONUtil.createObj();
-        paramMap.put("collection", collectionNameQa);
-        paramMap.put("ids", collectionList);
-        log.info("调用删除向量远程接口 START...");
-        long startRemove = System.currentTimeMillis();
-        remoteModelService.dropVectors(paramMap);
-        log.info("调用删除向量远程接口 END...共耗时 {} 毫秒", System.currentTimeMillis() - startRemove);
-        // 调用远程插入接口插入新修改的数据
-        JSONObject param = JSONUtil.createObj();
-        param.put("collection", knowledgeBase.getCollectionNameQa());
-        param.put("question", bizQuestionAnswer.getQuestion());
-        param.put("answer", bizQuestionAnswer.getAnswer());
-        log.info("调用添加文本问答远程接口 START...");
-        long start = System.currentTimeMillis();
-        remoteModelService.appendQa(param);
-        log.info("调用添加文本问答远程接口 END...共耗时 {} 毫秒", System.currentTimeMillis() - start);
         if (i > 0) {
             return 1;
         }
