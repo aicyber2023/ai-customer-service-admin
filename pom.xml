@@ -9,8 +9,7 @@
     <version>0.0.1</version>
 
     <name>digital-employee</name>
-    <!-- <url>http://www.ruoyi.vip</url> -->
-    <description>安全监督管理系统</description>
+    <description>智能客服</description>
 
     <properties>
         <digitalemployee.version>0.0.1</digitalemployee.version>

@@ -47,35 +47,4 @@ public class BizSessionController extends BaseController {
         return toAjax(bizSessionService.deleteBizSessionByIds(ids));
     }
 
-/*
-    *//**
-     * 获取会话session详细信息
-     *//*
-    @PreAuthorize("@ss.hasPermi('check:session:query')")
-    @GetMapping(value = "/{id}")
-    public AjaxResult getInfo(@PathVariable("id") Long id) {
-        return success(bizSessionService.selectBizSessionById(id));
-    }
-
-    *//**
-     * 新增会话session
-     *//*
-    @PreAuthorize("@ss.hasPermi('check:session:add')")
-    @Log(title = "会话session", businessType = BusinessType.INSERT)
-    @PostMapping
-    public AjaxResult add(@RequestBody BizSession bizSession) {
-        return toAjax(bizSessionService.insertBizSession(bizSession));
-    }
-
-    *//**
-     * 修改会话session
-     *//*
-    @PreAuthorize("@ss.hasPermi('check:session:edit')")
-    @Log(title = "会话session", businessType = BusinessType.UPDATE)
-    @PutMapping
-    public AjaxResult edit(@RequestBody BizSession bizSession) {
-        return toAjax(bizSessionService.updateBizSession(bizSession));
-    }
-    */
-
 }

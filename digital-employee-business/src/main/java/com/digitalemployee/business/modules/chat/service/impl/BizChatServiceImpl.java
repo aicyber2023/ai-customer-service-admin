@@ -300,9 +300,6 @@ public class BizChatServiceImpl implements BizChatService {
             return new ArrayList<>();
         }
 
-        // TODO: 2023/12/28 path
-        // TODO: 2023/12/28 存map到value
-
         String clientIP = ServletUtil.getClientIP(request);
         Cookie cookie = ServletUtil.getCookie(request, ChatDataDTO.CHAT_USER_TOKEN);
         if (cookie == null) {

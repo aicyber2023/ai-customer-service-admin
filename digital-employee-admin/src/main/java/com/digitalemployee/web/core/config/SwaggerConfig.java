@@ -32,7 +32,7 @@ public class SwaggerConfig
 {
     /** 系统基础配置 */
     @Autowired
-    private AicyberConfig ruoyiConfig;
+    private AicyberConfig aicyberConfig;
 
     /** 是否开启swagger */
     @Value("${swagger.enabled}")
@@ -117,9 +117,9 @@ public class SwaggerConfig
                 // 描述
                 .description("描述：用于管理集团旗下公司的人员信息,具体包括XXX,XXX模块...")
                 // 作者信息
-                .contact(new Contact(ruoyiConfig.getName(), null, null))
+                .contact(new Contact(aicyberConfig.getName(), null, null))
                 // 版本
-                .version("版本号:" + ruoyiConfig.getVersion())
+                .version("版本号:" + aicyberConfig.getVersion())
                 .build();
     }
 }

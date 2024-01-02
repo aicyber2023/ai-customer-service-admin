@@ -187,7 +187,7 @@ public class ChatDataDTO {
 
     public String getTokenMapKey() {
         if (isTest()) {
-            return loginUserId + "-" + digitalEmployee;
+            return loginUserId + "-" + digitalEmployee.getId();
         } else {
             return String.valueOf(digitalEmployee.getId());
         }
