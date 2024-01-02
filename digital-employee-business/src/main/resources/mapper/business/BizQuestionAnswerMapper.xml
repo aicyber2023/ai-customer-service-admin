@@ -112,6 +112,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         update biz_question_answer
         <trim prefix="SET" suffixOverrides=",">
             <if test="digitalEmployeeId != null">digital_employee_id = #{digitalEmployeeId},</if>
+            <if test="collectionId != null">collection_id = #{collectionId},</if>
             <if test="question != null">question = #{question},</if>
             <if test="answer != null">answer = #{answer},</if>
             <if test="status != null">status = #{status},</if>

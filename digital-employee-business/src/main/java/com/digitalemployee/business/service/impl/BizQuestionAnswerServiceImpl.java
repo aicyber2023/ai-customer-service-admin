@@ -4,6 +4,7 @@ import cn.hutool.json.JSONObject;
 import cn.hutool.json.JSONUtil;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.digitalemployee.business.api.RemoteModelService;
+import com.digitalemployee.business.api.domain.AppendQaResponse;
 import com.digitalemployee.business.domain.*;
 import com.digitalemployee.business.mapper.BizDigitalEmployeeMapper;
 import com.digitalemployee.business.mapper.BizQuestionAnswerMapper;
@@ -136,12 +137,10 @@ public class BizQuestionAnswerServiceImpl extends ServiceImpl<BizQuestionAnswerM
         if (questionAnswer != null) {
             throw new BaseException("该问答数据已存在,请填写新的问答数据");
         }
-        //更新本地数据库问答数据
-        int i = bizQuestionAnswerMapper.updateBizQuestionAnswer(bizQuestionAnswer);
         //根据数字员工id找到collectionid,
         BizQuestionAnswer questionAnswerDB = bizQuestionAnswerMapper.selectBizQuestionAnswerById(bizQuestionAnswer.getId());
         String collectionId = questionAnswerDB.getCollectionId();
-        if(collectionId != null){
+        if (collectionId != null) {
             // 调用远程删除接口删除要修改的数据
             Long knowledgeBaseId = bizKnowledgeBaseService.getKnowledgeBaseIdByDeId(bizQuestionAnswer.getDigitalEmployeeId());
             BizKnowledgeBase knowledgeBase = bizKnowledgeBaseService.getById(knowledgeBaseId);
@@ -165,9 +164,14 @@ public class BizQuestionAnswerServiceImpl extends ServiceImpl<BizQuestionAnswerM
             param.put("answer", bizQuestionAnswer.getAnswer());
             log.info("调用添加文本问答远程接口 START...");
             long start = System.currentTimeMillis();
-            remoteModelService.appendQa(param);
+            AppendQaResponse appendQaResponse = remoteModelService.appendQa(param);
+            if (appendQaResponse.getId() != null) {
+                bizQuestionAnswer.setCollectionId(appendQaResponse.getId());
+            }
             log.info("调用添加文本问答远程接口 END...共耗时 {} 毫秒", System.currentTimeMillis() - start);
         }
+        //更新本地数据库问答数据
+        int i = bizQuestionAnswerMapper.updateBizQuestionAnswer(bizQuestionAnswer);
         if (i > 0) {
             return 1;
         }
