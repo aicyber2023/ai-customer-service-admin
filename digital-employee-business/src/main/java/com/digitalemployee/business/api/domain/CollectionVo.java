@@ -7,5 +7,5 @@ import java.util.List;
 @Data
 public class CollectionVo {
     private Long digitalEmployeeId;
-    private List<String> ids;
+    private List<Long> ids;
 }

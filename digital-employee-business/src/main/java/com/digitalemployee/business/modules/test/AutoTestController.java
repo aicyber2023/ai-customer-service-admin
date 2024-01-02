@@ -152,35 +152,37 @@ public class AutoTestController {
     /**
      * 调用删除向量远程接口
      *
-     * @param digitalEmployeeId
+     * @param collectionVo
      * @return
      */
     @Anonymous
     @PostMapping("/deleteVectors")
-    public AjaxResult deleteVectors(Long digitalEmployeeId) {
-        Long knowledgeBaseId = bizKnowledgeBaseService.getKnowledgeBaseIdByDeId(digitalEmployeeId);
+    public AjaxResult deleteVectors(@RequestBody CollectionVo collectionVo) {
+        List<Long> ids = collectionVo.getIds();
+        List<String> collectionList = new ArrayList<>();
+        if(!ids.isEmpty()){
+            for (Long id : ids) {
+                BizQuestionAnswer bizQuestionAnswer = bizQuestionAnswerService.selectBizQuestionAnswerById(id);
+                collectionList.add(bizQuestionAnswer.getCollectionId());
+            }
+        }
+        Long knowledgeBaseId = bizKnowledgeBaseService.getKnowledgeBaseIdByDeId(collectionVo.getDigitalEmployeeId());
         BizKnowledgeBase knowledgeBase = bizKnowledgeBaseService.getById(knowledgeBaseId);
         if (knowledgeBase == null) {
             throw new RuntimeException("知识库不存在");
-        }
-        List<String> collectionList = new ArrayList<>();
-        List<Long> idList = new ArrayList<>();
-        List<BizQuestionAnswer> bizQuestionAnswerList = bizQuestionAnswerService.selectBizQuestionAnswerListBydeId(digitalEmployeeId);
-        if (bizQuestionAnswerList.size() != 0) {
-            for (BizQuestionAnswer questionAnswer : bizQuestionAnswerList) {
-                collectionList.add(questionAnswer.getCollectionId());
-                idList.add(questionAnswer.getId());
-            }
         }
         String collectionNameQa = knowledgeBase.getCollectionNameQa();
         JSONObject paramMap = JSONUtil.createObj();
         paramMap.put("collection", collectionNameQa);
         paramMap.put("ids", collectionList);
-        Long[] idListArray = idList.toArray(new Long[idList.size()]);
-        if (idListArray.length != 0) {
-            bizQuestionAnswerService.deleteBizQuestionAnswerByIds(idListArray);
+        Long[] questionAnswerIdArray = ids.toArray(new Long[ids.size()]);
+        if (questionAnswerIdArray.length != 0) {
+            bizQuestionAnswerService.deleteBizQuestionAnswerByIds(questionAnswerIdArray);
         }
-        BaseResponse response = remoteModelService.dropVectors(paramMap);
+        log.info("调用删除向量远程接口 START...");
+        long startRemove = System.currentTimeMillis();
+        remoteModelService.dropVectors(paramMap);
+        log.info("调用删除向量远程接口 END...共耗时 {} 毫秒", System.currentTimeMillis() - startRemove);
         return AjaxResult.success();
     }
 

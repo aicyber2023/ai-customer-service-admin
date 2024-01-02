@@ -138,11 +138,12 @@ public class BizQuestionAnswerServiceImpl extends ServiceImpl<BizQuestionAnswerM
         if (questionAnswer != null) {
             throw new BaseException("该问答数据已存在,请填写新的问答数据");
         }
+        //更新本地数据库问答数据
         int i = bizQuestionAnswerMapper.updateBizQuestionAnswer(bizQuestionAnswer);
-        //根据id找到collectionid,
+        //根据数字员工id找到collectionid,
         BizQuestionAnswer questionAnswerDB = bizQuestionAnswerMapper.selectBizQuestionAnswerById(bizQuestionAnswer.getId());
         String collectionId = questionAnswerDB.getCollectionId();
-        // 调用远程删除接口删除，
+        // 调用远程删除接口删除要修改的数据
         Long knowledgeBaseId = bizKnowledgeBaseService.getKnowledgeBaseIdByDeId(bizQuestionAnswer.getDigitalEmployeeId());
         BizKnowledgeBase knowledgeBase = bizKnowledgeBaseService.getById(knowledgeBaseId);
         if (knowledgeBase == null) {
@@ -154,8 +155,11 @@ public class BizQuestionAnswerServiceImpl extends ServiceImpl<BizQuestionAnswerM
         JSONObject paramMap = JSONUtil.createObj();
         paramMap.put("collection", collectionNameQa);
         paramMap.put("ids", collectionList);
-//        remoteModelService.dropVectors(paramMap);
-        // 调用远程插入接口
+        log.info("调用删除向量远程接口 START...");
+        long startRemove = System.currentTimeMillis();
+        remoteModelService.dropVectors(paramMap);
+        log.info("调用删除向量远程接口 END...共耗时 {} 毫秒", System.currentTimeMillis() - startRemove);
+        // 调用远程插入接口插入新修改的数据
         JSONObject param = JSONUtil.createObj();
         param.put("collection", knowledgeBase.getCollectionNameQa());
         param.put("question", bizQuestionAnswer.getQuestion());
