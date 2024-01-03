@@ -112,30 +112,11 @@ public class ReadExcel {
             Row row = sheet.getRow(r);
             if (row != null) {
                 BizQuestionAnswer bizQuestionAnswer = new BizQuestionAnswer();
-//                List<BizSimilarityQuestion> similarityQuestionList = new ArrayList<>();
-//                BizSimilarityQuestion bizSimilarityQuestion = new BizSimilarityQuestion();
-                if (row.getCell(0) != null && !"".equals(row.getCell(0).getStringCellValue())) {
+                if (row.getCell(0) != null && !"".equals(row.getCell(0).getStringCellValue()) && row.getCell(1) != null && !"".equals(row.getCell(1).getStringCellValue())) {
                     bizQuestionAnswer.setQuestion(row.getCell(0).getStringCellValue());
                     bizQuestionAnswer.setAnswer(row.getCell(1).getStringCellValue());
-//                    if(row.getCell(3) != null && !"".equals(row.getCell(3).getStringCellValue())){
-//                        bizQuestionAnswer.setRemark(row.getCell(3).getStringCellValue());
-//                    }
-//                    if (row.getCell(2) == null) {
-//                        bizSimilarityQuestion.setSimilarityQuestion(row.createCell(2).getStringCellValue());
-//                    } else {
-//                        bizSimilarityQuestion.setSimilarityQuestion(row.getCell(2).getStringCellValue());
-//                    }
-//                    bizSimilarityQuestion.setSimilarityQuestion(row.getCell(2).getStringCellValue());
-//                    similarityQuestionList.add(bizSimilarityQuestion);
-//                    similarityQuestionList = similarityQuestionList.stream().distinct().collect(Collectors.toList());
-//                    bizQuestionAnswer.setSimilarityQuestionList(similarityQuestionList);
                     bizQuestionAnswerList.add(bizQuestionAnswer);
                 }
-//                else {
-//                    BizQuestionAnswer questionAnswer = bizQuestionAnswerList.get(bizQuestionAnswerList.size() - 1);
-//                    bizSimilarityQuestion.setSimilarityQuestion(row.getCell(2).getStringCellValue());
-//                    questionAnswer.getSimilarityQuestionList().add(bizSimilarityQuestion);
-//                }
             }
         }
         return bizQuestionAnswerList;
