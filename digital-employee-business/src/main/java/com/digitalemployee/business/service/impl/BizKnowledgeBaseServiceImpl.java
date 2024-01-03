@@ -2,6 +2,7 @@ package com.digitalemployee.business.service.impl;
 
 import cn.hutool.core.io.FileUtil;
 import cn.hutool.core.util.IdUtil;
+import cn.hutool.core.util.RandomUtil;
 import cn.hutool.core.util.StrUtil;
 import cn.hutool.http.ContentType;
 import cn.hutool.http.Header;
@@ -410,13 +411,17 @@ public class BizKnowledgeBaseServiceImpl extends ServiceImpl<BizKnowledgeBaseMap
         bizKnowledgeBase.setUserId(userId);
 
         String uuid = IdUtil.fastSimpleUUID();
-        bizKnowledgeBase.setCollectionName(uuid);
-        bizKnowledgeBase.setCollectionNameQa(IdUtil.fastSimpleUUID());
+        String prefix = RandomUtil.randomString(RandomUtil.BASE_CHAR, 1);
+        bizKnowledgeBase.setCollectionName(prefix + uuid);
         bizKnowledgeBase.setName(uuid);
+
+        bizKnowledgeBase.setCollectionNameQa(prefix + IdUtil.fastSimpleUUID());
+
         bizKnowledgeBase.setUpdateBy(String.valueOf(userId));
         this.save(bizKnowledgeBase);
         return bizKnowledgeBase;
     }
+
 
     @Override
     @Transactional(rollbackFor = Exception.class)
