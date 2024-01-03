@@ -151,10 +151,11 @@ export function listWD(query) {
 
 
 // 问答库 删除问答
-export function deleteWD(ids) {
+export function deleteWD(data) {
   return request({
-    url: `/de/questionAnswer/removeQuestionAnswer/${ids}`,
-    method: "delete",
+    url: `/autotest/deleteVectors`,
+    method: "post",
+    data:data
   })
 }
 
@@ -169,7 +170,7 @@ export function selectWD(id) {
 // 问答库 新建问答
 export function createWD(data) {
   return request({
-    url: `/de/questionAnswer`,
+    url: `/autotest/appendQa`,
     method: "post",
     data: data
   })
@@ -181,6 +182,15 @@ export function updateWD(data) {
     url: `/de/questionAnswer`,
     method: "put",
     data: data
+  })
+}
+
+// 查询相同问
+export function selectSimilarQuestionList(query) {
+  return request({
+    url: `/de/questionAnswer/querySimilarQuestionList`,
+    method: "get",
+    params:query
   })
 }
 

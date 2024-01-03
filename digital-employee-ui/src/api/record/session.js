@@ -3,7 +3,7 @@ import request from '@/utils/request'
 // 查询列表
 export function list(query) {
   return request({
-    url: '/de/sessionRecord/list',
+    url: '/de/chatSession/list',
     method: 'get',
     params: query
   })
@@ -40,5 +40,21 @@ export function del(id) {
   return request({
     url: '/de/sessionRecord/' + id,
     method: 'delete'
+  })
+}
+
+// 查询详情对话列表
+export function getSessionRecord(query){
+  return request({
+    url: '/de/sessionRecord/list',
+    method: 'get',
+    params: query
+  })
+}
+
+export function delSessionRecord(ids){
+  return request({
+    url: `/de/chatSession/${ids}`,
+    method: 'delete',
   })
 }

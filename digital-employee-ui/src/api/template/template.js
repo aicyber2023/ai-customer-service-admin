@@ -44,6 +44,13 @@ export function update(data) {
   })
 }
 
+export function updateStatus(data) {
+  return request({
+    url: '/de/employeeTemplate/updateTemplateStatus',
+    method: 'get',
+    params: data
+  })
+}
 // 删除
 export function del(id) {
   return request({
