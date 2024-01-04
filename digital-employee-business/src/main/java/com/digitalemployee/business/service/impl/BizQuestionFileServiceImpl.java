@@ -175,14 +175,14 @@ public class BizQuestionFileServiceImpl extends ServiceImpl<BizQuestionFileMappe
         return bizQuestionFileMapper.deleteBizQuestionFileById(id);
     }
     public void downInChargeOfTemplate(HttpServletResponse response) {
-        responseSetting(response, "各分任务负责人导入模板", ".xlsx",
+        responseSetting(response, "问答模板", ".xlsx",
                 "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
 
         InputStream inputStream = null;
         OutputStream outputStream = null;
         try {
             // 读取文件的输入流
-            inputStream = Thread.currentThread().getContextClassLoader().getResourceAsStream("templates/各分任务负责人导入模板.xlsx");
+            inputStream = Thread.currentThread().getContextClassLoader().getResourceAsStream("问答模板.xlsx");
             XSSFWorkbook wb = new XSSFWorkbook(inputStream);
             outputStream = response.getOutputStream();
             wb.write(outputStream);

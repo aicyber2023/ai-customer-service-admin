@@ -3,6 +3,7 @@ package com.digitalemployee.business.controller;
 import com.digitalemployee.business.domain.BizQuestionAnswer;
 import com.digitalemployee.business.mapper.BizQuestionAnswerMapper;
 import com.digitalemployee.business.service.IBizQuestionAnswerService;
+import com.digitalemployee.business.vo.DigitalEmployeeIdVo;
 import com.digitalemployee.common.annotation.Log;
 import com.digitalemployee.common.core.controller.BaseController;
 import com.digitalemployee.common.core.domain.AjaxResult;
@@ -103,9 +104,9 @@ public class BizQuestionAnswerController extends BaseController {
         return success(result);
     }
     @GetMapping("/querySimilarQuestionList")
-    public TableDataInfo querySimilarQuestionList(Long digitalEmployeeId) {
+    public TableDataInfo querySimilarQuestionList(@RequestBody DigitalEmployeeIdVo digitalEmployeeIdVo) {
         startPage();
-        List<BizQuestionAnswer> list = bizQuestionAnswerService.querySimilarQuestionList(digitalEmployeeId);
+        List<BizQuestionAnswer> list = bizQuestionAnswerService.querySimilarQuestionList(digitalEmployeeIdVo);
         return getDataTable(list);
     }
 

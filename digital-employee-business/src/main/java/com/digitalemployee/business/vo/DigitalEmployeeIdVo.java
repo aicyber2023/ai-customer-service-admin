@@ -1,2 +1,8 @@
-package com.digitalemployee.business.vo;public class digitalEmployeeIdVo {
+package com.digitalemployee.business.vo;
+
+import lombok.Data;
+
+@Data
+public class DigitalEmployeeIdVo {
+    private Long digitalEmployeeId;
 }
