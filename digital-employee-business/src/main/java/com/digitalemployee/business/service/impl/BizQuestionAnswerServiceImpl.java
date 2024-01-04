@@ -256,10 +256,6 @@ public class BizQuestionAnswerServiceImpl extends ServiceImpl<BizQuestionAnswerM
             questionFile.setCreateBy(username);
             questionFile.setCreateTime(new Date());
             questionFile.setQuestionId(s);
-            BizQuestionFile bizQuestionFile = bizQuestionFileMapper.selectOneBizQuestionFile(questionFile);
-            if (bizQuestionFile != null) {
-                throw new BaseException("文件名称已存在");
-            }
             int i = bizQuestionFileMapper.insertBizQuestionFile(questionFile);
             if (i > 0) {
                 result = "上传成功";
