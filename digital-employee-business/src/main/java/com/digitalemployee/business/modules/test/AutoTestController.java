@@ -15,6 +15,7 @@ import com.digitalemployee.business.domain.BizQuestionAnswer;
 import com.digitalemployee.business.service.IBizKnowledgeBaseService;
 import com.digitalemployee.business.service.IBizQuestionAnswerService;
 import com.digitalemployee.common.annotation.Anonymous;
+import com.digitalemployee.common.core.controller.BaseController;
 import com.digitalemployee.common.core.domain.AjaxResult;
 import com.digitalemployee.common.exception.base.BaseException;
 import lombok.Data;
@@ -37,7 +38,7 @@ import java.util.stream.Collectors;
 @RequestMapping("/autotest")
 @RestController
 @RequiredArgsConstructor
-public class AutoTestController {
+public class AutoTestController  extends BaseController {
 
     /**
      * 测试临时目录
@@ -115,6 +116,13 @@ public class AutoTestController {
     @Anonymous
     @PostMapping("/appendQa")
     public AjaxResult appendQa(@RequestBody QuestionAnswerVo questionAnswerVo) {
+        BizQuestionAnswer bizQuestionAnswer = new BizQuestionAnswer();
+        bizQuestionAnswer.setQuestion(questionAnswerVo.getQuestion());
+        bizQuestionAnswer.setAnswer(questionAnswerVo.getAnswer());
+        bizQuestionAnswer.setDigitalEmployeeId(questionAnswerVo.getDigitalEmployeeId());
+        bizQuestionAnswer.setCreateBy(getUsername());
+        bizQuestionAnswerService.insertBizQuestionAnswer(bizQuestionAnswer);
+
         Long knowledgeBaseId = bizKnowledgeBaseService.getKnowledgeBaseIdByDeId(questionAnswerVo.getDigitalEmployeeId());
         BizKnowledgeBase knowledgeBase = bizKnowledgeBaseService.getById(knowledgeBaseId);
         if (knowledgeBase == null) {

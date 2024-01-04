@@ -460,6 +460,11 @@ export default {
                   templateId: this.form.templateId,
                   greeting: this.form.greeting,
                   status: 0,
+                  procedureList: res.data.procedureList,
+                  chatType:res.data.chatType,
+                  qaRadius:res.data.qaRadius,
+                  kbRadius:res.data.kbRadius,
+                  modelSwitch:res.data.modelSwitch,
                 }
                 add(form).then((res) => {
                   if (res.code == 200) {

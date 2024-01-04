@@ -21,6 +21,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
@@ -101,6 +102,7 @@ public class BizQuestionAnswerServiceImpl extends ServiceImpl<BizQuestionAnswerM
      * @return 结果
      */
     @Override
+    @Transactional
     public int insertBizQuestionAnswer(BizQuestionAnswer bizQuestionAnswer) {
         bizQuestionAnswer.setCreateTime(DateUtils.getNowDate());
         bizQuestionAnswer.setCreateType(1);
@@ -131,6 +133,7 @@ public class BizQuestionAnswerServiceImpl extends ServiceImpl<BizQuestionAnswerM
      * @return 结果
      */
     @Override
+    @Transactional
     public int updateBizQuestionAnswer(BizQuestionAnswer bizQuestionAnswer) {
         bizQuestionAnswer.setUpdateTime(DateUtils.getNowDate());
         BizQuestionAnswer questionAnswer = bizQuestionAnswerMapper.selectBizQuestionAnswer(bizQuestionAnswer);
@@ -201,6 +204,7 @@ public class BizQuestionAnswerServiceImpl extends ServiceImpl<BizQuestionAnswerM
     }
 
     @Override
+    @Transactional
     public String readExcelFile(MultipartFile[] files, String username, Long digitalEmployeeId, HttpServletRequest request) throws IOException {
         BizDigitalEmployee bizDigitalEmployee = bizDigitalEmployeeMapper.selectBizDigitalEmployeeById(digitalEmployeeId);
         if (bizDigitalEmployee == null) {
@@ -252,10 +256,6 @@ public class BizQuestionAnswerServiceImpl extends ServiceImpl<BizQuestionAnswerM
             questionFile.setCreateBy(username);
             questionFile.setCreateTime(new Date());
             questionFile.setQuestionId(s);
-            BizQuestionFile bizQuestionFile = bizQuestionFileMapper.selectOneBizQuestionFile(questionFile);
-            if (bizQuestionFile != null) {
-                throw new BaseException("文件名称已存在");
-            }
             int i = bizQuestionFileMapper.insertBizQuestionFile(questionFile);
             if (i > 0) {
                 result = "上传成功";

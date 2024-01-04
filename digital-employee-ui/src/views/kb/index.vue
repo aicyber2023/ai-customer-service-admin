@@ -172,7 +172,7 @@
               type="primary"
               icon="el-icon-search"
               size="mini"
-              @click="loadingListWD"
+              @click="wendaQueryParams.pageNum=1;loadingListWD()"
             >搜索
             </el-button
             >
@@ -229,6 +229,17 @@
             </el-button
             >
           </el-col>
+          <el-col :span="1.5">
+            <el-button
+              type="primary"
+              plain
+              icon="el-icon-document-copy"
+              size="mini"
+              @click="loadingSameProblem"
+            >{{ sameProblemStateShow ? "隐藏" : "显示" }}重复问题
+            </el-button
+            >
+          </el-col>
         </el-row>
         <!--        <div style="height: 400px;overflow-y: scroll">-->
         <el-table
@@ -240,16 +251,25 @@
         >
           <el-table-column type="selection" width="55" align="center"/>
           <el-table-column
-            prop="question"
             label="用户问"
             align="center"
             min-width="250"
-          />
+            :show-overflow-tooltip="true"
+          >
+            <template v-slot="scope">
+              <el-tooltip class="item" effect="dark" :content="scope.row.question" placement="top"/>
+              {{ scope.row.question }}
+            </template>
+          </el-table-column>
           <el-table-column
-            prop="answer"
             label="回答"
             align="center"
-            min-width="250">
+            min-width="250"
+            :show-overflow-tooltip="true">
+            <template v-slot="scope">
+              <el-tooltip class="item" effect="dark" :content="scope.row.answer" placement="top"/>
+              {{ scope.row.answer }}
+            </template>
           </el-table-column>
           <el-table-column
             prop="trainingStatus"
@@ -303,17 +323,18 @@
           <span class="myDialog-title">上传{{ uploadTitle }}文件</span>
           <div class="myDialog-content">
             <el-form-item label="文件个数" label-width="100px" prop="fileNum">
-              {{ form.fileList.length }}/1个
+              {{ form.fileList.length }}/10个
             </el-form-item>
             <el-form-item label="文件" label-width="100px" prop="fileList">
               <el-upload
+                multiple
                 class="upload-demo"
                 ref="upload"
                 action="https://jsonplaceholder.typicode.com/posts/"
                 :on-change="changeFile"
                 :file-list="form.fileList"
                 :auto-upload="false"
-                :limit="1"
+                :limit="10"
                 :on-remove="changeFile"
                 :accept="currentType==='0'?'.txt,.word.pdf':'.xls,.xlsx'"
                 :on-exceed="exceedFileError"
@@ -368,13 +389,13 @@
           <el-form-item label="用户问 :" prop="question" style="width: 80%;">
             <el-input size="medium " placeholder="请输入用户问问题" v-model.trim="formKV.question"/>
           </el-form-item>
-          <el-form-item label="相似问 :" style="width: 80%;" class="similarityList">
-            <div class="similarityQuestionItem" v-for="(item,index) in formKV.similarityQuestionList">
-              <el-input size="medium " placeholder="请输入相似问问题" v-model.trim="item.similarityQuestion"/>
-              <i class="el-icon-remove-outline" @click="removeSimilarityQuestion(index)"></i>
-            </div>
-            <i class="el-icon-circle-plus-outline" @click="addSimilarityQuestion"></i>
-          </el-form-item>
+          <!--          <el-form-item label="相似问 :" style="width: 80%;" class="similarityList">-->
+          <!--            <div class="similarityQuestionItem" v-for="(item,index) in formKV.similarityQuestionList">-->
+          <!--              <el-input size="medium " placeholder="请输入相似问问题" v-model.trim="item.similarityQuestion"/>-->
+          <!--              <i class="el-icon-remove-outline" @click="removeSimilarityQuestion(index)"></i>-->
+          <!--            </div>-->
+          <!--            <i class="el-icon-circle-plus-outline" @click="addSimilarityQuestion"></i>-->
+          <!--          </el-form-item>-->
           <el-form-item label="回答" style="width: 80%;" prop="answer">
             <el-input size="medium " type="textarea" placeholder="请输入相似问回答" v-model.trim="formKV.answer"/>
           </el-form-item>
@@ -442,7 +463,7 @@
   </div>
 </template>
 <script>
-import {add, createWD, del, deleteFileDQ, deleteWD, delFile, fileListDQ, list, listWD, loadingFileRecordAll, saveFile, selectWD, showFace, update, updateWD, uploadFileDQ, uploadFileWD} from "@/api/kb/kb.js";
+import {add, createWD, del, deleteFileDQ, deleteWD, delFile, fileListDQ, list, listWD, loadingFileRecordAll, saveFile, selectSimilarQuestionList, selectWD, showFace, update, updateWD, uploadFileDQ, uploadFileWD} from "@/api/kb/kb.js";
 import {get} from "@/api/employee/employee"
 import {uuid} from "vue-uuid";
 
@@ -485,6 +506,7 @@ export default {
           state: "新建问题"
         },
       ],
+      sameProblemStateShow: false,
       zsk: [],
       delete_bk_state: false,
       delete_not_bk_state: false,
@@ -520,7 +542,7 @@ export default {
       // 问答库form表单
       formKV: {
         question: "",
-        similarityQuestionList: [{similarityQuestion: ""}],
+        // similarityQuestionList: [{similarityQuestion: ""}],
         answer: "",
         digitalEmployeeId: this.$route.query.id
       },
@@ -843,9 +865,9 @@ export default {
       this.$refs.formKV.validate((valid) => {
 
         if (valid) {
-          this.formKV.similarityQuestionList = this.formKV.similarityQuestionList.filter((item) => {
-            return item.similarityQuestion != "";
-          })
+          // this.formKV.similarityQuestionList = this.formKV.similarityQuestionList.filter((item) => {
+          //   return item.similarityQuestion != "";
+          // })
           if (this.formKV.id) {
             this.titleWD = "修改";
             //   修改 问答
@@ -969,7 +991,9 @@ export default {
         })
       } else {
         const wdFormData = new FormData();
-        wdFormData.append("file", this.form.fileList[0].raw);
+        for (const item of this.form.fileList) {
+          wdFormData.append("files", item.raw);
+        }
         wdFormData.append("digitalEmployeeId", this.employeeId);
         uploadFileWD(wdFormData).then((res) => {
           if (res.code == 200) {
@@ -1038,7 +1062,7 @@ export default {
     //   超出文件数量警告
     exceedFileError() {
       this.$message({
-        message: "一次最多上传一个文件",
+        message: "一次最多上传10个文件",
         type: "warning",
       })
     },
@@ -1056,12 +1080,21 @@ export default {
     },
     //   加载问答列表
     loadingListWD() {
-      listWD(addDataFun({...this.wendaQueryParams})).then(res => {
-        if (res.code == 200) {
-          this.totalWD = res.total;
-          this.tableDataWD = res.rows
-        }
-      })
+      if (this.sameProblemStateShow) {
+        selectSimilarQuestionList(addDataFun({...this.wendaQueryParams})).then(res => {
+          if (res.code == 200) {
+            this.totalWD = res.total;
+            this.tableDataWD = res.rows
+          }
+        })
+      } else {
+        listWD(addDataFun({...this.wendaQueryParams})).then(res => {
+          if (res.code == 200) {
+            this.totalWD = res.total;
+            this.tableDataWD = res.rows
+          }
+        })
+      }
 
       // 拆分时间搜索的数据
       function addDataFun(obj) {
@@ -1077,14 +1110,14 @@ export default {
     },
     //   删除问答项
     removeWD(row) {
-      const id = row.id || this.idsWD;
+      const id = row.id?[row.id]:this.idsWD;
       console.log("id--->", id, this.idsWD)
       this.$confirm('此操作将永久删除该问答, 是否继续?', '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         type: 'warning'
       }).then(() => {
-        deleteWD(id).then(res => {
+        deleteWD({ids: id, digitalEmployeeId: this.wendaQueryParams.digitalEmployeeId}).then(res => {
           if (res.code == 200) {
             this.$message({
               message: "删除成功！",
@@ -1116,6 +1149,31 @@ export default {
         }
         return obj
       }
+    },
+    //   加载相同问题
+    loadingSameProblem() {
+      this.sameProblemStateShow = !this.sameProblemStateShow
+      if (this.sameProblemStateShow) {
+        //调取相同问接口
+        selectSimilarQuestionList(addDataFun({...this.wendaQueryParams})).then(res => {
+          if (res.code == 200) {
+            this.totalWD = res.total;
+            this.tableDataWD = res.rows
+          }
+        })
+
+      } else {
+        this.loadingListWD()
+      }
+
+      function addDataFun(obj) {
+        if (obj.dateRangeSendTime && obj.dateRangeSendTime.length !== 0) {
+          obj.startTime = obj.dateRangeSendTime[0]
+          obj.endTime = obj.dateRangeSendTime[1]
+        }
+        return obj
+      }
+
     }
   },
 };

@@ -7,95 +7,74 @@
       :inline="true"
       v-show="showSearch"
     >
-      <el-form-item label="客户" prop="sysUserId" v-if="showSysUser">
+      <el-form-item label="会话类型" prop="sessionType">
         <el-select
-          v-model="queryParams.sysUserId"
-          placeholder="请选择客户"
+          v-model="queryParams.sessionType"
           size="small"
-          clearable
         >
-          <el-option
-            v-for="item in userOptions"
-            :key="item.userId"
-            :label="item.nickName"
-            :value="item.userId"
-          />
+          <el-option label="全部" value=""/>
+          <el-option label="测试" :value="0"/>
+          <el-option label="匿名" :value="1"/>
         </el-select>
       </el-form-item>
-      <el-form-item label="服务对象ID" prop="userId">
+      <el-form-item label="访客IP" prop="ip">
         <el-input
-          v-model="queryParams.userId"
-          placeholder="请输入用户ID"
+          v-model="queryParams.ip"
+          placeholder="请输入访客IP"
           clearable
           size="small"
         />
       </el-form-item>
-      <el-form-item label="数字员工" prop="digitalEmployeeId">
+      <el-form-item label="数字员工昵称" prop="digitalEmployeeId">
         <el-select
           v-model="queryParams.digitalEmployeeId"
-          placeholder="请选择数字员工"
           clearable
           size="small"
         >
           <el-option
-            v-for="dict in employeeOptions"
-            :key="dict.id"
-            :label="dict.title"
-            :value="dict.id"
+            label="全部"
+            value=""
+          />
+          <el-option
+            v-for="item in employeeList"
+            :key="item.id"
+            :label="item.name"
+            :value="item.id"
           />
         </el-select>
       </el-form-item>
-      <el-form-item label="发送时间" prop="sendTime">
+      <el-form-item label="对话条数:">
+        <template style="display: flex;align-items: center">
+          <el-input v-model="queryParams.recordAmountStart" style="width: 80px;"></el-input>
+          <span> ~ </span>
+          <el-input v-model="queryParams.recordAmountEnd" style="width: 80px;"></el-input>
+          <span> 条 </span>
+        </template>
+      </el-form-item>
+      <el-form-item label="创建时间">
         <el-date-picker
-          v-model="dateRangeSendTime"
-          value-format="yyyy-MM-dd HH:mm:ss"
-          type="datetimerange"
+          v-model="createTime"
+          value-format="yyyy-MM-dd"
+          type="daterange"
           range-separator="-"
           start-placeholder="开始时间"
           end-placeholder="结束时间"
           size="small"
         ></el-date-picker>
       </el-form-item>
-      <el-form-item label="响应间隔">
-        <el-col :span="10">
-          <el-form-item prop="responseIntervalStart" style="width: 80px">
-            <el-input
-              v-model="queryParams.responseIntervalStart"
-              size="small"
-            />
-          </el-form-item>
-        </el-col>
-        <el-col class="line" :span="4" style="text-align: center">-</el-col>
-        <el-col :span="10">
-          <el-form-item prop="responseIntervalEnd" style="width: 80px">
-            <el-input v-model="queryParams.responseIntervalEnd" size="small"/>
-          </el-form-item>
-        </el-col>
-      </el-form-item>
-      <el-form-item label="返回状态" prop="status">
-        <el-select
-          v-model="queryParams.status"
-          placeholder="请选择返回状态"
-          clearable
+      <el-form-item label="最近对话时间">
+        <el-date-picker
+          v-model="recentlyConversationTime"
+          value-format="yyyy-MM-dd"
+          type="daterange"
+          range-separator="-"
+          start-placeholder="开始时间"
+          end-placeholder="结束时间"
           size="small"
-          @change="handleStatusChanged"
-        >
-          <el-option
-            v-for="dict in statusOptions"
-            :key="dict.dictValue"
-            :label="dict.dictLabel"
-            :value="dict.dictValue"
-          />
-        </el-select>
+        ></el-date-picker>
       </el-form-item>
-      <el-form-item label="错误码" prop="errorCode">
-        <el-input
-          v-model="queryParams.errorCode"
-          placeholder="请输入错误码"
-          clearable
-          :disabled="errorCodeDisabled"
-          size="small"
-        />
+      <el-form-item label="创建人ID" prop="userId">
+        <el-input v-model="queryParams.userId" placeholder="请输入创始人ID" clearable/>
       </el-form-item>
       <el-form-item>
         <el-button
@@ -120,70 +99,29 @@
       @selection-change="handleSelectionChange"
       height="550px"
     >
-      <el-table-column prop="sysUserId" label="客户ID" align="center" width="100">
-        <!-- <template slot-scope="scope">
-          {{ scope.row.sysUserId | filterUser(userOptions) }}
-        </template> -->
-      </el-table-column>
-      <el-table-column
-        prop="userId"
-        label="服务对象ID"
-        align="center"
-        width="100"
-      />
-      <el-table-column label="服务对象昵称" align="center" width="120">
-        <template slot-scope="scope">
-          {{ scope.row.nickName ? scope.row.nickName : "" }}
+      <el-table-column prop="index" label="序号" align="center">
+        <template v-slot="scope">
+          {{ (queryParams.pageNum - 1) * queryParams.pageSize + scope.$index + 1 }}
         </template>
       </el-table-column>
-      <el-table-column
-        prop="sendTime"
-        label="发送时间"
-        align="center"
-        width="150"
-      />
-      <el-table-column
-        prop="returnTime"
-        label="返回时间"
-        align="center"
-        width="150"
-      />
-      <el-table-column
-        prop="responseInterval"
-        label="响应间隔（ms）"
-        align="center"
-        width="80"
-      />
-      <el-table-column
-        prop="tokens"
-        label="Token数"
-        align="center"
-        width="100"
-      />
-      <el-table-column prop="digitalEmployeeId" label="数字员工" width="100">
-        <template slot-scope="scope">
-          {{ scope.row.digitalEmployeeId | filterEmployee(employeeOptions) }}
+      <el-table-column prop="sessionType" label="会话类型" align="center" min-width="100px">
+        <template v-slot="scope">
+          {{ scope.row.sessionType | filterSessionType }}
         </template>
       </el-table-column>
-      <el-table-column
-        prop="inputText"
-        label="用户输入"
-        min-width="100"
-        :show-overflow-tooltip="true"
-      />
-      <el-table-column
-        prop="outputText"
-        label="机器人返回"
-        min-width="100"
-        :show-overflow-tooltip="true"
-      />
-      <!-- <el-table-column prop="status" label="状态" width="150" align="center">
-        <template slot-scope="scope">
-          {{
-            scope.row.status | filterStage(statusOptions, scope.row.errorCode)
-          }}
+      <el-table-column prop="testUserName" label="用户账号" align="center" min-width="100px"/>
+      <el-table-column prop="ip" label="访客IP" align="center" min-width="100px"/>
+      <el-table-column prop="deName" label="数字客服昵称" align="center" min-width="100px"/>
+      <el-table-column prop="createTime" label="创建时间" align="center" min-width="140px"/>
+      <el-table-column prop="updateTime" label="最近对话时间" align="center" min-width="140px"/>
+      <el-table-column prop="recordAmount" label="对话条数" align="center" min-width="100px"/>
+      <el-table-column prop="userId" align="center" label="创建人ID" min-width="100px"/>
+      <el-table-column label="操作" align="center" width="200">
+        <template v-slot="scope">
+          <el-button type="text" @click="dialogueDetails(scope.row)">查看详情</el-button>
+          <el-button type="text" @click="dialogueDelete(scope.row)">删除会话</el-button>
         </template>
-      </el-table-column> -->
+      </el-table-column>
     </el-table>
     <pagination
       v-show="total > 0"
@@ -196,9 +134,9 @@
 </template>
 
 <script>
-import {list} from "@/api/record/session";
+import {delSessionRecord, list} from "@/api/record/session";
 import {listData} from "@/api/system/dict/data";
-import {listAll as listEmployees} from "@/api/employee/employee";
+import {listAll, listAll as listEmployees} from "@/api/employee/employee";
 import {listAll as listUsers} from "@/api/system/user";
 import {getInfo} from "@/api/login";
 
@@ -211,21 +149,26 @@ export default {
       total: 0,
       queryParams: {
         pageNum: 1,
-        pageSize: 10,
-        sysUserId: undefined,
+        pageSize: 12,
+        sessionType: "",
+        ip: "",
+        digitalEmployeeId: "",
+        recordAmountStart:"",
+        recordAmountEnd:"",
         userId: "",
-        digitalEmployeeId: undefined,
-        sendTimeStart: undefined,
-        sendTimeEnd: undefined,
-        responseIntervalStart: undefined,
-        responseIntervalEnd: undefined,
-        status: undefined,
-        errorCode: undefined,
+
+        createTimeStart: undefined,
+        createTimeEnd: undefined,
+        updateTimeStart: undefined,
+        updateTimeEnd: undefined,
       },
+      // 数字员工列表
+      employeeList: [],
       statusOptions: [],
       userOptions: [],
       employeeOptions: [],
-      dateRangeSendTime: [],
+      createTime: [],
+      recentlyConversationTime: [],
       errorCodeDisabled: true,
       showSearch: true,
       showSysUser: false,
@@ -235,39 +178,51 @@ export default {
     };
   },
   filters: {
-    filterStage: function (val, list, errorCode) {
-      if (list && list.length != 0) {
-        let tmp = errorCode && errorCode != 200 ? "（" + errorCode + "）" : "";
-        return list.filter((v) => v.dictValue == val)[0].dictLabel + tmp;
-      }
-      return val;
-    },
-    filterEmployee: function (val, list) {
-      console.log(val, list);
-      if (val != null) {
-        if (list && list.length != 0) {
-          console.log(list.filter((v) => v.id == val));
-          return list.filter((v) => v.id == val).length != 0 ? list.filter((v) => v.id == val)[0].name : "";
-        }
-      }
-      return "";
-    },
-    filterUser: function (val, list) {
-      if (list && list.length != 0) {
-        return list.filter((v) => v.userId == val)[0].nickName;
-      }
-      return val;
+    filterSessionType: function (val) {
+      if (val == 1) return "匿名"
+      return "测试"
     },
   },
   methods: {
+    // 查看对话详情
+    dialogueDetails(row) {
+      const {id} = row
+      this.$router.push({
+        name: 'sessionDetails',
+        query: {
+          id: id
+        }
+      })
+    },
+    // 删除对话
+    dialogueDelete(row) {
+      this.$confirm('确定要删除当前对话?', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        delSessionRecord(row.id).then(res => {
+          if (res.code == 200) {
+            this.$message({
+              type: 'success',
+              message: '删除成功!'
+            })
+            this.getList()
+          }
+        })
+      })
+    },
     getList() {
-      if (this.dateRangeSendTime && this.dateRangeSendTime.length > 0) {
-        this.queryParams.sendTimeStart = this.dateRangeSendTime[0];
-        this.queryParams.sendTimeEnd = this.dateRangeSendTime[1];
+      if (this.createTime && this.createTime.length > 0) {
+        this.queryParams.createTimeStart = this.createTime[0];
+        this.queryParams.createTimeEnd = this.createTime[1];
       }
-
+      if (this.recentlyConversationTime&&this.recentlyConversationTime.length>0){
+        this.queryParams.updateTimeStart = this.recentlyConversationTime[0];
+        this.queryParams.updateTimeEnd = this.recentlyConversationTime[1];
+      }
       list(this.queryParams).then((res) => {
-        if (res.code == 200) {
+        if (res.code === 200) {
           this.tableData = res.rows;
           this.total = res.total;
         }
@@ -288,28 +243,29 @@ export default {
     handleQuery() {
       this.queryParams.pageNum = 1;
       this.getList();
+      console.log(this.queryParams)
     },
     /** 重置按钮操作 */
     resetQuery() {
       this.queryParams = {
         pageNum: 1,
         pageSize: 10,
-        sysUserId: undefined,
+        sessionType: "",
+        ip: "",
+        digitalEmployeeId: "",
+        recordAmountStart: "",
+        recordAmountEnd:"",
         userId: "",
-        digitalEmployeeId: undefined,
-        sendTimeStart: undefined,
-        sendTimeEnd: undefined,
-        responseIntervalStart: undefined,
-        responseIntervalEnd: undefined,
-        status: undefined,
-        errorCode: undefined,
+        createTimeStart: undefined,
+        createTimeEnd: undefined,
+        updateTimeStart: undefined,
+        updateTimeEnd: undefined,
+
       };
+      this.createTime = [];
+      this.recentlyConversationTime = [];
       this.dateRangeSendTime = [];
-      if (!this.showSysUser) {
-        this.queryParams.sysUserId = this.userInfo.userId;
-      }
       this.resetForm("queryForm");
-      this.handleQuery();
     },
     /** 多选框选中数据 */
     handleSelectionChange(selection) {
@@ -327,6 +283,10 @@ export default {
     },
   },
   created() {
+    // 获取数字员工列表
+    listAll().then(res=>{
+      this.employeeList=res.data
+    })
     listEmployees().then((res) => {
       if (res.code == 200) {
         this.employeeOptions = res.data;
@@ -354,8 +314,8 @@ export default {
       if (!this.showSysUser) {
         this.queryParams.sysUserId = res.user.userId;
       }
-      this.getList();
     });
+    this.getList();
   },
 };
 </script>

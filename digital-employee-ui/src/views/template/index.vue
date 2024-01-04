@@ -502,7 +502,7 @@
               </el-slider>
             </el-form-item>
           </el-col>
-          <el-col :span="11" :offset="1">
+          <el-col :span="11">
             <el-form-item label="单次回复限制" prop="maxTokens">
               <div v-if="editMode">
                 <el-input-number
@@ -521,7 +521,6 @@
                 }}</span>
             </el-form-item>
           </el-col>
-
           <el-col :span="11">
             <el-form-item label="话题新鲜度" prop="presencePenalty">
               <el-slider
@@ -535,7 +534,7 @@
               </el-slider>
             </el-form-item>
           </el-col>
-          <el-col :span="11" :offset="1">
+          <el-col :span="11">
             <el-form-item label="频率惩罚度" prop="frequencyPenalty">
               <el-slider
                 v-model="form.frequencyPenalty"
@@ -548,7 +547,67 @@
               </el-slider>
             </el-form-item>
           </el-col>
+          <el-col :span="11">
+            <el-form-item label="知识库支持模式" prop="chatType">
+              <el-select v-model="form.chatType" :disabled="!editMode">
+                <el-option label="仅支持问答库" :value="0"></el-option>
+                <el-option label="仅支持文档库" :value="1"></el-option>
+                <el-option label="同时支持问答库和文档库" :value="2"></el-option>
+              </el-select>
+            </el-form-item>
+          </el-col>
+          <el-col :span="11">
+            <el-form-item label="问题命中匹配度" prop="qaRadius">
+              <el-slider
+                v-model="form.qaRadius"
+                :min="0"
+                :max="1"
+                :step="0.1"
+                style="padding: 0 10px"
+                :disabled="!editMode"
+              >
+              </el-slider>
+            </el-form-item>
+          </el-col>
+          <el-col :span="11">
+            <el-form-item label="文本命中匹配度" prop="kbRadius">
+              <el-slider
+                v-model="form.kbRadius"
+                :min="0"
+                :max="1"
+                :step="0.1"
+                style="padding: 0 10px"
+                :disabled="!editMode"
+              >
+              </el-slider>
+            </el-form-item>
+          </el-col>
+          <el-col :span="11">
+            <el-form-item label="超纲问题回复" prop="modelSwitch">
+              <el-select v-model="form.modelSwitch" :disabled="!editMode">
+                <el-option label="使用大模型知识" :value="0"></el-option>
+                <el-option label="使用兜底话术" :value="1"></el-option>
+              </el-select>
+            </el-form-item>
+          </el-col>
+          <el-col :span="22" v-if="form.modelSwitch==1">
+            <el-form-item label="兜底话术列表">
+              <div class="modelSwitchList">
+                <div class="modelSwitchItem" v-for="(item,index) in form.procedureList" :key="item.id">
+                  <el-input v-model="item.content" placeholder="请输入兜底话术" style="width: 60%;" :disabled="!editMode"/>
+                  <template v-if="editMode">
+                    <i class="el-icon-circle-plus-outline icon" style="right: 60px" v-if="index==form.procedureList.length-1" @click="handleAddScript"></i>
+                    <i class="el-icon-remove-outline icon" style="right: 35px" @click="handleSubScript(index)"></i>
+                  </template>
+                  <el-radio-group v-model="item.enable" style="position: absolute;right: 15px" :disabled="!editMode">
+                    <el-radio :label="1" @change="handleUpdateEnable(index)"/>
+                  </el-radio-group>
+                </div>
+              </div>
+            </el-form-item>
+          </el-col>
         </el-row>
+
         <el-form-item label="附带历史消息数" prop="historyNum">
           <el-input-number
             :min="0"
@@ -627,9 +686,11 @@
 </template>
 
 <script>
-import {add, del, get, list, update, uploadFace, uploadLogo,} from "@/api/template/template";
+import {add, del, get, list, update, updateStatus, uploadFace, uploadLogo,} from "@/api/template/template";
 import {listData} from "@/api/system/dict/data";
 import avatarFile from "@/utils/baseAvatarFile"
+import {uuid} from "vue-uuid";
+import {nanoid} from "nanoid";
 
 export default {
   name: "index",
@@ -640,7 +701,7 @@ export default {
       total: 0,
       queryParams: {
         pageNum: 1,
-        pageSize: 10,
+        pageSize: 12,
         name: "",
         status: undefined,
       },
@@ -679,7 +740,19 @@ export default {
         status: "0",
         headImageUrl: undefined,
         //   禁止修改模板名称
-        prohibit: false
+        prohibit: false,
+        chatType: 0,
+        qaRadius: 0.5,
+        kbRadius: 0.5,
+        modelSwitch: 1,
+        procedureList: [
+          {
+            id: "1",
+            content: "非常抱歉，我还没学到相关知识。",
+            enable: 1,
+            templateId: 1,
+          },
+        ]
       },
       rules: {
         name: [
@@ -732,6 +805,36 @@ export default {
     },
   },
   methods: {
+    handleUpdateEnable(index) {
+      const updateArr = this.form.procedureList.map(item => {
+        item.enable = 0
+        this.form.procedureList[index].enable = 1
+        return item;
+      })
+      this.form.procedureList = updateArr
+      console.log(this.form.procedureList)
+    },
+    handleAddScript() {
+      this.form.procedureList.push({
+        id: nanoid(),
+        content: "",
+        enable: 0,
+        templateId: undefined,
+      })
+    },
+    handleSubScript(index) {
+      if (this.form.procedureList.length === 1) {
+        return;
+      }
+      if (index === this.form.procedureList.length - 1) {
+        this.form.procedureList[index].enable = 0
+        this.form.procedureList[index - 1].enable = 1
+      } else {
+        this.form.procedureList[index].enable = 0
+        this.form.procedureList[index + 1].enable = 1
+      }
+      this.form.procedureList.splice(index, 1)
+    },
     getUrl(templateId) {
       let baseUrl = window.cfg.baseUrl;
       let url = baseUrl + "/de/employeeTemplate/showAvatar/" + templateId;
@@ -779,6 +882,10 @@ export default {
       this.$refs["form"].validate((valid) => {
         if (valid) {
           let form = {...this.form};
+          form.procedureList = form.procedureList.map(item => {
+            item.id = null
+            return item
+          })
           if (this.form.id) {
             form.id = this.form.id;
             update(form).then((res) => {
@@ -837,6 +944,7 @@ export default {
                   Promise.all([
                     uploadFace(this.faceFormData),
                     uploadLogo(this.LogoFormData),
+                    // add(form),
                   ]).then(() => {
                     this.$modal.msgSuccess("操作成功");
                     this.open = false;
@@ -941,10 +1049,10 @@ export default {
     },
     handleChangeStatus(row, val) {
       let form = {
-        id: row.id,
+        templateId: row.id,
         status: val,
       };
-      update(form).then((res) => {
+      updateStatus(form).then((res) => {
         if (res.code == 200) {
           this.$modal.msgSuccess("操作成功");
           this.getList();
@@ -971,8 +1079,21 @@ export default {
         builtin: true,
         status: "0",
         headImageUrl: undefined,
+        chatType: 0,
+        qaRadius: 0.5,
+        kbRadius: 0.5,
+        modelSwitch: 0,
+        procedureList: [
+          {
+            id: "1",
+            content: "非常抱歉，我还没学到相关知识。",
+            enable: 1,
+            templateId: 1
+          },
+        ]
       };
       this.resetForm("form");
+
     },
     requestUpload() {
     },
@@ -1073,6 +1194,35 @@ export default {
 </script>
 
 <style lang="scss">
+.modelSwitchList {
+  width: 100%;
+  border: 1px solid #cccccc;
+  border-radius: 10px;
+
+  .modelSwitchItem {
+    position: relative;
+    width: 100%;
+    padding: 10px;
+    border-bottom: 1px solid #cccccc;
+    display: flex;
+    align-items: center;
+
+    &:last-child {
+      border-bottom: none;
+    }
+
+    .el-radio__label {
+      display: none;
+    }
+
+    .icon {
+      cursor: pointer;
+      font-size: 20px;
+      position: absolute;
+    }
+  }
+}
+
 //.el-pagination {
 //  .number:hover {
 //    color: #1d93ab !important;

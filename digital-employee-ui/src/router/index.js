@@ -100,6 +100,19 @@ export const constantRoutes = [
       }
     ]
   },
+  {
+    path: '/session',
+    component: Layout,
+    hidden: true,
+    children: [
+      {
+        path: 'details',
+        component: () => import('@/views/record/session/details.vue'),
+        name: 'sessionDetails',
+        meta: {title: '对话记录详情', icon: 'dashboard',}
+      }
+    ]
+  },
 ]
 
 // 动态路由，基于用户权限动态去加载
