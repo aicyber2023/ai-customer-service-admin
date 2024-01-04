@@ -94,6 +94,6 @@ public interface BizQuestionAnswerMapper  extends BaseMapper<BizQuestionAnswer>
     void insertBatchQuestionAnswer(List<BizQuestionAnswer> list);
 
 
-    List<BizQuestionAnswer> querySimilarQuestionList();
+    List<BizQuestionAnswer> querySimilarQuestionList(Long digitalEmployeeId);
 
 }

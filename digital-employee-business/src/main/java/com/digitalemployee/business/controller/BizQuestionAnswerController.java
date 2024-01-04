@@ -103,9 +103,9 @@ public class BizQuestionAnswerController extends BaseController {
         return success(result);
     }
     @GetMapping("/querySimilarQuestionList")
-    public TableDataInfo querySimilarQuestionList() {
+    public TableDataInfo querySimilarQuestionList(Long digitalEmployeeId) {
         startPage();
-        List<BizQuestionAnswer> list = bizQuestionAnswerService.querySimilarQuestionList();
+        List<BizQuestionAnswer> list = bizQuestionAnswerService.querySimilarQuestionList(digitalEmployeeId);
         return getDataTable(list);
     }
 

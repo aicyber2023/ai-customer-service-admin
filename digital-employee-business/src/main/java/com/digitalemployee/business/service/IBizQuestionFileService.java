@@ -6,6 +6,7 @@ import org.apache.ibatis.annotations.Param;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.util.List;
 
 /**
@@ -64,4 +65,6 @@ public interface IBizQuestionFileService extends IService<BizQuestionFile>
      * @return 结果
      */
     int deleteBizQuestionFileById(Long id);
+
+    public void downInChargeOfTemplate(HttpServletResponse response);
 }

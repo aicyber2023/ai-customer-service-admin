@@ -149,6 +149,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         from biz_question_answer
         where question in
               (select question from biz_question_answer group by question having count(question)> 1)
+          AND digital_employee_id = #{digitalEmployeeId}
         order by  question
     </select>
 </mapper>

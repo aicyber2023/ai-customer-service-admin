@@ -289,7 +289,7 @@ public class BizQuestionAnswerServiceImpl extends ServiceImpl<BizQuestionAnswerM
     }
 
     @Override
-    public List<BizQuestionAnswer> querySimilarQuestionList() {
-        return bizQuestionAnswerMapper.querySimilarQuestionList();
+    public List<BizQuestionAnswer> querySimilarQuestionList(Long digitalEmployeeId) {
+        return bizQuestionAnswerMapper.querySimilarQuestionList(digitalEmployeeId);
     }
 }
