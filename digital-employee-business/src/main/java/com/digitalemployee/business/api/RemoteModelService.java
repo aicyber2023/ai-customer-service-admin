@@ -1,12 +1,11 @@
 package com.digitalemployee.business.api;
 
 import cn.hutool.http.*;
-import cn.hutool.json.JSONObject;
 import cn.hutool.json.JSONUtil;
-import com.alibaba.fastjson2.JSON;
 import com.digitalemployee.business.api.domain.*;
 import com.digitalemployee.business.modules.config.ChatResourcesConfig;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Component;
 import org.springframework.web.bind.annotation.RequestPart;
@@ -18,7 +17,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
+@Slf4j
 @Component
 @RequiredArgsConstructor
 public class RemoteModelService {
@@ -54,6 +53,8 @@ public class RemoteModelService {
      */
     public AppendTextsResponse appendFile(String collection, Map<String, Object> param) {
         final String url = chatResourcesConfig.getQaAppendFileUrl() + collection;
+        log.info("url="+url);
+        log.info("param="+param);
         AppendTextsResponse response = postFormDataToJson(url, param, AppendTextsResponse.class);
         if (response != null && !response.getSuccessful()) {
             throw new RuntimeException(url + "远程服务调用异常：" + response.getMessage());
@@ -83,6 +84,8 @@ public class RemoteModelService {
      */
     public AppendQaResponse appendQa(Map<String, Object> param) {
         final String url = chatResourcesConfig.getQaAppendQaUrl();
+        log.info("url="+url);
+        log.info("param="+param.toString());
         AppendQaResponse response = post(url, param.toString(), AppendQaResponse.class);
         if (response != null && !response.getSuccessful()) {
             throw new RuntimeException(url + "远程服务调用异常：" + response.getMessage());
@@ -113,6 +116,8 @@ public class RemoteModelService {
      */
     public BaseResponse dropVectors(Map<String, Object> param) {
         final String url = chatResourcesConfig.getDropVectorsUrl();
+        log.info("url="+url);
+        log.info("param="+param.toString());
         BaseResponse response = post(url, param.toString(), BaseResponse.class);
         if (response != null && !response.getSuccessful()) {
             throw new RuntimeException(url + "远程服务调用异常：" + response.getMessage());

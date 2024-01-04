@@ -3,19 +3,19 @@ package com.digitalemployee.business.domain;
 import com.digitalemployee.business.utils.ReadExcelUtils;
 import com.digitalemployee.business.vo.QuestionAnswersVo;
 import com.digitalemployee.common.exception.base.BaseException;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
-import org.apache.poi.ss.usermodel.Row;
-import org.apache.poi.ss.usermodel.Sheet;
-import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
-
+@Slf4j
 public class ReadExcel {
     //总行数
     private int totalRows = 0;
@@ -98,6 +98,7 @@ public class ReadExcel {
      * @return
      */
     private List<BizQuestionAnswer> readExcelValue(Workbook wb) throws CloneNotSupportedException {
+        log.info("--------------------读取单元格内容------------------------");
         // 得到第一个shell
         Sheet sheet = wb.getSheetAt(0);
         // 得到Excel的行数
@@ -112,14 +113,41 @@ public class ReadExcel {
             Row row = sheet.getRow(r);
             if (row != null) {
                 BizQuestionAnswer bizQuestionAnswer = new BizQuestionAnswer();
-                if (row.getCell(0) != null && !"".equals(row.getCell(0).getStringCellValue()) && row.getCell(1) != null && !"".equals(row.getCell(1).getStringCellValue())) {
-                    bizQuestionAnswer.setQuestion(row.getCell(0).getStringCellValue());
-                    bizQuestionAnswer.setAnswer(row.getCell(1).getStringCellValue());
-                    bizQuestionAnswerList.add(bizQuestionAnswer);
+                if(row.getCell(0)!= null && row.getCell(1)!= null ){
+
+                    log.info("row.getCell(0) = " + getValue(row.getCell(0)));
+                    log.info("row.getCell(0).getStringCellValue()= "+getValue(row.getCell(0)).getStringCellValue());
+                    log.info("row.getCell(1)= "+getValue(row.getCell(1)));
+                    log.info("row.getCell(1).getStringCellValue()= "+getValue(row.getCell(1)).getStringCellValue());
+                    if (row.getCell(0) != null && !"".equals(getValue(row.getCell(0)).getStringCellValue()) && row.getCell(1) != null && !"".equals(getValue(row.getCell(1)).getStringCellValue())) {
+                        bizQuestionAnswer.setQuestion(getValue(row.getCell(0)).getStringCellValue());
+                        bizQuestionAnswer.setAnswer(getValue(row.getCell(1)).getStringCellValue());
+                        bizQuestionAnswerList.add(bizQuestionAnswer);
+                    }
                 }
+
             }
         }
         return bizQuestionAnswerList;
+    }
+    /*
+    将单元格格式改为字符串
+     */
+    public Cell getValue(Cell cell){
+        if (cell==null || cell.getCellType()== CellType.BLANK){
+            return null;
+        }
+        switch (cell.getCellType()){
+            case NUMERIC:
+                cell.setCellType(CellType.STRING);
+                break;
+            case  BOOLEAN:
+                cell.setCellType(CellType.STRING);
+                break;
+            default:
+                cell.setCellType(CellType.STRING);
+        }
+        return cell;
     }
 
     public static void readTree(Sheet sheet, int rowIndex, String parentValue) {
