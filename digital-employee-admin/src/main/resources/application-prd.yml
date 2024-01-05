@@ -9,7 +9,7 @@ aicyber:
   # 实例演示开关
   demoEnabled: false
   # 文件路径 示例（ Windows配置D:/ruoyi/uploadPath，Linux配置 /home/ruoyi/uploadPath）
-  profile: D:/aicyber/uploadPath
+  profile: /opt/app/upload
   # 获取ip地址开关
   addressEnabled: false
   # 验证码类型 math 数组计算 char 字符验证
@@ -191,18 +191,18 @@ xss:
   urlPatterns: /system/*,/monitor/*,/tool/*
 
 chat:
-  knowledgeFilePath: /data/de-customer-service/server-java/upload
+  knowledgeFilePath: /opt/app/upload/upload
   questionAnswerFilePath: /data/de-customer-service/sever-java/upload/questionAnswerUpload
 
 train:
-  tempPath: /data/de-customer-service/server-java/temp/
+  tempPath: /opt/app/upload/temp/
 
 autoTest:
-  tempPath: /data/de-customer-service/server-java/upload/qa_auto_test/%s/
+  tempPath: /opt/app/upload/qa_auto_test/%s/
   qaRemoteUrl: https://718395e20o.zicp.fun/qa.do
 
 ai:
-  testPath: /data/de-customer-service/server-java/upload/qa_auto_test/%s/
+  testPath: /opt/app/upload/qa_auto_test/%s/
   qaUrlPrefix: acs-algorithm:28006
   qaRemoteUrl: /qa.do
   qaSearchTextUrl: /search-text.do
