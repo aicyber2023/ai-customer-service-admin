@@ -153,8 +153,10 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         where
          digital_employee_id = #{bizQuestionAnswer.digitalEmployeeId} and
         question in
-              (select question from biz_question_answer group by question having count(question)> 1)
-                <if test="bizQuestionAnswer.digitalEmployeeId != null "> and digital_employee_id = #{bizQuestionAnswer.digitalEmployeeId}</if>
+              (select question from biz_question_answer
+                 where
+                    digital_employee_id = #{bizQuestionAnswer.digitalEmployeeId}
+                               group by question having count(question)> 1)
                 <if test="bizQuestionAnswer.question != null  and bizQuestionAnswer.question != ''"> and question like concat('%', #{bizQuestionAnswer.question}, '%')</if>
                 <if test="bizQuestionAnswer.createType != null "> and create_type = #{bizQuestionAnswer.createType}</if>
                 <if test="startTime !=null and endTime !=null">
