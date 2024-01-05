@@ -10,8 +10,11 @@ import com.digitalemployee.common.enums.BusinessType;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 import java.util.List;
 
 /**
@@ -92,6 +95,12 @@ public class BizQuestionFileController extends BaseController
     public AjaxResult remove(@PathVariable Long[] ids)
     {
         return toAjax(bizQuestionFileService.deleteBizQuestionFileByIds(ids));
+    }
+    @ResponseBody
+    @PostMapping(value = "/uploadTemplate")
+    public AjaxResult uploadTemplate(MultipartFile file) throws IOException {
+        bizQuestionFileService.uploadTemplate(file);
+        return success();
     }
 
     @GetMapping("/downInChargeOfTemplate")

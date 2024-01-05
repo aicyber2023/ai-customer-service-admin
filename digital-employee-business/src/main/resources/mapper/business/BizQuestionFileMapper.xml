@@ -37,7 +37,6 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="digitalEmployeeId != null "> and digital_employee_id = #{digitalEmployeeId}</if>
             <if test="questionId != null "> and question_id = #{questionId}</if>
             <if test="fileName != null  and fileName != ''"> and file_name = #{fileName}</if>
-<!--            <if test="filePath != null  and filePath != ''"> and file_path = #{filePath}</if>-->
             <if test="status != null "> and status = #{status}</if>
             <if test="fileSize != null "> and file_size = #{fileSize}</if>
         </where>
@@ -75,14 +74,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     <update id="updateBizQuestionFile" parameterType="BizQuestionFile">
         update biz_question_file
         <trim prefix="SET" suffixOverrides=",">
-<!--            <if test="digitalEmployeeId != null">digital_employee_id = #{digitalEmployeeId},</if>-->
-<!--            <if test="questionId != null">question_id = #{questionId},</if>-->
             <if test="fileName != null and fileName != ''">file_name = #{fileName},</if>
-<!--            <if test="filePath != null and filePath != ''">file_path = #{filePath},</if>-->
             <if test="status != null">status = #{status},</if>
-<!--            <if test="fileSize != null">file_size = #{fileSize},</if>-->
-<!--            <if test="createTime != null">create_time = #{createTime},</if>-->
-<!--            <if test="createBy != null and createBy != ''">create_by = #{createBy},</if>-->
         </trim>
         where id = #{id}
     </update>

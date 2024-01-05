@@ -3,7 +3,6 @@ package com.digitalemployee.business.controller;
 import com.digitalemployee.business.domain.BizQuestionAnswer;
 import com.digitalemployee.business.mapper.BizQuestionAnswerMapper;
 import com.digitalemployee.business.service.IBizQuestionAnswerService;
-import com.digitalemployee.business.vo.DigitalEmployeeIdVo;
 import com.digitalemployee.common.annotation.Log;
 import com.digitalemployee.common.core.controller.BaseController;
 import com.digitalemployee.common.core.domain.AjaxResult;
@@ -15,7 +14,6 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.Date;
 import java.util.List;
@@ -103,11 +101,14 @@ public class BizQuestionAnswerController extends BaseController {
         String result = bizQuestionAnswerService.readExcelFile(files, username, digitalEmployeeId,request);
         return success(result);
     }
-    @PostMapping("/querySimilarQuestionList")
-    public TableDataInfo querySimilarQuestionList(@RequestBody DigitalEmployeeIdVo digitalEmployeeIdVo) {
+    @GetMapping("/querySimilarQuestionList")
+    public TableDataInfo querySimilarQuestionList(BizQuestionAnswer bizQuestionAnswer,Date startTime, Date endTime) {
         startPage();
-        List<BizQuestionAnswer> list = bizQuestionAnswerService.querySimilarQuestionList(digitalEmployeeIdVo);
-        return getDataTable(list);
+        List<BizQuestionAnswer> list = bizQuestionAnswerService.querySimilarQuestionList(bizQuestionAnswer,startTime,endTime);
+        List<BizQuestionAnswer> bizQuestionAnswerList = bizQuestionAnswerMapper.querySimilarQuestionList(bizQuestionAnswer, startTime, endTime);
+        TableDataInfo dataTable = getDataTable(list);
+        dataTable.setTotal(bizQuestionAnswerList.size());
+        return dataTable;
     }
 
 }

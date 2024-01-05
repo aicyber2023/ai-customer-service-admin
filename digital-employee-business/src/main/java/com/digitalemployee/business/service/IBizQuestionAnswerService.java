@@ -2,9 +2,7 @@ package com.digitalemployee.business.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.digitalemployee.business.domain.BizQuestionAnswer;
-import com.digitalemployee.business.vo.DigitalEmployeeIdVo;
 import org.apache.ibatis.annotations.Param;
-import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
@@ -78,5 +76,7 @@ public interface IBizQuestionAnswerService extends IService<BizQuestionAnswer>
      */
     String readExcelFile(@Param("files") MultipartFile[] files, @Param("username") String username,@Param("digitalEmployeeId") Long digitalEmployeeId, HttpServletRequest request) throws IOException;
 
-    List<BizQuestionAnswer> querySimilarQuestionList(DigitalEmployeeIdVo digitalEmployeeIdVo);
+    List<BizQuestionAnswer> querySimilarQuestionList(@Param("bizQuestionAnswer") BizQuestionAnswer bizQuestionAnswer,
+                                                     @Param("startTime") Date startTime,
+                                                     @Param("endTime") Date endTime);
 }
