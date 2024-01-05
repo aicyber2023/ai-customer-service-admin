@@ -146,38 +146,46 @@ public class BizQuestionAnswerServiceImpl extends ServiceImpl<BizQuestionAnswerM
         //根据数字员工id找到collectionid,
         BizQuestionAnswer questionAnswerDB = bizQuestionAnswerMapper.selectBizQuestionAnswerById(bizQuestionAnswer.getId());
         String collectionId = questionAnswerDB.getCollectionId();
+        int i = 0;
+        //如果collectionId有多个，则不删除远端仓库的数据,
         if (collectionId != null) {
-            // 调用远程删除接口删除要修改的数据
+            List<BizQuestionAnswer> collectionIdList = bizQuestionAnswerMapper.getQuestionAnswerByCollectionId(collectionId,bizQuestionAnswer.getDigitalEmployeeId());
             Long knowledgeBaseId = bizKnowledgeBaseService.getKnowledgeBaseIdByDeId(bizQuestionAnswer.getDigitalEmployeeId());
             BizKnowledgeBase knowledgeBase = bizKnowledgeBaseService.getById(knowledgeBaseId);
             if (knowledgeBase == null) {
                 throw new RuntimeException("知识库不存在");
             }
-            List<String> collectionList = new ArrayList<>();
-            collectionList.add(collectionId);
-            String collectionNameQa = knowledgeBase.getCollectionNameQa();
-            JSONObject paramMap = new JSONObject();
-            paramMap.put("collection", collectionNameQa);
-            paramMap.put("ids", collectionList);
-            log.info("调用删除向量远程接口 START...");
-            long startRemove = System.currentTimeMillis();
-            remoteModelService.dropVectors(paramMap);
-            log.info("调用删除向量远程接口 END...共耗时 {} 毫秒", System.currentTimeMillis() - startRemove);
-            // 调用远程插入接口插入新修改的数据
-            JSONObject param = JSONUtil.createObj();
-            param.put("collection", knowledgeBase.getCollectionNameQa());
-            param.put("question", bizQuestionAnswer.getQuestion());
-            param.put("answer", bizQuestionAnswer.getAnswer());
-            log.info("调用添加文本问答远程接口 START...");
-            long start = System.currentTimeMillis();
-            AppendQaResponse appendQaResponse = remoteModelService.appendQa(param);
-            if (appendQaResponse.getId() != null) {
-                bizQuestionAnswer.setCollectionId(appendQaResponse.getId());
+            if(!collectionIdList.isEmpty()){
+                //只有一条数据时才进行远端数据库删除数据操作
+                if(collectionIdList.size()==1){
+                    // 调用远程删除接口删除要修改的数据
+                    List<String> collectionList = new ArrayList<>();
+                    collectionList.add(collectionId);
+                    String collectionNameQa = knowledgeBase.getCollectionNameQa();
+                    JSONObject paramMap = new JSONObject();
+                    paramMap.put("collection", collectionNameQa);
+                    paramMap.put("ids", collectionList);
+                    log.info("调用删除向量远程接口 START...");
+                    long startRemove = System.currentTimeMillis();
+                    remoteModelService.dropVectors(paramMap);
+                    log.info("调用删除向量远程接口 END...共耗时 {} 毫秒", System.currentTimeMillis() - startRemove);
+                }
+                // 调用远程插入接口插入新修改的数据
+                JSONObject param = JSONUtil.createObj();
+                param.put("collection", knowledgeBase.getCollectionNameQa());
+                param.put("question", bizQuestionAnswer.getQuestion());
+                param.put("answer", bizQuestionAnswer.getAnswer());
+                log.info("调用添加文本问答远程接口 START...");
+                long start = System.currentTimeMillis();
+                AppendQaResponse appendQaResponse = remoteModelService.appendQa(param);
+                if (appendQaResponse.getId() != null) {
+                    bizQuestionAnswer.setCollectionId(appendQaResponse.getId());
+                }
+                log.info("调用添加文本问答远程接口 END...共耗时 {} 毫秒", System.currentTimeMillis() - start);
             }
-            log.info("调用添加文本问答远程接口 END...共耗时 {} 毫秒", System.currentTimeMillis() - start);
+            //更新本地数据库问答数据
+             i = bizQuestionAnswerMapper.updateBizQuestionAnswer(bizQuestionAnswer);
         }
-        //更新本地数据库问答数据
-        int i = bizQuestionAnswerMapper.updateBizQuestionAnswer(bizQuestionAnswer);
         if (i > 0) {
             return 1;
         }
