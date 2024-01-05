@@ -199,7 +199,6 @@ train:
 
 autoTest:
   tempPath: /opt/app/upload/qa_auto_test/%s/
-  qaRemoteUrl: https://718395e20o.zicp.fun/qa.do
 
 ai:
   testPath: /opt/app/upload/qa_auto_test/%s/
