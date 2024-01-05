@@ -217,10 +217,4 @@ public class BizDigitalEmployee extends BaseEntity {
     @TableField(exist = false)
     private Integer knowledgeBaseFileCount;
 
-    public Integer getProactivelyGreet() {
-        if (proactivelyGreet == null) {
-            return 0;
-        }
-        return proactivelyGreet;
-    }
 }
