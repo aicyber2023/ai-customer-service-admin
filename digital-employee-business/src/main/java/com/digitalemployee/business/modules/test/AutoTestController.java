@@ -116,12 +116,7 @@ public class AutoTestController  extends BaseController {
     @Anonymous
     @PostMapping("/appendQa")
     public AjaxResult appendQa(@RequestBody QuestionAnswerVo questionAnswerVo) {
-        BizQuestionAnswer bizQuestionAnswer = new BizQuestionAnswer();
-        bizQuestionAnswer.setQuestion(questionAnswerVo.getQuestion());
-        bizQuestionAnswer.setAnswer(questionAnswerVo.getAnswer());
-        bizQuestionAnswer.setDigitalEmployeeId(questionAnswerVo.getDigitalEmployeeId());
-        bizQuestionAnswer.setCreateBy(getUsername());
-        bizQuestionAnswerService.insertBizQuestionAnswer(bizQuestionAnswer);
+
 
         Long knowledgeBaseId = bizKnowledgeBaseService.getKnowledgeBaseIdByDeId(questionAnswerVo.getDigitalEmployeeId());
         BizKnowledgeBase knowledgeBase = bizKnowledgeBaseService.getById(knowledgeBaseId);
@@ -134,8 +129,17 @@ public class AutoTestController  extends BaseController {
         paramMap.put("answer", questionAnswerVo.getAnswer());
         log.info("调用添加文本问答远程接口 START...");
         long start = System.currentTimeMillis();
-        remoteModelService.appendQa(paramMap);
+        AppendQaResponse appendQaResponse = remoteModelService.appendQa(paramMap);
+        String collectionId = appendQaResponse.getId();
         log.info("调用添加文本问答远程接口 END...共耗时 {} 毫秒", System.currentTimeMillis() - start);
+
+        BizQuestionAnswer bizQuestionAnswer = new BizQuestionAnswer();
+        bizQuestionAnswer.setQuestion(questionAnswerVo.getQuestion());
+        bizQuestionAnswer.setAnswer(questionAnswerVo.getAnswer());
+        bizQuestionAnswer.setDigitalEmployeeId(questionAnswerVo.getDigitalEmployeeId());
+        bizQuestionAnswer.setCreateBy(getUsername());
+        bizQuestionAnswer.setCollectionId(collectionId);
+        bizQuestionAnswerService.insertBizQuestionAnswer(bizQuestionAnswer);
         return AjaxResult.success();
     }
 

@@ -11,6 +11,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletResponse;
 import java.util.List;
 
 /**
@@ -92,4 +93,10 @@ public class BizQuestionFileController extends BaseController
     {
         return toAjax(bizQuestionFileService.deleteBizQuestionFileByIds(ids));
     }
+
+    @GetMapping("/downInChargeOfTemplate")
+    public void downInChargeOfTemplate(HttpServletResponse response) {
+        bizQuestionFileService.downInChargeOfTemplate(response);
+    }
+
 }

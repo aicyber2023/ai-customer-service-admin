@@ -13,6 +13,7 @@ import com.digitalemployee.business.mapper.BizSimilarityQuestionMapper;
 import com.digitalemployee.business.modules.config.ChatResourcesConfig;
 import com.digitalemployee.business.service.IBizKnowledgeBaseService;
 import com.digitalemployee.business.service.IBizQuestionAnswerService;
+import com.digitalemployee.business.vo.DigitalEmployeeIdVo;
 import com.digitalemployee.common.exception.base.BaseException;
 import com.digitalemployee.common.utils.DateUtils;
 import com.digitalemployee.common.utils.StringUtils;
@@ -106,6 +107,7 @@ public class BizQuestionAnswerServiceImpl extends ServiceImpl<BizQuestionAnswerM
     public int insertBizQuestionAnswer(BizQuestionAnswer bizQuestionAnswer) {
         bizQuestionAnswer.setCreateTime(DateUtils.getNowDate());
         bizQuestionAnswer.setCreateType(1);
+        bizQuestionAnswer.setStatus(1);
         BizQuestionAnswer questionAnswer = bizQuestionAnswerMapper.selectOneBizQuestionAnswer(bizQuestionAnswer);
         if (questionAnswer != null) {
             throw new BaseException("该问答数据已存在");
@@ -289,7 +291,7 @@ public class BizQuestionAnswerServiceImpl extends ServiceImpl<BizQuestionAnswerM
     }
 
     @Override
-    public List<BizQuestionAnswer> querySimilarQuestionList() {
-        return bizQuestionAnswerMapper.querySimilarQuestionList();
+    public List<BizQuestionAnswer> querySimilarQuestionList(DigitalEmployeeIdVo digitalEmployeeIdVo) {
+        return bizQuestionAnswerMapper.querySimilarQuestionList(digitalEmployeeIdVo);
     }
 }
