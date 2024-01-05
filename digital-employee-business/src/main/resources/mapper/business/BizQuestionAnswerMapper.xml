@@ -151,7 +151,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         select id, digital_employee_id, question, answer, status, create_type, create_by, create_time, update_by, update_time, remark
         from biz_question_answer
         where
-         digital_employee_id = #{bizQuestionAnswer.digitalEmployeeId}
+         digital_employee_id = #{bizQuestionAnswer.digitalEmployeeId} and
         question in
               (select question from biz_question_answer group by question having count(question)> 1)
                 <if test="bizQuestionAnswer.digitalEmployeeId != null "> and digital_employee_id = #{bizQuestionAnswer.digitalEmployeeId}</if>
