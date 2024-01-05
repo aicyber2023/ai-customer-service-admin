@@ -13,7 +13,6 @@ import com.digitalemployee.business.mapper.BizSimilarityQuestionMapper;
 import com.digitalemployee.business.modules.config.ChatResourcesConfig;
 import com.digitalemployee.business.service.IBizKnowledgeBaseService;
 import com.digitalemployee.business.service.IBizQuestionAnswerService;
-import com.digitalemployee.business.vo.DigitalEmployeeIdVo;
 import com.digitalemployee.common.exception.base.BaseException;
 import com.digitalemployee.common.utils.DateUtils;
 import com.digitalemployee.common.utils.StringUtils;
@@ -27,7 +26,9 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 import java.util.stream.Collectors;
 
 
@@ -291,7 +292,14 @@ public class BizQuestionAnswerServiceImpl extends ServiceImpl<BizQuestionAnswerM
     }
 
     @Override
-    public List<BizQuestionAnswer> querySimilarQuestionList(DigitalEmployeeIdVo digitalEmployeeIdVo) {
-        return bizQuestionAnswerMapper.querySimilarQuestionList(digitalEmployeeIdVo);
+    public List<BizQuestionAnswer> querySimilarQuestionList(BizQuestionAnswer bizQuestionAnswer, @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") Date startTime, @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") Date endTime) {
+        List<BizQuestionAnswer> list = new ArrayList<>();
+        List<BizQuestionAnswer> bizQuestionAnswerList = bizQuestionAnswerMapper.querySimilarQuestionList(bizQuestionAnswer, startTime, endTime);
+        if (!bizQuestionAnswerList.isEmpty()) {
+            for (BizQuestionAnswer questionAnswer : bizQuestionAnswerList) {
+                list.add(questionAnswer);
+            }
+        }
+        return list;
     }
 }

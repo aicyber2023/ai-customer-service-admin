@@ -36,6 +36,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
                  and create_time &lt; #{endTime}
              </if>
         </where>
+        ORDER BY update_time DESC
     </select>
 
     <select id="selectBizQuestionAnswerListBydeId" parameterType="BizQuestionAnswer" resultMap="BizQuestionAnswerResult">
@@ -151,7 +152,14 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         from biz_question_answer
         where question in
               (select question from biz_question_answer group by question having count(question)> 1)
-          AND digital_employee_id = #{digitalEmployeeId}
+                <if test="bizQuestionAnswer.digitalEmployeeId != null "> and digital_employee_id = #{bizQuestionAnswer.digitalEmployeeId}</if>
+                <if test="bizQuestionAnswer.question != null  and bizQuestionAnswer.question != ''"> and question like concat('%', #{bizQuestionAnswer.question}, '%')</if>
+                <if test="bizQuestionAnswer.createType != null "> and create_type = #{bizQuestionAnswer.createType}</if>
+                <if test="startTime !=null and endTime !=null">
+                    and create_time &gt;= #{startTime}
+                    and create_time &lt; #{endTime}
+                </if>
+
         order by  question
     </select>
 </mapper>

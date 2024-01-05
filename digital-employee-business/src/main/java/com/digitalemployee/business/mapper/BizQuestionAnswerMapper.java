@@ -2,7 +2,6 @@ package com.digitalemployee.business.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.digitalemployee.business.domain.BizQuestionAnswer;
-import com.digitalemployee.business.vo.DigitalEmployeeIdVo;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
@@ -95,6 +94,8 @@ public interface BizQuestionAnswerMapper  extends BaseMapper<BizQuestionAnswer>
     void insertBatchQuestionAnswer(List<BizQuestionAnswer> list);
 
 
-    List<BizQuestionAnswer> querySimilarQuestionList(DigitalEmployeeIdVo digitalEmployeeIdVo);
+    List<BizQuestionAnswer> querySimilarQuestionList(@Param("bizQuestionAnswer") BizQuestionAnswer bizQuestionAnswer,
+                                                     @Param("startTime") Date startTime,
+                                                     @Param("endTime") Date endTime);
 
 }

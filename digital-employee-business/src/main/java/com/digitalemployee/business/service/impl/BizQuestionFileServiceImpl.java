@@ -1,12 +1,13 @@
 package com.digitalemployee.business.service.impl;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.io.UnsupportedEncodingException;
+import java.io.*;
+import java.net.URL;
 import java.net.URLEncoder;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 
+import org.springframework.util.ResourceUtils;
 import cn.hutool.core.io.IoUtil;
 import cn.hutool.json.JSONObject;
 import cn.hutool.json.JSONUtil;
@@ -19,8 +20,6 @@ import com.digitalemployee.business.mapper.BizQuestionFileMapper;
 import com.digitalemployee.business.mapper.BizSimilarityQuestionMapper;
 import com.digitalemployee.business.service.IBizKnowledgeBaseService;
 import com.digitalemployee.business.service.IBizQuestionFileService;
-import com.digitalemployee.business.service.IBizSimilarityQuestionService;
-import com.digitalemployee.common.exception.base.BaseException;
 import com.digitalemployee.common.utils.DateUtils;
 import lombok.RequiredArgsConstructor;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
@@ -28,9 +27,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.multipart.MultipartHttpServletRequest;
 
-import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 
@@ -182,7 +179,7 @@ public class BizQuestionFileServiceImpl extends ServiceImpl<BizQuestionFileMappe
         OutputStream outputStream = null;
         try {
             // 读取文件的输入流
-            inputStream = Thread.currentThread().getContextClassLoader().getResourceAsStream("问答模板.xlsx");
+            inputStream = Thread.currentThread().getContextClassLoader().getResourceAsStream("templates/问答模板1.xlsx");
             XSSFWorkbook wb = new XSSFWorkbook(inputStream);
             outputStream = response.getOutputStream();
             wb.write(outputStream);
@@ -193,6 +190,37 @@ public class BizQuestionFileServiceImpl extends ServiceImpl<BizQuestionFileMappe
             IoUtil.close(inputStream);
             IoUtil.close(outputStream);
         }
+    }
+
+    @Override
+    public void uploadTemplate(MultipartFile file)  {
+        if (file==null) {
+            log.error("文件不能为空");
+            throw new RuntimeException("上传Excel文件内容为空，请重新上传！");
+        }
+        String fileName = file.getOriginalFilename();
+        //判断文件是否是excel文件
+        if (!fileName.endsWith("xls") && !fileName.endsWith("xlsx")) {
+            log.error(fileName + "不是Excel文件!");
+            throw new RuntimeException(fileName + "不是Excel文件!");
+        }
+        ClassLoader classLoader = getClass().getClassLoader();
+        URL resourceURL = classLoader.getResource("templates");
+        String filePath = resourceURL.getPath();
+
+        String resourcePath = filePath.replace("target/classes/", "");
+        //保存文件到本地
+        File dir1 = new File(resourcePath);
+        if (!dir1.exists()) {
+            dir1.mkdirs();
+        }
+        File file1 = new File(dir1.getAbsolutePath() + File.separator  +"问答模板.xlsx");
+        try {
+            file.transferTo(file1);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
     }
 
     public void responseSetting(HttpServletResponse response, String fileName, String suffix, String contentType) {

@@ -113,8 +113,7 @@ public class ReadExcel {
             Row row = sheet.getRow(r);
             if (row != null) {
                 BizQuestionAnswer bizQuestionAnswer = new BizQuestionAnswer();
-                if(row.getCell(0)!= null && row.getCell(1)!= null ){
-
+                if(getValue(row.getCell(0))!= null && getValue(row.getCell(1))!= null ){
                     log.info("row.getCell(0) = " + getValue(row.getCell(0)));
                     log.info("row.getCell(0).getStringCellValue()= "+getValue(row.getCell(0)).getStringCellValue());
                     log.info("row.getCell(1)= "+getValue(row.getCell(1)));
@@ -125,7 +124,6 @@ public class ReadExcel {
                         bizQuestionAnswerList.add(bizQuestionAnswer);
                     }
                 }
-
             }
         }
         return bizQuestionAnswerList;
