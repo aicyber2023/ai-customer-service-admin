@@ -65,12 +65,6 @@
             <artifactId>digital-employee-business</artifactId>
         </dependency>
 
-        <!-- 训练模块-->
-        <dependency>
-            <groupId>com.digitalemployee</groupId>
-            <artifactId>digital-employee-train</artifactId>
-        </dependency>
-
     </dependencies>
 
 </project>

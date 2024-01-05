@@ -169,12 +169,6 @@
                 <version>${digitalemployee.version}</version>
             </dependency>
 
-            <dependency>
-                <groupId>com.digitalemployee</groupId>
-                <artifactId>digital-employee-train</artifactId>
-                <version>${digitalemployee.version}</version>
-            </dependency>
-
             <!-- 通用工具-->
             <dependency>
                 <groupId>com.digitalemployee</groupId>
@@ -188,7 +182,6 @@
     <modules>
         <module>digital-employee-admin</module>
         <module>digital-employee-business</module>
-        <module>digital-employee-train</module>
         <module>digital-employee-framework</module>
         <module>digital-employee-system</module>
         <module>digital-employee-quartz</module>
