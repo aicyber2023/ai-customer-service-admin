@@ -244,7 +244,7 @@ public class BizKnowledgeBaseServiceImpl extends ServiceImpl<BizKnowledgeBaseMap
         Map<String, Object> paramMap = new HashMap<>();
         paramMap.put("file", new File(knowledgeBaseFile.getFilePath()));
 
-        try (HttpResponse execute = HttpRequest.post(chatResourcesConfig.getUploadTextUrl() + collectionName)
+        try (HttpResponse execute = HttpRequest.post(chatResourcesConfig.getQaAppendFileUrl() + collectionName)
                 .header(Header.CONTENT_TYPE, "multipart/form-data")//头信息，多个头信息多次调用此方法即可
                 .form(paramMap)//表单内容
                 .timeout(20000)//超时，毫秒
@@ -262,6 +262,7 @@ public class BizKnowledgeBaseServiceImpl extends ServiceImpl<BizKnowledgeBaseMap
             this.saveAndSendMessage(knowledgeBaseFile, 3);
             throw new RuntimeException(e);
         }
+
     }
 
     private void saveAndSendMessage(BizKnowledgeBaseFile knowledgeBaseFile, int status) {
@@ -295,7 +296,7 @@ public class BizKnowledgeBaseServiceImpl extends ServiceImpl<BizKnowledgeBaseMap
                 paramMap.put("ids", idList);
                 String jsonStr = JSONUtil.toJsonStr(paramMap);
 
-                try (HttpResponse result = HttpRequest.post(chatResourcesConfig.getDropVectorsUrl())
+                try (HttpResponse result = HttpRequest.post(chatResourcesConfig.getQaDropVectorsUrl())
                         .header(Header.CONTENT_TYPE, ContentType.JSON.getValue())
                         .body(jsonStr)//表单内容
                         .execute()) {

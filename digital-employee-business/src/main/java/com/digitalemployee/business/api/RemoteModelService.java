@@ -115,7 +115,7 @@ public class RemoteModelService {
      * @return
      */
     public BaseResponse dropVectors(Map<String, Object> param) {
-        final String url = chatResourcesConfig.getDropVectorsUrl();
+        final String url = chatResourcesConfig.getQaDropVectorsUrl();
         log.info("url="+url);
         log.info("param="+param.toString());
         BaseResponse response = post(url, param.toString(), BaseResponse.class);

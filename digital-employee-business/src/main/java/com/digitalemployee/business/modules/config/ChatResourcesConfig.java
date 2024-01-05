@@ -14,12 +14,6 @@ public class ChatResourcesConfig {
     @Value("${chat.questionAnswerFilePath}")
     private String questionAnswerFilePath;
 
-    @Value("${chat.uploadTextUrl}")
-    private String uploadTextUrl;
-
-    @Value("${chat.dropVectorsUrl}")
-    private String dropVectorsUrl;
-
     /**
      * 测试临时目录
      */
