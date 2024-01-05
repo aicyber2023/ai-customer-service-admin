@@ -98,4 +98,6 @@ public interface BizQuestionAnswerMapper  extends BaseMapper<BizQuestionAnswer>
                                                      @Param("startTime") Date startTime,
                                                      @Param("endTime") Date endTime);
 
+    List<BizQuestionAnswer> getQuestionAnswerByCollectionId(@Param("collectionId")String collectionId,@Param("digitalEmployeeId") Long digitalEmployeeId);
+
 }

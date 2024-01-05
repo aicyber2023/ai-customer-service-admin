@@ -174,24 +174,24 @@ public class AutoTestController  extends BaseController {
                 BizQuestionAnswer bizQuestionAnswer = bizQuestionAnswerService.selectBizQuestionAnswerById(id);
                 collectionList.add(bizQuestionAnswer.getCollectionId());
             }
+            Long knowledgeBaseId = bizKnowledgeBaseService.getKnowledgeBaseIdByDeId(collectionVo.getDigitalEmployeeId());
+            BizKnowledgeBase knowledgeBase = bizKnowledgeBaseService.getById(knowledgeBaseId);
+            if (knowledgeBase == null) {
+                throw new RuntimeException("知识库不存在");
+            }
+            String collectionNameQa = knowledgeBase.getCollectionNameQa();
+            JSONObject paramMap = JSONUtil.createObj();
+            paramMap.put("collection", collectionNameQa);
+            paramMap.put("ids", collectionList);
+            Long[] questionAnswerIdArray = ids.toArray(new Long[ids.size()]);
+            if (questionAnswerIdArray.length != 0) {
+                bizQuestionAnswerService.deleteBizQuestionAnswerByIds(questionAnswerIdArray);
+            }
+            log.info("调用删除向量远程接口 START...");
+            long startRemove = System.currentTimeMillis();
+            remoteModelService.dropVectors(paramMap);
+            log.info("调用删除向量远程接口 END...共耗时 {} 毫秒", System.currentTimeMillis() - startRemove);
         }
-        Long knowledgeBaseId = bizKnowledgeBaseService.getKnowledgeBaseIdByDeId(collectionVo.getDigitalEmployeeId());
-        BizKnowledgeBase knowledgeBase = bizKnowledgeBaseService.getById(knowledgeBaseId);
-        if (knowledgeBase == null) {
-            throw new RuntimeException("知识库不存在");
-        }
-        String collectionNameQa = knowledgeBase.getCollectionNameQa();
-        JSONObject paramMap = JSONUtil.createObj();
-        paramMap.put("collection", collectionNameQa);
-        paramMap.put("ids", collectionList);
-        Long[] questionAnswerIdArray = ids.toArray(new Long[ids.size()]);
-        if (questionAnswerIdArray.length != 0) {
-            bizQuestionAnswerService.deleteBizQuestionAnswerByIds(questionAnswerIdArray);
-        }
-        log.info("调用删除向量远程接口 START...");
-        long startRemove = System.currentTimeMillis();
-        remoteModelService.dropVectors(paramMap);
-        log.info("调用删除向量远程接口 END...共耗时 {} 毫秒", System.currentTimeMillis() - startRemove);
         return AjaxResult.success();
     }
 
