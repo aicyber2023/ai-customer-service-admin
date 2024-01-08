@@ -80,6 +80,5 @@ public interface IBizQuestionAnswerService extends IService<BizQuestionAnswer>
                                                      @Param("startTime") Date startTime,
                                                      @Param("endTime") Date endTime);
 
-//    List<BizQuestionAnswer> getQuestionAnswerByCollectionId(@Param("collectionId")String collectionId,@Param("digitalEmployeeId") Long digitalEmployeeId);
     List<String> getQuestionAnswerByCollectionId(@Param("collectionId")String collectionId,@Param("digitalEmployeeId") Long digitalEmployeeId);
 }
