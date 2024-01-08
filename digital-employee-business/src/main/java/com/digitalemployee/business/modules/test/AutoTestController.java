@@ -12,6 +12,7 @@ import com.digitalemployee.business.api.RemoteModelService;
 import com.digitalemployee.business.api.domain.*;
 import com.digitalemployee.business.domain.BizKnowledgeBase;
 import com.digitalemployee.business.domain.BizQuestionAnswer;
+import com.digitalemployee.business.mapper.BizQuestionAnswerMapper;
 import com.digitalemployee.business.service.IBizKnowledgeBaseService;
 import com.digitalemployee.business.service.IBizQuestionAnswerService;
 import com.digitalemployee.common.annotation.Anonymous;
@@ -51,6 +52,8 @@ public class AutoTestController  extends BaseController {
     private final IBizKnowledgeBaseService bizKnowledgeBaseService;
 
     private final IBizQuestionAnswerService bizQuestionAnswerService;
+
+    private final BizQuestionAnswerMapper bizQuestionAnswerMapper;
 
     @Anonymous
     @PostMapping("/qABatchTest")
@@ -116,8 +119,6 @@ public class AutoTestController  extends BaseController {
     @Anonymous
     @PostMapping("/appendQa")
     public AjaxResult appendQa(@RequestBody QuestionAnswerVo questionAnswerVo) {
-
-
         Long knowledgeBaseId = bizKnowledgeBaseService.getKnowledgeBaseIdByDeId(questionAnswerVo.getDigitalEmployeeId());
         BizKnowledgeBase knowledgeBase = bizKnowledgeBaseService.getById(knowledgeBaseId);
         if (knowledgeBase == null) {
@@ -172,7 +173,10 @@ public class AutoTestController  extends BaseController {
         if(!ids.isEmpty()){
             for (Long id : ids) {
                 BizQuestionAnswer bizQuestionAnswer = bizQuestionAnswerService.selectBizQuestionAnswerById(id);
-                collectionList.add(bizQuestionAnswer.getCollectionId());
+                List<String> collectionIdList = bizQuestionAnswerService.getQuestionAnswerByCollectionId(bizQuestionAnswer.getCollectionId(),bizQuestionAnswer.getDigitalEmployeeId());
+                if(collectionIdList.size()==1){
+                    collectionList.add(bizQuestionAnswer.getCollectionId());
+                }
             }
             Long knowledgeBaseId = bizKnowledgeBaseService.getKnowledgeBaseIdByDeId(collectionVo.getDigitalEmployeeId());
             BizKnowledgeBase knowledgeBase = bizKnowledgeBaseService.getById(knowledgeBaseId);

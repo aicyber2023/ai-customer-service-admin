@@ -149,7 +149,7 @@ public class BizQuestionAnswerServiceImpl extends ServiceImpl<BizQuestionAnswerM
         int i = 0;
         //如果collectionId有多个，则不删除远端仓库的数据,
         if (collectionId != null) {
-            List<BizQuestionAnswer> collectionIdList = bizQuestionAnswerMapper.getQuestionAnswerByCollectionId(collectionId,bizQuestionAnswer.getDigitalEmployeeId());
+            List<String> collectionIdList = bizQuestionAnswerMapper.getQuestionAnswerByCollectionId(collectionId,bizQuestionAnswer.getDigitalEmployeeId());
             Long knowledgeBaseId = bizKnowledgeBaseService.getKnowledgeBaseIdByDeId(bizQuestionAnswer.getDigitalEmployeeId());
             BizKnowledgeBase knowledgeBase = bizKnowledgeBaseService.getById(knowledgeBaseId);
             if (knowledgeBase == null) {
@@ -309,5 +309,10 @@ public class BizQuestionAnswerServiceImpl extends ServiceImpl<BizQuestionAnswerM
             }
         }
         return list;
+    }
+
+    @Override
+    public List<String> getQuestionAnswerByCollectionId(String collectionId, Long digitalEmployeeId) {
+        return bizQuestionAnswerMapper.getQuestionAnswerByCollectionId(collectionId,digitalEmployeeId);
     }
 }
