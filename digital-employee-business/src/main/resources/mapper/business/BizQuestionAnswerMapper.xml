@@ -166,7 +166,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 
         order by  question
     </select>
-    <select id="getQuestionAnswerByCollectionId" parameterType="BizQuestionAnswer" resultMap="BizQuestionAnswerResult">
+    <select id="getQuestionAnswerByCollectionId" parameterType="BizQuestionAnswer" resultType="string">
         select collection_id from biz_question_answer
         <where>
             <if test="digitalEmployeeId != null "> and digital_employee_id = #{digitalEmployeeId}</if>
