@@ -696,6 +696,7 @@ export default {
   name: "index",
   data() {
     return {
+      baseUrl:process.env.VUE_APP_BASE_URL,
       loading: false,
       tableData: [],
       total: 0,
@@ -812,7 +813,7 @@ export default {
         return item;
       })
       this.form.procedureList = updateArr
-      console.log(this.form.procedureList)
+      //console.log(this.form.procedureList)
     },
     handleAddScript() {
       this.form.procedureList.push({
@@ -836,7 +837,7 @@ export default {
       this.form.procedureList.splice(index, 1)
     },
     getUrl(templateId) {
-      let baseUrl = window.cfg.baseUrl;
+      let baseUrl = this.baseUrl;
       let url = baseUrl + "/de/employeeTemplate/showAvatar/" + templateId;
       // +
       // "?uuid=" +
@@ -845,7 +846,7 @@ export default {
     },
     getList() {
       list(this.queryParams).then((res) => {
-        console.log("111");
+        //console.log("111");
         if (res.code == 200) {
           this.tableData = res.rows;
           this.total = res.total;
@@ -891,7 +892,7 @@ export default {
             update(form).then((res) => {
               if (res.code == 200) {
                 if (this.faceFormData && this.LogoFormData) {
-                  console.log("头像和公司logo都修改");
+                  //console.log("头像和公司logo都修改");
                   Promise.all([
                     uploadFace(this.faceFormData),
                     uploadLogo(this.LogoFormData),
@@ -901,14 +902,14 @@ export default {
                     this.getList();
                   });
                 } else if (this.faceFormData) {
-                  console.log("头像修改");
+                  //console.log("头像修改");
                   uploadFace(this.faceFormData).then(() => {
                     this.$modal.msgSuccess("修改成功");
                     this.open = false;
                     this.getList();
                   });
                 } else if (this.LogoFormData) {
-                  console.log("logo修改");
+                  //console.log("logo修改");
                   uploadLogo(this.LogoFormData).then(() => {
                     this.$modal.msgSuccess("修改成功");
                     this.open = false;
@@ -927,14 +928,14 @@ export default {
               let file = new File([blob], 'default-image.jpg', {type: 'image/jpeg'});
               this.faceFormData = new FormData();
               this.faceFormData.append("file", file)
-              console.log("头像修改", this.faceFormData)
+              //console.log("头像修改", this.faceFormData)
             }
             if (!this.LogoFormData) {
               const blob = this.dataURItoBlob(avatarFile.baseCompanyAvatar);
               let file = new File([blob], 'default-image.jpg', {type: 'image/jpeg'});
               this.LogoFormData = new FormData();
               this.LogoFormData.append("file", file)
-              console.log("logo修改", this.LogoFormData)
+              //console.log("logo修改", this.LogoFormData)
             }
             add(form).then((res) => {
               if (res.code == 200) {
@@ -992,11 +993,11 @@ export default {
         this.editMode = false;
         if (this.form.avatarContentType) {
           this.form.headImageUrl =
-            window.cfg.baseUrl +
+            this.baseUrl +
             "/de/employeeTemplate/showAvatar/" +
             this.form.id;
           this.form.CompanyLogo =
-            window.cfg.baseUrl +
+            this.baseUrl +
             "/de/employeeTemplate/showCompanyAvatar/" +
             this.form.id;
         }
@@ -1014,11 +1015,11 @@ export default {
         this.editMode = true;
         if (this.form.avatarContentType) {
           this.form.headImageUrl =
-            window.cfg.baseUrl +
+            this.baseUrl +
             "/de/employeeTemplate/showAvatar/" +
             this.form.id;
           this.form.CompanyLogo =
-            window.cfg.baseUrl +
+            this.baseUrl +
             "/de/employeeTemplate/showCompanyAvatar/" +
             this.form.id;
         }
@@ -1106,7 +1107,7 @@ export default {
         const reader = new FileReader();
         reader.readAsDataURL(file);
         reader.onload = () => {
-          console.log(reader.result);
+          //console.log(reader.result);
           this.form.headImageUrl = reader.result;
           this.$forceUpdate();
           this.faceFormData = new FormData();
@@ -1126,7 +1127,7 @@ export default {
         const reader = new FileReader();
         reader.readAsDataURL(file);
         reader.onload = () => {
-          console.log(reader.result);
+          //console.log(reader.result);
           this.form.CompanyLogo = reader.result;
           this.$forceUpdate();
           this.LogoFormData = new FormData();

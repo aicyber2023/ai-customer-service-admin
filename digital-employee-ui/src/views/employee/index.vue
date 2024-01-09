@@ -1,6 +1,6 @@
 <template>
   <div class="review-type">
-    <h3><b>我的数字员工</b></h3>
+    <h3><b>我的智能客服</b></h3>
     <div class="nav">
       <div class="navItem">
         <el-tooltip
@@ -43,7 +43,7 @@
               style="width: 42px; height: 42px"
             />
             <span style="fontsize: 12px; margintop: 20px"
-            >点击创建数字员工</span
+            >点击创建智能客服</span
             >
           </div>
         </el-card>
@@ -115,7 +115,7 @@
         />
       </el-col>
     </el-row>
-    <!-- 创建数字员工弹出层 -->
+    <!-- 创建智能客服弹出层 -->
     <el-dialog :visible.sync="createState" width="60%" @close="reset">
       <el-form
         :model="form"
@@ -126,19 +126,19 @@
         size="normal"
       >
         <div class="myDialog-body">
-          <span class="myDialog-title">创建数字员工</span>
+          <span class="myDialog-title">创建智能客服</span>
           <div class="myDialog-content">
             <!-- 数字人名称 -->
             <div class="">
               <el-form-item
-                label="数字员工昵称"
+                label="智能客服昵称"
                 size="medium"
                 prop="name"
                 label-width="120px"
                 style="textalign: left"
               >
                 <el-input
-                  placeholder="请输入数字员工昵称"
+                  placeholder="请输入智能客服昵称"
                   v-model="form.name"
                   clearable
                   maxlength="16"
@@ -211,7 +211,7 @@
     </el-dialog>
     <!-- 删除按钮对话框 -->
     <el-dialog title="提示" :visible.sync="deleteState" width="30%">
-      <span>确认删除数字员工？</span>
+      <span>确认删除智能客服？</span>
       <span slot="footer" class="dialog-footer">
         <el-button class="editClose" @click="deleteState = false"
         >取 消</el-button
@@ -236,6 +236,7 @@ export default {
   name: "index",
   data() {
     return {
+      baseUrl: process.env.VUE_APP_BASE_URL,
       // 选中的说话风格
       selectSpeakingStyle: "",
       // 新建员工对话框的状态
@@ -285,13 +286,13 @@ export default {
       },
       // 删除按钮提示框
       deleteState: false,
-      // 选中要删除的数字员工
+      // 选中要删除的智能客服
       selectDeleteStaff: null,
-      // 数字员工的数量
+      // 智能客服的数量
       total: 24,
-      //   总数字员工数量
+      //   总智能客服数量
       employeeAmount: 0,
-      //   创建数字员工的模板
+      //   创建智能客服的模板
       createEmployeeTemplateList: [],
       //   创建者 账号
       createBy: "",
@@ -330,7 +331,7 @@ export default {
     },
   },
   methods: {
-    // // 模糊查询数字员工
+    // // 模糊查询智能客服
     // searchEmployee() {
     //   if (this.search != "") {
     //     const form = {
@@ -339,32 +340,32 @@ export default {
     //     this.getList(form);
     //   }
     // },
-    // 删除数字员工
+    // 删除智能客服
     deleteStaff() {
       this.deleteState = false;
-      console.log("删除:" + this.selectDeleteStaff);
+      //console.log("删除:" + this.selectDeleteStaff);
       del(this.selectDeleteStaff).then((res) => {
         if (res.code == 200) {
-          console.log("删除成功");
+          //console.log("删除成功");
           this.getList();
         }
       });
     },
     getUrl(templateId) {
-      let baseUrl = window.cfg.baseUrl;
-      console.log("baseurl:", baseUrl);
+      let baseUrl = this.baseUrl;
+      //console.log("baseurl:", baseUrl);
       let url = baseUrl + "/de/employeeTemplate/showAvatar/" + templateId;
-      console.log("url", url);
+      //console.log("url", url);
       return url;
     },
     getList(form = this.queryParams) {
       const queryParams = form.limit ? this.queryParams : form;
-      console.log("queryParams", queryParams);
+      //console.log("queryParams", queryParams);
       list(queryParams).then((res) => {
         if (res.code == 200) {
           let obj = res.rows;
           obj = obj.filter((item) => {
-            console.log(item);
+            //console.log(item);
             return item.status != 2;
           });
           listTemplates().then((res) => {
@@ -387,7 +388,7 @@ export default {
                 }
               }
             }
-            console.log("obj", newArr);
+            //console.log("obj", newArr);
             this.tableData = newArr;
             if (!form.templateId) {
               this.employeeNum = newArr.length;
@@ -431,7 +432,7 @@ export default {
             status: 0,
             companyName: this.form.companyName,
           };
-          console.log("上传的form", form);
+          //console.log("上传的form", form);
           if (this.form.id) {
             form.id = this.form.id;
             update(form).then((res) => {
@@ -551,10 +552,10 @@ export default {
       });
       return flg;
     },
-    // 获取指定的数字员工列表
+    // 获取指定的智能客服列表
     getDigitalEmployeesList(templateId) {
       this.selectNav = templateId;
-      console.log(templateId);
+      //console.log(templateId);
       let form = {
         ...this.queryParams,
       };
@@ -564,12 +565,12 @@ export default {
           templateId,
         };
       }
-      console.log(form);
+      //console.log(form);
       this.getList(form);
     },
-    // 数字员工详情
+    // 智能客服详情
     details(item) {
-      console.log(item);
+      //console.log(item);
       this.$router.push(
         `/details/index?id=${item.id}&templateId=${
           item.templateId
@@ -614,7 +615,7 @@ export default {
     }).then((res) => {
       if (res.code == 200) {
         this.templateOptions = {...res.data};
-        console.log(res.data);
+        //console.log(res.data);
         this.form.templateId = res.data[0].id;
         const obj = {
           id: 0,

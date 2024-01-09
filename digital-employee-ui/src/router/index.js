@@ -96,7 +96,7 @@ export const constantRoutes = [
         path: 'index',
         component: () => import('@/views/details/details'),
         name: 'xxxx',
-        meta: {title: '数字员工详情', icon: 'dashboard',}
+        meta: {title: '智能客服详情', icon: 'dashboard',}
       }
     ]
   },

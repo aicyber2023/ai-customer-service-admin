@@ -25,7 +25,7 @@
           size="small"
         />
       </el-form-item>
-      <el-form-item label="数字员工昵称" prop="digitalEmployeeId">
+      <el-form-item label="智能客服昵称" prop="digitalEmployeeId">
         <el-select
           v-model="queryParams.digitalEmployeeId"
           clearable
@@ -162,7 +162,7 @@ export default {
         updateTimeStart: undefined,
         updateTimeEnd: undefined,
       },
-      // 数字员工列表
+      // 智能客服列表
       employeeList: [],
       statusOptions: [],
       userOptions: [],
@@ -243,7 +243,7 @@ export default {
     handleQuery() {
       this.queryParams.pageNum = 1;
       this.getList();
-      console.log(this.queryParams)
+      //console.log(this.queryParams)
     },
     /** 重置按钮操作 */
     resetQuery() {
@@ -283,7 +283,7 @@ export default {
     },
   },
   created() {
-    // 获取数字员工列表
+    // 获取智能客服列表
     listAll().then(res=>{
       this.employeeList=res.data
     })

@@ -35,7 +35,7 @@ export default {
   },
   data() {
     return {
-      title: '奥图数字员工管理平台',
+      title: '奥图智能客服管理平台',
       logo: logoImg
     }
   }

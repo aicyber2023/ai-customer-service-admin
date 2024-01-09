@@ -1,7 +1,7 @@
 {
-  "name": "ruoyi",
+  "name": "aotu",
   "version": "3.8.5",
-  "description": "奥图数字员工管理平台",
+  "description": "奥图智能客服管理平台",
   "author": "aicyber",
   "license": "MIT",
   "scripts": {
@@ -31,10 +31,6 @@
     "admin-template",
     "management-system"
   ],
-  "repository": {
-    "type": "git",
-    "url": "https://gitee.com/y_project/RuoYi-Vue.git"
-  },
   "dependencies": {
     "@riophae/vue-treeselect": "0.4.0",
     "axios": "0.24.0",
