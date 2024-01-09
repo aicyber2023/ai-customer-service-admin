@@ -43,7 +43,7 @@ export default {
     handleQuery() {
       this.queryParams.pageNum = 1;
       this.getList();
-      console.log(this.queryParams)
+      //console.log(this.queryParams)
     },
     /** 重置按钮操作 */
     resetQuery() {
@@ -62,7 +62,7 @@ export default {
     },
     getList() {
       this.loading=true
-      console.log(this.$route.query.id)
+      //console.log(this.$route.query.id)
       const id=this.$route.query.id
       this.queryParams.id=id;
       if (this.sendTime&&this.sendTime.length>0){

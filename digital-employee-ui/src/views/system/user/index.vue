@@ -267,9 +267,9 @@
         </el-row>
         <el-row v-if="showConfigBox">
           <el-col :span="4" :offset="4">
-            <div style="margin-bottom: 5px">数字员工个数</div>
+            <div style="margin-bottom: 5px">智能客服个数</div>
             <el-form-item label="" prop="employeeAmount" label-width="0" size="mini">
-              <el-input-number :min="0" :controls="false" style="width: 70px" v-model="configForm.employeeAmount" placeholder="请输入数字员工个数"/>
+              <el-input-number :min="0" :controls="false" style="width: 70px" v-model="configForm.employeeAmount" placeholder="请输入智能客服个数"/>
               个
             </el-form-item>
           </el-col>
@@ -548,7 +548,7 @@ export default {
   methods: {
     getAmountValidator() {
       return (rule, value, callback) => {
-        // console.log(this, value)
+        // //console.log(this, value)
         if (this.showConfigBox && !this.configForm.employeeAmount && !this.configForm.sessionAmount
           && !this.configForm.knowledgeBaseAmount && !this.configForm.knowledgeBaseDocAmount && !this.configForm.knowledgeBaseDocWordAmount) {
           callback(new Error('至少需要设置一项！'))
@@ -688,7 +688,7 @@ export default {
         this.form.password = "";
         if (this.form.roleIds.length > 0) {
           this.showConfigBox = true;
-          console.log("kfskfksg")
+          //console.log("kfskfksg")
         }
       });
     },

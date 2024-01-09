@@ -257,6 +257,7 @@ export default {
   name: "index",
   data() {
     return {
+      baseUrl:process.env.VUE_APP_BASE_URL,
       loading: false,
       tableData: [],
       statusOptions: [],
@@ -350,7 +351,7 @@ export default {
       this.resetForm("form");
     },
     getUrl(openId) {
-      let baseUrl = window.cfg.baseUrl;
+      let baseUrl = this.baseUrl;
       let url = baseUrl + "/de/bizUser/showFace/" + openId;
       return url;
     },
@@ -464,7 +465,7 @@ export default {
     checkRoles() {
       let flg = 0;
       if (this.userInfo.roles) {
-        console.log("this.userInfo", this.userInfo.roles)
+        //console.log("this.userInfo", this.userInfo.roles)
         this.userInfo.roles.forEach((role) => {
           if (role.roleKey == "admin") {
             flg = 9;

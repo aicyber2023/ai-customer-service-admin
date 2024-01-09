@@ -37,7 +37,7 @@
                   <div class="percentage" :style="{marginLeft:percentageLeft<10?'-92px':'-100px'}">{{ percentageLeft }}%</div>
                 </div>
                 <div class="desc" :style="{marginLeft:percentageLeft<10?'50':'35'}">
-                  <div>数字员工数量</div>
+                  <div>智能客服数量</div>
                   <div><b>{{ resource.usedEmployeeAmount }} / {{ resource.employeeAmount | filterAmount }}</b></div>
                 </div>
               </div>
@@ -103,7 +103,7 @@
                     />
                     <br/>
                     <span style="font-weight: 400; font-size: 14px"
-                    >数字员工管理</span
+                    >智能客服管理</span
                     >
                   </div>
                 </el-link>
@@ -397,7 +397,7 @@ export default {
     chartRight.setOption(optionRight);
   },
   created() {
-    // console.log("windowsWidth:", window.outerWidth);
+    // //console.log("windowsWidth:", window.outerWidth);
     // if (window.outerWidth > 1540) {
     //   this.windowWidthLayout = 5;
     // } else if (window.outerWidth < 1540) {
@@ -406,7 +406,7 @@ export default {
     // list()
     //   .then((res) => {
     //     if (res.code == 200) {
-    //       console.log(res);
+    //       //console.log(res);
     //       let emplayeeArr = [];
     //       for (const item of res.rows) {
     //         if (emplayeeArr.length == 0) {
@@ -451,13 +451,13 @@ export default {
     //         }
     //       }
     //       this.emplayeeArr = emplayeeArr;
-    //       console.log("elployeeArr", emplayeeArr);
+    //       //console.log("elployeeArr", emplayeeArr);
     //       return listAll();
     //     }
     //   })
     //   .then((res) => {
     //     if (res.code == 200) {
-    //       console.log("templateList", res);
+    //       //console.log("templateList", res);
     //       for (const templateItem of res.data) {
     //         for (const employeeItem of this.emplayeeArr) {
     //           if (employeeItem.templateId == templateItem.id) {
@@ -471,14 +471,14 @@ export default {
     //   });
 
     /*
-    * 获取全部数字员工
+    * 获取全部智能客服
     * */
 
     getAllEmployee().then((res) => {
       if (res.code == 200) {
         let obj = res.data;
         obj = obj.filter((item) => {
-          console.log(item);
+          //console.log(item);
           return item.status != 2;
         });
         listTemplates().then((res) => {
@@ -500,7 +500,7 @@ export default {
               }
             }
           }
-          console.log("obj", newArr);
+          //console.log("obj", newArr);
           this.emplayeeArr = newArr;
         });
         this.total = res.total;
@@ -592,9 +592,9 @@ export default {
     gotoDialogueList() {
       this.$router.push("/resource/record");
     },
-    // 数字员工详情
+    // 智能客服详情
     details(item) {
-      console.log(item);
+      //console.log(item);
       this.$router.push(
         `/details/index?id=${item.id}&templateId=${
           item.templateId

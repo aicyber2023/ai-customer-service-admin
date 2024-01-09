@@ -3,7 +3,7 @@ import { Notification, MessageBox, Message, Loading } from 'element-ui'
 import store from '@/store'
 import { getToken } from '@/utils/auth'
 import errorCode from '@/utils/errorCode'
-import { tansParams, blobValidate } from "@/utils/ruoyi";
+import { tansParams, blobValidate } from "@/utils/aotu";
 import cache from '@/plugins/cache'
 import { saveAs } from 'file-saver'
 
@@ -19,7 +19,7 @@ const service = axios.create({
   // 超时
   timeout: 10000
 })
-console.log("111",process.env.VUE_APP_BASE_API);
+//console.log("111",process.env.VUE_APP_BASE_API);
 
 // request拦截器
 service.interceptors.request.use(config => {
@@ -62,7 +62,7 @@ service.interceptors.request.use(config => {
   }
   return config
 }, error => {
-    console.log(error)
+    //console.log(error)
     Promise.reject(error)
 })
 
@@ -103,7 +103,7 @@ service.interceptors.response.use(res => {
     }
   },
   error => {
-    console.log('err' + error)
+    //console.log('err' + error)
     let { message } = error;
     if (message == "Network Error") {
       message = "后端接口连接异常";

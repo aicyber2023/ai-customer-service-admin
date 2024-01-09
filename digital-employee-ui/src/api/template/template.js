@@ -59,7 +59,7 @@ export function del(id) {
   })
 }
 
-// 上传数字员工头像
+// 上传智能客服头像
 export function uploadFace(data) {
   return request({
     url: '/de/employeeTemplate/uploadAvatar',
@@ -78,7 +78,7 @@ export function uploadLogo(data) {
 }
 
 
-// 查询正在使用的数字员工模板
+// 查询正在使用的智能客服模板
 export function selectUsedTemplateList() {
   return request({
     url: "/de/employeeTemplate/selectUsedTemplateList",

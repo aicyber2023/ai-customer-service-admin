@@ -1,5 +1,9 @@
 <template>
   <div class="container kb">
+    <div @click="closeView" class="closeBtn">
+      <i class="el-icon-close"/>
+    </div>
+    <span class="employeeName" >{{employeeName}}</span>
     <el-tabs v-model="currentType" @tab-click="handleClick">
       <el-tab-pane label="文档库" name="0" style="padding-bottom: 20px">
         <!--      文档库-->
@@ -201,7 +205,7 @@
               plain
               icon="el-icon-edit"
               size="mini"
-              @click="wendaCreateAndEditState = true"
+              @click="wendaCreateAndEditState = true;titleWD='新建'"
             >新建
             </el-button
             >
@@ -285,7 +289,7 @@
             prop="createTime"
             label="创建时间"
             align="center"
-            width="150"
+            min-width="150"
           />
           <el-table-column label="操作" align="center" width="150">
             <template slot-scope="scope">
@@ -470,6 +474,7 @@ import {uuid} from "vue-uuid";
 export default {
   data() {
     return {
+      baseWsUrl:process.env.VUE_APP_BASE_WEBSOCKET_URL,
       stateOptions: [
         {
           id: "",
@@ -587,9 +592,9 @@ export default {
       wendaCreateAndEditState: false,
       //   上传记录
       uploadRecordState: false,
-      //   当前数字员工
+      //   当前智能客服
       employeeId: "",
-      // 当前数字员工名称
+      // 当前智能客服名称
       employeeName: "",
       // 问答库 历史记录
       fileRecordData: [],
@@ -641,8 +646,9 @@ export default {
     }
   },
   mounted() {
+    //console.log(window.cfg.xxx)
     this.employeeId = this.$route.query.id
-    // 获取当前数字员工名称
+    // 获取当前智能客服名称
     get(this.employeeId).then(res => {
       if (res.code == 200) {
         this.employeeName = res.data.name;
@@ -662,14 +668,14 @@ export default {
         alert("您的浏览器不支持WebSocket");
         return false;
       }
-      let ip = window.cfg.baseWs
+      let ip = this.baseWsUrl
       if (ip.startsWith("http:")) {
         ip = ip.substr(7)
       } else if (ip.startsWith("https:")) {
         ip = ip.substr(8)
       }
       const wsuri = `ws://${ip}/bizWebSocket/${fileId}` // websocket地址
-      console.log(wsuri)
+      //console.log(wsuri)
       const websocket = {
         websocketItem: null,
         id: null,
@@ -682,7 +688,7 @@ export default {
       websocket.websocketItem.onclose = this.websocketclose;
     },
     websocketonopen(websocket) {
-      console.log("链接成功!", websocket)
+      //console.log("链接成功!", websocket)
       this.upload_file_state = false
       // 连接成功把连接添加到连接池中
       this.wsList.push(websocket)
@@ -700,14 +706,14 @@ export default {
         this.loadingListDQ();
         this.upload_file_state = false
       })
-      console.log("websocket连接池--->", this.wsList)
+      //console.log("websocket连接池--->", this.wsList)
     },
     websocketonerror(e) {
-      console.log(`连接失败的信息：`, e);
+      //console.log(`连接失败的信息：`, e);
     },
     //接收后端返回的数据，可以根据需要进行处理
     websocketonmessage(e) {
-      console.log("收到消息-->", e)
+      //console.log("收到消息-->", e)
       // 更新列表
       //   收到消息如果为已完成的状态 关闭连接
       if (e.isTrusted) {
@@ -716,7 +722,7 @@ export default {
         const table = JSON.parse(JSON.stringify(this.tableData));
         for (const item of table) {
           if (item.id == data.id) {
-            console.log("item--->", item, "item.status--->", item.status, "data.status", data.status);
+            //console.log("item--->", item, "item.status--->", item.status, "data.status", data.status);
             item.status = data.status
             break;
           }
@@ -729,7 +735,7 @@ export default {
     },
     //关闭连接
     websocketclose(e) {
-      console.log("断开连接-->", e);
+      //console.log("断开连接-->", e);
     },
 
 
@@ -741,18 +747,18 @@ export default {
             if (ws.id == id) {
               ws.websocketItem.close()
               this.wsList.splice(this.wsList.indexOf(ws), 1)
-              console.log("断开指定连接-->", ws, ",当前连接池--->", this.wsList)
+              //console.log("断开指定连接-->", ws, ",当前连接池--->", this.wsList)
               break;
             }
           }
         } else {
           // 关闭所有连接
-          console.log("断开全部连接")
+          //console.log("断开全部连接")
           for (const ws of this.wsList) {
             ws.websocketItem.close()
           }
           this.wsList = []
-          console.log("断开全部连接,当前连接池--->", this.wsList)
+          //console.log("断开全部连接,当前连接池--->", this.wsList)
         }
       }
 
@@ -785,7 +791,7 @@ export default {
     },
     // 删除知识库
     delete_bk(id) {
-      console.log(id);
+      //console.log(id);
       // 先用id去查询 当前知识库内是否存在文件
       showFace(id).then((res) => {
         if (res.code == 200) {
@@ -800,7 +806,7 @@ export default {
     },
     // 确认删除知识库
     confirmDeleteKb() {
-      console.log("删除", this.selectDeleteKbId);
+      //console.log("删除", this.selectDeleteKbId);
       del(this.selectDeleteKbId).then((res) => {
         if (res.code == 200) {
           this.toolsSuccess();
@@ -900,10 +906,10 @@ export default {
     },
     // 文件改变时触发
     changeFile(file, fileList) {
-      console.log(file, fileList);
+      //console.log(file, fileList);
       this.form.fileNum = fileList.length;
       this.form.fileList = fileList;
-      console.log(this.form.fileList);
+      //console.log(this.form.fileList);
     },
     /** 多选框选中数据 */
     handleSelectionChange(selection, type) {
@@ -912,12 +918,12 @@ export default {
         this.idsDQ = [];
         this.idsDQ = selection.map((item) => item.id);
         this.multipleDQ = !selection.length || flg;
-        console.log("ids", this.idsDQ);
+        //console.log("ids", this.idsDQ);
       } else if (type == "WD") {
         this.idsWD = [];
         this.idsWD = selection.map((item) => item.id);
         this.multipleWD = !selection.length || flg;
-        console.log("ids", this.idsWD);
+        //console.log("ids", this.idsWD);
       }
 
     },
@@ -929,7 +935,7 @@ export default {
       this.currentKb = id;
       showFace(id).then((res) => {
         if (res.code == 200) {
-          console.log(res);
+          //console.log(res);
           this.tableData = res.data.fileList;
         }
       });
@@ -1057,6 +1063,8 @@ export default {
           dateRangeSendTime: [],
           digitalEmployeeId: this.employeeId
         }
+        this.loadingListWD()
+
       }
     },
     //   超出文件数量警告
@@ -1111,7 +1119,7 @@ export default {
     //   删除问答项
     removeWD(row) {
       const id = row.id?[row.id]:this.idsWD;
-      console.log("id--->", id, this.idsWD)
+      //console.log("id--->", id, this.idsWD)
       this.$confirm('此操作将永久删除该问答, 是否继续?', '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
@@ -1131,7 +1139,7 @@ export default {
     //   文档库 文件列表
     loadingListDQ() {
       return new Promise((resolve, reject) => {
-        console.log("this.queryParams--->", this.queryParams)
+        //console.log("this.queryParams--->", this.queryParams)
         fileListDQ(addDataFun({...this.queryParams})).then(res => {
           if (res.code == 200) {
             this.total = res.total
@@ -1174,7 +1182,34 @@ export default {
         return obj
       }
 
-    }
+    },
+  //   关闭当前窗口
+    closeView(){
+      this.$tab.closePage(this.$route).then(({visitedViews}) => {
+        if (this.isActive(this.$route)) {
+          ////console.log(visitedViews)
+          this.toLastView(visitedViews, this.$route)
+        }
+      })
+    },
+    isActive(route) {
+      return route.path === this.$route.path
+    },
+    toLastView(visitedViews, view) {
+      const latestView = visitedViews.slice(-1)[0]
+      if (latestView) {
+        this.$router.push(latestView.fullPath)
+      } else {
+        // now the default is to redirect to the home page if there is no tags-view,
+        // you can adjust it according to your needs.
+        if (view.name === 'Dashboard') {
+          // to reload home page
+          this.$router.replace({path: '/redirect' + view.fullPath})
+        } else {
+          this.$router.push('/')
+        }
+      }
+    },
   },
 };
 </script>
@@ -1198,7 +1233,33 @@ export default {
   padding: 20px;
   overflow: auto;
   box-sizing: border-box;
-
+  .closeBtn{
+    width: 38px;
+    height: 38px;
+    border-radius: 10px;
+    border: 1px solid #cccccc;
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    z-index: 999;
+  }
+  .closeBtn:hover{
+    border-color: rgb(29 147 171);
+    background-color: rgb(229,229,229);
+  }
+  .closeBtn:active{
+    opacity: 0.6;
+  }
+  .employeeName{
+    position: absolute;
+    top: 20px;
+    left: 50%;
+    transform:translate(-50%);
+  }
 
   .myDialog-body {
     width: 100%;

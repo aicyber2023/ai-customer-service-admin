@@ -17,6 +17,7 @@
 export default {
   data() {
     return {
+      chatUrl:process.env.VUE_APP_BASE_CHAT_URL,
       id: "",
       templateId: "",
       token: "",
@@ -28,7 +29,7 @@ export default {
     this.templateId = this.$route.query.templateId;
     this.token = this.$route.query.header;
     this.createBy = this.$route.query.createBy;
-    console.log(this.$route.query.id, this.$route.query.templateId, this.$route.query.header, this.$route.query.createBy);
+    ////console.log(this.$route.query.id, this.$route.query.templateId, this.$route.query.header, this.$route.query.createBy);
     // var iframe = document.getElementById('ifr1').contentWindow;
     let _this = this;
     window.addEventListener('message', this.handleMessage);
@@ -37,17 +38,21 @@ export default {
     getSrc() {
       // return `${window.cfg.chatUrl}/#/?isTest=1&id=${this.id}&templateId=${this.templateId}&header=${this.token}&createBy=${this.createBy}`
       // return `${window.cfg.chatUrl}/#/?isTest=1&id=${this.id}&templateId=${this.templateId}&header=${this.token}&createBy=${this.createBy}`
-      return `${window.cfg.chatUrl}/#/?isTest=1&id=${this.id}&templateId=${this.templateId}&header=${this.token}&createBy=${this.createBy}`
+      return `${this.chatUrl}/#/?isTest=1&id=${this.id}&templateId=${this.templateId}&header=${this.token}&createBy=${this.createBy}`
     },
     handleMessage(event) {
       // 处理接收到的消息
-      if (event.data == "close") {
+      if (event.data.type == "close") {
         this.$tab.closePage(this.$route).then(({visitedViews}) => {
           if (this.isActive(this.$route)) {
-            console.log(visitedViews)
+            ////console.log(visitedViews)
             this.toLastView(visitedViews, this.$route)
           }
         })
+      }
+      if (event.data.type == "gotoKb"){
+        const id=event.data.data
+        this.$router.push(`/resource/kb?id=${id}`)
       }
     },
     isActive(route) {

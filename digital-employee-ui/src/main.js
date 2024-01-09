@@ -5,7 +5,7 @@ import Cookies from 'js-cookie'
 import Element from 'element-ui'
 import './assets/styles/element-variables.scss'
 import '@/assets/styles/index.scss' // global css
-import '@/assets/styles/ruoyi.scss' // ruoyi css
+import '@/assets/styles/aotu.scss'
 import App from './App'
 import store from './store'
 import router from './router'
@@ -17,7 +17,7 @@ import './assets/icons' // icon
 import './permission' // permission control
 import {getDicts} from "@/api/system/dict/data";
 import {getConfigKey} from "@/api/system/config";
-import {addDateRange, handleTree, parseTime, resetForm, selectDictLabel, selectDictLabels} from "@/utils/ruoyi";
+import {addDateRange, handleTree, parseTime, resetForm, selectDictLabel, selectDictLabels} from "@/utils/aotu";
 // 分页组件
 import Pagination from "@/components/Pagination";
 // 自定义表格工具组件

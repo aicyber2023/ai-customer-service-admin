@@ -85,7 +85,7 @@
         </template>
       </el-table-column>
       <el-table-column prop="name" label="产品名称" align="center" min-width="200"></el-table-column>
-      <el-table-column prop="employeeAmount" label="数字员工个数" width="100" align="center">
+      <el-table-column prop="employeeAmount" label="智能客服个数" width="100" align="center">
         <template slot-scope="scope">
           {{ scope.row.employeeAmount + '个' }}
         </template>
@@ -178,8 +178,8 @@
         <el-form-item label="产品名称" prop="name">
           <el-input v-model="form.name" placeholder="请输入产品名称" />
         </el-form-item>
-        <el-form-item label="数字员工个数" prop="employeeAmount">
-          <el-input-number :min="0" controls-position="right" v-model="form.employeeAmount" placeholder="请输入数字员工个数" />
+        <el-form-item label="智能客服个数" prop="employeeAmount">
+          <el-input-number :min="0" controls-position="right" v-model="form.employeeAmount" placeholder="请输入智能客服个数" />
           个
         </el-form-item>
         <el-form-item label="总对话条数" prop="sessionAmount">
@@ -287,7 +287,7 @@ import { listData } from "@/api/system/dict/data";
     methods:{
       getAmountValidator() {
         return (rule, value, callback) => {
-          // console.log(this, value)
+          // //console.log(this, value)
           if (!this.form.employeeAmount && !this.form.sessionAmount
             && !this.form.knowledgeBaseAmount && !this.form.knowledgeBaseDocAmount && !this.form.knowledgeBaseDocWordAmount) {
             callback(new Error('至少需要设置一项！'))
