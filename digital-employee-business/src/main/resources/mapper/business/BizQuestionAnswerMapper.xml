@@ -150,9 +150,13 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     <select id="querySimilarQuestionList" resultMap="BizQuestionAnswerResult">
         select id, digital_employee_id, question, answer, status, create_type, create_by, create_time, update_by, update_time, remark
         from biz_question_answer
-        where question in
-              (select question from biz_question_answer group by question having count(question)> 1)
-                <if test="bizQuestionAnswer.digitalEmployeeId != null "> and digital_employee_id = #{bizQuestionAnswer.digitalEmployeeId}</if>
+        where
+         digital_employee_id = #{bizQuestionAnswer.digitalEmployeeId} and
+        question in
+              (select question from biz_question_answer
+                 where
+                    digital_employee_id = #{bizQuestionAnswer.digitalEmployeeId}
+                               group by question having count(question)> 1)
                 <if test="bizQuestionAnswer.question != null  and bizQuestionAnswer.question != ''"> and question like concat('%', #{bizQuestionAnswer.question}, '%')</if>
                 <if test="bizQuestionAnswer.createType != null "> and create_type = #{bizQuestionAnswer.createType}</if>
                 <if test="startTime !=null and endTime !=null">
@@ -161,5 +165,13 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
                 </if>
 
         order by  question
+    </select>
+    <select id="getQuestionAnswerByCollectionId" parameterType="BizQuestionAnswer" resultType="string">
+        select collection_id from biz_question_answer
+        <where>
+            <if test="digitalEmployeeId != null "> and digital_employee_id = #{digitalEmployeeId}</if>
+            <if test="collectionId != null "> and collection_id = #{collectionId}</if>
+        </where>
+
     </select>
 </mapper>

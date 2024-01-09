@@ -79,4 +79,6 @@ public interface IBizQuestionAnswerService extends IService<BizQuestionAnswer>
     List<BizQuestionAnswer> querySimilarQuestionList(@Param("bizQuestionAnswer") BizQuestionAnswer bizQuestionAnswer,
                                                      @Param("startTime") Date startTime,
                                                      @Param("endTime") Date endTime);
+
+    List<String> getQuestionAnswerByCollectionId(@Param("collectionId")String collectionId,@Param("digitalEmployeeId") Long digitalEmployeeId);
 }
