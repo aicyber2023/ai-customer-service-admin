@@ -202,7 +202,7 @@ autoTest:
 
 ai:
   testPath: /opt/app/upload/qa_auto_test/%s/
-  qaUrlPrefix: acs-algorithm:28006
+  qaUrlPrefix: acs-pychat:28006
   qaRemoteUrl: /qa.do
   qaSearchTextUrl: /search-text.do
   qaChatUrl: /chat.do
