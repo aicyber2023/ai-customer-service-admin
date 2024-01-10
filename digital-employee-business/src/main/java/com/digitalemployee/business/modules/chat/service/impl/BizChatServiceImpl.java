@@ -224,6 +224,7 @@ public class BizChatServiceImpl implements BizChatService {
     private BizSessionRecord initRecord(ChatDataDTO chatData) {
         BizSessionRecord record = new BizSessionRecord();
         record.setSessionId(chatData.getSession().getId());
+        record.setIp(chatData.getClientIp());
         record.setDigitalEmployeeId(chatData.getDigitalEmployee().getId());
         record.setSendTime(new Date());
         record.setInputText(chatData.getUserInput());

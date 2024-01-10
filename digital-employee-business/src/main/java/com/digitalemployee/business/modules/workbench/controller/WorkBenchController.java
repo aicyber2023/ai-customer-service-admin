@@ -6,6 +6,7 @@ import com.digitalemployee.business.domain.BizDigitalEmployee;
 import com.digitalemployee.business.domain.BizUser;
 import com.digitalemployee.business.mapper.BizDigitalEmployeeMapper;
 import com.digitalemployee.business.mapper.BizKnowledgeBaseFileMapper;
+import com.digitalemployee.business.modules.chatsession.domain.BizSession;
 import com.digitalemployee.business.modules.chatsession.domain.BizSessionRecord;
 import com.digitalemployee.business.modules.chatsession.service.IBizSessionRecordService;
 import com.digitalemployee.business.modules.workbench.domain.ChatResourceVO;
@@ -70,12 +71,11 @@ public class WorkBenchController extends BaseController {
             return AjaxResult.success();
         }
 
-        List<Long> deIdList = digitalEmployeeList.stream().map(BizDigitalEmployee::getId).collect(Collectors.toList());
 
-        // 初始化 数字化员工 的会话Map
+        // 初始化 数字化员工 的会话详情Map
         Map<Long, List<BizSessionRecord>> sessionMapByDeId = new HashMap<>();
-
         LambdaQueryWrapper<BizSessionRecord> sessionRecordWrapper = Wrappers.lambdaQuery();
+        List<Long> deIdList = digitalEmployeeList.stream().map(BizDigitalEmployee::getId).collect(Collectors.toList());
         sessionRecordWrapper
                 .in(BizSessionRecord::getDigitalEmployeeId, deIdList) // sysUser 对应的 bizUser
                 .between(BizSessionRecord::getSendTime,
@@ -88,6 +88,9 @@ public class WorkBenchController extends BaseController {
             sessionMapByDeId
                     = sessionRecordList.stream().collect(Collectors.groupingBy(BizSessionRecord::getDigitalEmployeeId));
         }
+
+
+
 
         // 设置数字员工的 今日服务次数 和 今日服务人数
         for (BizDigitalEmployee de : digitalEmployeeList) {
