@@ -70,26 +70,14 @@ public class WorkBenchController extends BaseController {
             return AjaxResult.success();
         }
 
+        List<Long> deIdList = digitalEmployeeList.stream().map(BizDigitalEmployee::getId).collect(Collectors.toList());
+
         // 初始化 数字化员工 的会话Map
         Map<Long, List<BizSessionRecord>> sessionMapByDeId = new HashMap<>();
 
-        // 查询当前登陆sysUser对应的BizUser
-        LambdaQueryWrapper<BizUser> bizUserWrapper = Wrappers.lambdaQuery();
-        bizUserWrapper.eq(BizUser::getSysUserId, userId);
-        List<BizUser> bizUserList = bizUserService.list(bizUserWrapper);
-
-        // 添加游客用户id
-        BizUser user = new BizUser();
-        user.setId(0L);
-        bizUserList.add(user);
-
-        // 查询用户今日的会话数据，并按 数字员工ID 分组
-        // if (bizUserList != null && !bizUserList.isEmpty()) {}
-
-        List<Long> bizUserIdList = bizUserList.stream().map(BizUser::getId).collect(Collectors.toList());
         LambdaQueryWrapper<BizSessionRecord> sessionRecordWrapper = Wrappers.lambdaQuery();
         sessionRecordWrapper
-                .in(BizSessionRecord::getUserId, bizUserIdList) // sysUser 对应的 bizUser
+                .in(BizSessionRecord::getDigitalEmployeeId, deIdList) // sysUser 对应的 bizUser
                 .between(BizSessionRecord::getSendTime,
                         LocalDateTime.now().withHour(0).withMinute(0).withSecond(0),
                         LocalDateTime.now().withHour(23).withMinute(59).withSecond(59)
@@ -108,15 +96,7 @@ public class WorkBenchController extends BaseController {
                 List<BizSessionRecord> deRecordList = sessionMapByDeId.get(digitalEmpId);
                 de.setServeTimeToday(deRecordList.size());
 
-                // long userCount = deRecordList.stream().mapToLong(BizSessionRecord::getUserId).distinct().count();
-                Set<String> userCountSet = new HashSet<>();
-                deRecordList.forEach(deRecord -> {
-                    String uId = deRecord.getUserId().toString();
-                    if ("0".equals(uId)) {
-                        uId = deRecord.getIp();
-                    }
-                    userCountSet.add(uId);
-                });
+                Set<String> userCountSet = deRecordList.stream().map(BizSessionRecord::getIp).collect(Collectors.toSet());
                 de.setServeUserToday(userCountSet.size());
             } else {
                 de.setServeTimeToday(0);
