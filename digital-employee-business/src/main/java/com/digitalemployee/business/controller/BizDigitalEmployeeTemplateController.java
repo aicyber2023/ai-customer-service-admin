@@ -1,5 +1,6 @@
 package com.digitalemployee.business.controller;
 
+import cn.hutool.core.collection.CollectionUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.digitalemployee.business.domain.BizDigitalEmployeeTemplate;
@@ -70,6 +71,9 @@ public class BizDigitalEmployeeTemplateController extends BaseController {
     }
 
     private void selectTemplateData(List<BizDigitalEmployeeTemplate> data) {
+        if (CollectionUtil.isEmpty(data)) {
+            return;
+        }
         List<Long> idList = data.stream().map(BizDigitalEmployeeTemplate::getId).collect(Collectors.toList());
 
         LambdaQueryWrapper<BizDigitalEmployeeTemplateContext> wrapper = Wrappers.lambdaQuery();
