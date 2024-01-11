@@ -3,12 +3,8 @@ package com.digitalemployee.business.modules.chat.controller;
 
 import cn.hutool.core.codec.Base64;
 import cn.hutool.core.util.IdUtil;
-import cn.hutool.core.util.URLUtil;
 import cn.hutool.extra.servlet.ServletUtil;
 import cn.hutool.json.JSONUtil;
-import com.digitalemployee.business.api.RemoteModelService;
-import com.digitalemployee.business.api.domain.ChatHistory;
-import com.digitalemployee.business.api.domain.ChatParam;
 import com.digitalemployee.business.modules.chat.domain.BizChatRequest;
 import com.digitalemployee.business.modules.chat.domain.ChatDataDTO;
 import com.digitalemployee.business.modules.chat.service.BizChatService;
@@ -17,18 +13,13 @@ import com.digitalemployee.common.core.controller.BaseController;
 import com.digitalemployee.common.core.domain.AjaxResult;
 import com.digitalemployee.common.exception.base.BaseException;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -39,12 +30,14 @@ public class BizChatController extends BaseController {
     private final BizChatService bizChatService;
 
     @Anonymous
+    @CrossOrigin
     @PostMapping("/anonymousChat")
     public AjaxResult anonymousChat(@RequestBody BizChatRequest param, HttpServletRequest request, HttpServletResponse response) {
         ChatDataDTO chatData = bizChatService.initChatData(param, null, request, response);
         return AjaxResult.success(bizChatService.chat(chatData));
     }
 
+    @CrossOrigin
     @PostMapping("/chat")
     public AjaxResult chat(@RequestBody BizChatRequest param, HttpServletRequest request, HttpServletResponse response) {
         Long loginUserId = getUserId();
