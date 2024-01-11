@@ -29,6 +29,7 @@ import com.digitalemployee.business.service.IBizDigitalEmployeeService;
 import com.digitalemployee.business.service.IBizKnowledgeBaseService;
 import com.digitalemployee.common.exception.base.BaseException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpHeaders;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -81,7 +82,7 @@ public class BizChatServiceImpl implements BizChatService {
         // ip
         chatData.setClientIp(ServletUtil.getClientIP(request));
         // cookie token
-        chatData.setClientToken(this.getCookie(chatData.getCookieToken(), chatData.getTokenMapKey(), request, response));
+        chatData.setClientToken(this.getTokenHeader(chatData.getCookieToken(), chatData.getTokenMapKey(), request, response));
         // procedure
         if (chatData.useProcedure()) {
             chatData.setProcedure(this.getProcedure(digitalEmployeeId));
@@ -121,30 +122,31 @@ public class BizChatServiceImpl implements BizChatService {
         return knowledgeBase;
     }
 
-    private String getCookie(String cookieToken, String mapKey, HttpServletRequest request, HttpServletResponse response) {
-        Cookie cookie = ServletUtil.getCookie(request, cookieToken);
-        if (cookie == null) {
+    private String getTokenHeader(String headerName, String mapKey, HttpServletRequest request, HttpServletResponse response) {
+        String headerValue = ServletUtil.getHeader(request, headerName, StandardCharsets.UTF_8);
+        if (headerValue == null) {
             Map<String, String> tokenMap = new HashMap<>();
-            return initCookie(tokenMap, mapKey, cookieToken, response);
+            return this.initTokenHeader(tokenMap, mapKey, headerName, response);
         }
 
-        String cookieValue = cookie.getValue();
-        String jsonString = new String(Base64.decode(cookieValue.getBytes(StandardCharsets.UTF_8)));
-        Map<String, String> bean = JSONUtil.toBean(jsonString, new TypeReference<HashMap<String, String>>() {}, true);
+        String jsonString = new String(Base64.decode(headerValue.getBytes(StandardCharsets.UTF_8)));
+        Map<String, String> bean = JSONUtil.toBean(jsonString, new TypeReference<HashMap<String, String>>() {
+        }, true);
         if (!bean.containsKey(mapKey)) {
-            return initCookie(bean, mapKey, cookieToken, response);
+            return initTokenHeader(bean, mapKey, headerName, response);
         }
 
-        return bean.get((mapKey));
+        response.addHeader(HttpHeaders.ACCESS_CONTROL_EXPOSE_HEADERS, headerName);
+        response.setHeader(headerName, headerValue);
+        return bean.get(mapKey);
     }
 
-    private String initCookie(Map<String, String> tokenMap, String mapKey, String cookieToken, HttpServletResponse response) {
+    private String initTokenHeader(Map<String, String> tokenMap, String mapKey, String headerName, HttpServletResponse response) {
         String value = IdUtil.fastSimpleUUID();
         tokenMap.put(mapKey, value);
         String encodedToken = Base64.encode(JSONUtil.toJsonStr(tokenMap).getBytes(StandardCharsets.UTF_8));
-        Cookie cookie = new Cookie(cookieToken, encodedToken);
-        cookie.setMaxAge(-1);
-        response.addCookie(cookie);
+        response.addHeader(HttpHeaders.ACCESS_CONTROL_EXPOSE_HEADERS, headerName);
+        response.setHeader(headerName, encodedToken);
         return value;
     }
 
