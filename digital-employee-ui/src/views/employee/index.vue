@@ -173,10 +173,10 @@
               </el-option>
             </el-select>
           </div> -->
-            <!-- 工作职能 -->
+            <!-- 客服模板 -->
 
             <div class="myDialog-content-item" style="align-items: start">
-              <span class="input_name">工作职能</span>
+              <span class="input_name">客服模板</span>
               <el-scrollbar class="createEmplayeeScrollbar">
                 <div class="jobFunctionContent">
                   <div
