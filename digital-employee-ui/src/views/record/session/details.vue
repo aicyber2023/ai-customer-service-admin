@@ -9,6 +9,7 @@ export default {
         pageNum: 1,
         pageSize: 12,
         status: "",
+        sessionId:"",
         responseIntervalStart:"",
         responseIntervalEnd:"",
         keyword: "",
@@ -65,6 +66,7 @@ export default {
       //console.log(this.$route.query.id)
       const id=this.$route.query.id
       this.queryParams.id=id;
+      this.queryParams.sessionId=id;
       if (this.sendTime&&this.sendTime.length>0){
         this.queryParams.sendTimeStart=this.sendTime[0]
         this.queryParams.sendTimeEnd=this.sendTime[1]
@@ -186,11 +188,11 @@ export default {
           {{ scope.row.hitStatus | filterHitSituation }}
         </template>
       </el-table-column>
-      <el-table-column label="操作" align="center" width="100">
-        <template v-slot="scope">
-          <el-button type="text" @click="kbOptimize(scope.row)">知识库优化</el-button>
-        </template>
-      </el-table-column>
+<!--      <el-table-column label="操作" align="center" width="100">-->
+<!--        <template v-slot="scope">-->
+<!--          <el-button type="text" @click="kbOptimize(scope.row)">知识库优化</el-button>-->
+<!--        </template>-->
+<!--      </el-table-column>-->
     </el-table>
     <pagination
       v-show="total > 0"

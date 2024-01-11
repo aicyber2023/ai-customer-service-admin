@@ -4,7 +4,7 @@
       <el-row :gutter="24">
         <el-col :span="24" :offset="0"
         ><h3 style="fontsize: 20px; color: #101010; paddingleft: 5px">
-          <b>👏 欢迎回来，Ryan Septimus</b>
+          <b>👏 欢迎回来，{{createBy}}</b>
         </h3></el-col
         >
       </el-row>
@@ -157,32 +157,32 @@
                   </div>
                 </el-link>
               </el-col>
-              <el-col
-                :span="6"
-                v-if="checkRoles() >= 3"
-                type="flex"
-                justify="center"
-                align="middle"
-                class="active"
-              >
-                <el-link
-                  :underline="false"
-                  style="color: #666666; padding: 20px 0px"
-                  @click="gotoServer"
-                >
-                  <div style="width: 100%; text-align: center">
-                    <img
-                      src="@/assets/images/DialogueCollage.png"
-                      alt=""
-                      width="60"
-                    />
-                    <br/>
-                    <span style="font-weight: 400; font-size: 14px"
-                    >服务对象管理</span
-                    >
-                  </div>
-                </el-link>
-              </el-col>
+<!--              <el-col-->
+<!--                :span="6"-->
+<!--                v-if="checkRoles() >= 3"-->
+<!--                type="flex"-->
+<!--                justify="center"-->
+<!--                align="middle"-->
+<!--                class="active"-->
+<!--              >-->
+<!--                <el-link-->
+<!--                  :underline="false"-->
+<!--                  style="color: #666666; padding: 20px 0px"-->
+<!--                  @click="gotoServer"-->
+<!--                >-->
+<!--                  <div style="width: 100%; text-align: center">-->
+<!--                    <img-->
+<!--                      src="@/assets/images/DialogueCollage.png"-->
+<!--                      alt=""-->
+<!--                      width="60"-->
+<!--                    />-->
+<!--                    <br/>-->
+<!--                    <span style="font-weight: 400; font-size: 14px"-->
+<!--                    >服务对象管理</span-->
+<!--                    >-->
+<!--                  </div>-->
+<!--                </el-link>-->
+<!--              </el-col>-->
               <el-col
                 :span="6"
                 v-if="checkRoles() >= 9"
@@ -204,7 +204,7 @@
                     />
                     <br/>
                     <span style="font-weight: 400; font-size: 14px"
-                    >员工模板管理</span
+                    >客服模板管理</span
                     >
                   </div>
                 </el-link>
@@ -284,6 +284,7 @@ export default {
   name: "Index",
   data() {
     return {
+      nickName:"",
       // 版本号
       noticeList: [],
       totalNotice: [],

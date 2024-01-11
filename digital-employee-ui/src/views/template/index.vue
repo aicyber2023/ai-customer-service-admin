@@ -18,10 +18,10 @@
       <!--        </el-select>-->
       <!--        <el-link type="primary" icon="el-icon-setting" size="mini" :underline="false" style="margin-left: 5px" @click="gotoType"></el-link>-->
       <!--      </el-form-item>-->
-      <el-form-item label="员工模板名称" prop="name">
+      <el-form-item label="客服模板名称" prop="name">
         <el-input
           v-model="queryParams.name"
-          placeholder="请输入员工模板名称"
+          placeholder="请输入客服模板名称"
           clearable
           size="small"
         />
@@ -108,7 +108,7 @@
       <!--      </el-table-column>-->
       <el-table-column
         prop="name"
-        label="员工模板名称"
+        label="客服模板名称"
         align="center"
         min-width="100"
       ></el-table-column>
@@ -314,10 +314,10 @@
       <el-form ref="form" :model="form" :rules="rules" label-width="120px">
         <el-row>
           <el-col :span="11">
-            <el-form-item label="员工模板名称" prop="name">
+            <el-form-item label="客服模板名称" prop="name">
               <el-input
                 v-model="form.name"
-                placeholder="请输入员工模板名称"
+                placeholder="请输入客服模板名称"
                 v-if="editMode"
                 :disabled="prohibit"
               ></el-input>
@@ -585,12 +585,12 @@
           <el-col :span="11">
             <el-form-item label="超纲问题回复" prop="modelSwitch">
               <el-select v-model="form.modelSwitch" :disabled="!editMode">
-                <el-option label="使用大模型知识" :value="0"></el-option>
-                <el-option label="使用兜底话术" :value="1"></el-option>
+                <el-option label="使用大模型知识" :value="1"></el-option>
+                <el-option label="使用兜底话术" :value="0"></el-option>
               </el-select>
             </el-form-item>
           </el-col>
-          <el-col :span="22" v-if="form.modelSwitch==1">
+          <el-col :span="22" v-if="form.modelSwitch==0">
             <el-form-item label="兜底话术列表">
               <div class="modelSwitchList">
                 <div class="modelSwitchItem" v-for="(item,index) in form.procedureList" :key="item.id">
@@ -757,7 +757,7 @@ export default {
       },
       rules: {
         name: [
-          {required: true, message: "请输入员工模板名称", trigger: "blur"},
+          {required: true, message: "请输入客服模板名称", trigger: "blur"},
         ],
         // templateType:[{required:true, message:"请选择模板分类", trigger:"change"}],
         introduction: [
