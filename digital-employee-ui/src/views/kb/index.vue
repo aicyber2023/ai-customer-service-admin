@@ -389,7 +389,7 @@
         size="normal"
       >
         <div class="myDialog-body">
-          <span class="myDialog-title">{{ titleWD }}问答库</span>
+          <span class="myDialog-title">{{ titleWD }}问答条目</span>
           <el-form-item label="用户问 :" prop="question" style="width: 80%;">
             <el-input size="medium " placeholder="请输入用户问问题" v-model.trim="formKV.question"/>
           </el-form-item>

@@ -10,7 +10,7 @@ window.cfg = {
   // 开发环境
   chatUrl: 'http://192.168.1.16:3000',
   // 测试环境
-  // chatUrl: 'http://121.37.82.194:8201',
+  // chatUrl: 'https://autoai.aicyber.com:8201',
   // 生产环境
   // chatUrl: 'http://121.37.82.194:8010',
 
