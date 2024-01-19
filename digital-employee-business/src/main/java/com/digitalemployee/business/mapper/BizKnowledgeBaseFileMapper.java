@@ -5,6 +5,7 @@ import com.digitalemployee.business.domain.BizKnowledgeBaseFile;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -30,6 +31,9 @@ public interface BizKnowledgeBaseFileMapper extends BaseMapper<BizKnowledgeBaseF
      * @return 知识库文档集合
      */
     List<BizKnowledgeBaseFile> selectBizKnowledgeBaseFileList(BizKnowledgeBaseFile bizKnowledgeBaseFile);
+    List<BizKnowledgeBaseFile> getBizKnowledgeBaseFileList(@Param("bizKnowledgeBaseFile") BizKnowledgeBaseFile bizKnowledgeBaseFile,
+                                                           @Param("startTime") Date startTime,
+                                                           @Param("endTime") Date endTime);
 
     /**
      * 新增知识库文档

@@ -1,14 +1,15 @@
 package com.digitalemployee.business.service;
 
-import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.digitalemployee.business.domain.BizDigitalEmployee;
 import com.digitalemployee.business.domain.BizKnowledgeBase;
 import com.digitalemployee.business.domain.BizKnowledgeBaseFile;
 import com.digitalemployee.common.core.domain.AjaxResult;
+import org.apache.ibatis.annotations.Param;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -67,7 +68,7 @@ public interface IBizKnowledgeBaseService extends IService<BizKnowledgeBase> {
     int deleteBizKnowledgeBaseById(Long id);
 
 //    Boolean uploadFile(Long knowledgeBaseId, MultipartFile[] files);
-    AjaxResult uploadFile(Long knowledgeBaseId, MultipartFile[] files);
+    AjaxResult uploadFile(@Param("knowledgeBaseId") Long knowledgeBaseId, @Param("files") MultipartFile[] files);
 
     Boolean appendFileToKnowledgeBase(Long knowledgeFileId);
 
@@ -80,7 +81,13 @@ public interface IBizKnowledgeBaseService extends IService<BizKnowledgeBase> {
 
     List<BizKnowledgeBaseFile> selectKbFileList(BizKnowledgeBaseFile knowledgeBaseFile);
 
+    List<BizKnowledgeBaseFile> selectFileList(@Param("knowledgeBaseFile") BizKnowledgeBaseFile knowledgeBaseFile,
+                                              @Param("startTime") Date startTime,
+                                              @Param("endTime") Date endTime);
+
     Long getKnowledgeBaseIdByDeId(Long digitalEmployeeId);
 
 //    Boolean removeFile(Long knowledgeFileId);
+
+    BizKnowledgeBaseFile selectBizKnowledgeBaseFileById(Long id);
 }

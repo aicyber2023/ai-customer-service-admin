@@ -147,17 +147,17 @@ public class BizQuestionAnswerServiceImpl extends ServiceImpl<BizQuestionAnswerM
         BizQuestionAnswer questionAnswerDB = bizQuestionAnswerMapper.selectBizQuestionAnswerById(bizQuestionAnswer.getId());
         String collectionId = questionAnswerDB.getCollectionId();
         int i = 0;
-        //如果collectionId有多个，则不删除远端仓库的数据,
+        //如果collectionId有重复，则不删除远端仓库的数据,只删除本地数据库的数据
         if (collectionId != null) {
-            List<String> collectionIdList = bizQuestionAnswerMapper.getQuestionAnswerByCollectionId(collectionId,bizQuestionAnswer.getDigitalEmployeeId());
+            List<String> collectionIdList = bizQuestionAnswerMapper.getQuestionAnswerByCollectionId(collectionId, bizQuestionAnswer.getDigitalEmployeeId());
             Long knowledgeBaseId = bizKnowledgeBaseService.getKnowledgeBaseIdByDeId(bizQuestionAnswer.getDigitalEmployeeId());
             BizKnowledgeBase knowledgeBase = bizKnowledgeBaseService.getById(knowledgeBaseId);
             if (knowledgeBase == null) {
                 throw new RuntimeException("知识库不存在");
             }
-            if(!collectionIdList.isEmpty()){
+            if (!collectionIdList.isEmpty()) {
                 //只有一条数据时才进行远端数据库删除数据操作
-                if(collectionIdList.size()==1){
+                if (collectionIdList.size() == 1) {
                     // 调用远程删除接口删除要修改的数据
                     List<String> collectionList = new ArrayList<>();
                     collectionList.add(collectionId);
@@ -184,7 +184,7 @@ public class BizQuestionAnswerServiceImpl extends ServiceImpl<BizQuestionAnswerM
                 log.info("调用添加文本问答远程接口 END...共耗时 {} 毫秒", System.currentTimeMillis() - start);
             }
             //更新本地数据库问答数据
-             i = bizQuestionAnswerMapper.updateBizQuestionAnswer(bizQuestionAnswer);
+            i = bizQuestionAnswerMapper.updateBizQuestionAnswer(bizQuestionAnswer);
         }
         if (i > 0) {
             return 1;
@@ -313,6 +313,6 @@ public class BizQuestionAnswerServiceImpl extends ServiceImpl<BizQuestionAnswerM
 
     @Override
     public List<String> getQuestionAnswerByCollectionId(String collectionId, Long digitalEmployeeId) {
-        return bizQuestionAnswerMapper.getQuestionAnswerByCollectionId(collectionId,digitalEmployeeId);
+        return bizQuestionAnswerMapper.getQuestionAnswerByCollectionId(collectionId, digitalEmployeeId);
     }
 }
