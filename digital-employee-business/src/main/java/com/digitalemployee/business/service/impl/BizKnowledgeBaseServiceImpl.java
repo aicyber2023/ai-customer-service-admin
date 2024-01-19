@@ -195,7 +195,9 @@ public class BizKnowledgeBaseServiceImpl extends ServiceImpl<BizKnowledgeBaseMap
             List<BizKnowledgeBaseFile> fileList = new ArrayList<>();
             String savePath = chatResourcesConfig.getKnowledgeFilePath();
 //            List<Long> fileIds =  new ArrayList<>();
-            Map<String, Long> fileIdsMap = new HashMap<>();
+//            Map<String, Long> fileIdsMap = new HashMap<>();
+            Map<String, List<Long>> fileIdsMap = new HashMap<>();
+            List<Long> fileIds =  new ArrayList<>();
             for (MultipartFile file : files) {
                 // 保存文件
                 File saveFile = new File(savePath);
@@ -218,7 +220,8 @@ public class BizKnowledgeBaseServiceImpl extends ServiceImpl<BizKnowledgeBaseMap
             }
             bizKnowledgeBaseFileService.saveBatch(fileList);
             for (BizKnowledgeBaseFile bizKnowledgeBaseFile : fileList) {
-                fileIdsMap.put("fileId", bizKnowledgeBaseFile.getId());
+                fileIds.add(bizKnowledgeBaseFile.getId());
+                fileIdsMap.put("fileId", fileIds);
                 this.appendFileToKnowledgeBase(bizKnowledgeBaseFile.getId());
             }
             return AjaxResult.success(fileIdsMap);
