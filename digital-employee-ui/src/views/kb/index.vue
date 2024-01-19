@@ -982,7 +982,9 @@ export default {
       }
       if (this.currentType == 0) {
         const dqFormData = new FormData();
-        dqFormData.append("files", this.form.fileList[0].raw);
+        for (const item of this.form.fileList) {
+          dqFormData.append("files", item.raw);
+        }
         dqFormData.append("digitalEmployeeId", this.employeeId);
         uploadFileDQ(dqFormData).then(res => {
           if (res.code == 200) {
@@ -995,7 +997,8 @@ export default {
             })
           }
         })
-      } else {
+      }
+      else {
         const wdFormData = new FormData();
         for (const item of this.form.fileList) {
           wdFormData.append("files", item.raw);
