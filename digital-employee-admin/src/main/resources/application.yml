@@ -144,7 +144,6 @@ train:
 ai:
   testPath: D:/temp/qa_auto_test/%s/
   qaUrlPrefix: http://116.204.112.29:7090
-  urlPrefix: http://116.204.83.155:9090
   qaRemoteUrl: /qa.do
   qaSearchTextUrl: /search-text.do
   qaChatUrl: /chat.do

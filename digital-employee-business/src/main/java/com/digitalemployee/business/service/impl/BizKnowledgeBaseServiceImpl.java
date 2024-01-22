@@ -13,7 +13,6 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.digitalemployee.business.api.BizWebSocket;
-import com.digitalemployee.business.api.RemoteFileService;
 import com.digitalemployee.business.domain.BizDigitalEmployee;
 import com.digitalemployee.business.domain.BizKnowledgeBase;
 import com.digitalemployee.business.domain.BizKnowledgeBaseFile;
@@ -71,7 +70,7 @@ public class BizKnowledgeBaseServiceImpl extends ServiceImpl<BizKnowledgeBaseMap
 
     private final BizWebSocket bizWebSocket;
 
-    private final RemoteFileService remoteFileService;
+//    private final RemoteFileService remoteFileService;
 
 
 
@@ -273,7 +272,7 @@ public class BizKnowledgeBaseServiceImpl extends ServiceImpl<BizKnowledgeBaseMap
         Map<String, Object> paramMap = new HashMap<>();
         paramMap.put("file", new File(knowledgeBaseFile.getFilePath()));
 
-        try (HttpResponse execute = HttpRequest.post(chatResourcesConfig.getAppendFileUrl() + collectionName)
+        try (HttpResponse execute = HttpRequest.post(chatResourcesConfig.getQaAppendFileUrl() + collectionName)
                 .header(Header.CONTENT_TYPE, "multipart/form-data")//头信息，多个头信息多次调用此方法即可
                 .form(paramMap)//表单内容
                 .timeout(20000)//超时，毫秒
@@ -303,8 +302,8 @@ public class BizKnowledgeBaseServiceImpl extends ServiceImpl<BizKnowledgeBaseMap
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public int removeFile(Long[] ids) {
-        for (Long id : ids) {
+    public int removeFile(String[] ids) {
+        for (String id : ids) {
             BizKnowledgeBaseFile knowledgeBaseFile = bizKnowledgeBaseFileService.getById(id);
             if (knowledgeBaseFile == null) {
                 throw new RuntimeException("知识库文件不存在或已删除");
@@ -321,11 +320,11 @@ public class BizKnowledgeBaseServiceImpl extends ServiceImpl<BizKnowledgeBaseMap
                 paramMap.put("collection", knowledgeBase.getCollectionName());
 
                 String[] vectorIdArr = vectorIds.split(",");
-                List<Long> idList = Stream.of(vectorIdArr).map(Long::valueOf).collect(Collectors.toList());
+                List<String> idList = Stream.of(vectorIdArr).map(String::valueOf).collect(Collectors.toList());
                 paramMap.put("ids", idList);
                 String jsonStr = JSONUtil.toJsonStr(paramMap);
 
-                try (HttpResponse result = HttpRequest.post(chatResourcesConfig.getDropVectorsUrl())
+                try (HttpResponse result = HttpRequest.post(chatResourcesConfig.getQaDropVectorsUrl())
                         .header(Header.CONTENT_TYPE, ContentType.JSON.getValue())
                         .body(jsonStr)//表单内容
                         .execute()) {
@@ -343,7 +342,10 @@ public class BizKnowledgeBaseServiceImpl extends ServiceImpl<BizKnowledgeBaseMap
             String filePath = knowledgeBaseFile.getFilePath();
             FileUtil.del(filePath);
         }
-        return bizKnowledgeBaseFileService.deleteBizKnowledgeBaseFileByIds(ids);
+        List<Long> propertyIdList = Arrays.stream(ids)
+                .map(s -> Long.parseLong(s.trim())).collect(Collectors.toList());
+        Long[] idsArr = propertyIdList.toArray(new Long[propertyIdList.size()]);
+        return bizKnowledgeBaseFileService.deleteBizKnowledgeBaseFileByIds(idsArr);
 //        return bizKnowledgeBaseFileService.removeById(knowledgeFileId);
     }
 

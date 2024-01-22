@@ -56,20 +56,5 @@ public class ChatResourcesConfig {
     @Value(value = "${ai.defaultProcedure}")
     private String defaultProcedure;
 
-    /** 添加文档 */
-    @Value(value = "${ai.urlPrefix}${ai.appendFileUrl}")
-    private String appendFileUrl;
-
-    /** 添加问答文本 */
-    @Value(value = "${ai.urlPrefix}${ai.appendQaUrl}")
-    private String appendUrl;
-
-    /** 删除集合 */
-    @Value(value = "${ai.urlPrefix}${ai.qaDropCollectionUrl}")
-    private String dropCollectionUrl;
-
-    /** 删除向量 */
-    @Value(value = "${ai.urlPrefix}${ai.qaDropVectorsUrl}")
-    private String dropVectorsUrl;
 
 }

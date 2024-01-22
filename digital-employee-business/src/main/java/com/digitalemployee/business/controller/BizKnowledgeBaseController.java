@@ -103,7 +103,7 @@ public class BizKnowledgeBaseController extends BaseController {
      */
     @Log(title = "知识库文件", businessType = BusinessType.DELETE)
     @DeleteMapping("/removeFile/{ids}")
-    public AjaxResult removeFile(@PathVariable Long[] ids) {
+    public AjaxResult removeFile(@PathVariable String[] ids) {
         return success(bizKnowledgeBaseService.removeFile(ids));
     }
 

@@ -75,7 +75,7 @@ public interface IBizKnowledgeBaseService extends IService<BizKnowledgeBase> {
     @Async
     void appendFile(BizKnowledgeBaseFile knowledgeBaseFile, String collectionName);
 
-    int removeFile(Long[] ids);
+    int removeFile(String[] ids);
 
     BizKnowledgeBase initKnowledgeBase(BizDigitalEmployee bizDigitalEmployee);
 
