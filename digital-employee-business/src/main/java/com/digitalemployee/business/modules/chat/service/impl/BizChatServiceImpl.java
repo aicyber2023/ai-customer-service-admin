@@ -29,6 +29,7 @@ import com.digitalemployee.business.service.IBizDigitalEmployeeService;
 import com.digitalemployee.business.service.IBizKnowledgeBaseService;
 import com.digitalemployee.common.exception.base.BaseException;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpHeaders;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -41,6 +42,7 @@ import java.util.*;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class BizChatServiceImpl implements BizChatService {
 
     private final IBizDigitalEmployeeService digitalEmployeeService;
@@ -124,6 +126,9 @@ public class BizChatServiceImpl implements BizChatService {
 
     private String getTokenHeader(String headerName, String mapKey, HttpServletRequest request, HttpServletResponse response) {
         String headerValue = ServletUtil.getHeader(request, headerName, StandardCharsets.UTF_8);
+        Map<String, String> headerMap = ServletUtil.getHeaderMap(request);
+        log.info("Header_Map: {}", headerMap);
+        log.info("Header: {}, Map_Key: {}, Header_Value: {}", headerName, mapKey, headerValue);
         if (headerValue == null) {
             Map<String, String> tokenMap = new HashMap<>();
             return this.initTokenHeader(tokenMap, mapKey, headerName, response);
@@ -131,6 +136,7 @@ public class BizChatServiceImpl implements BizChatService {
 
         String jsonString = new String(Base64.decode(headerValue.getBytes(StandardCharsets.UTF_8)));
         Map<String, String> bean = JSONUtil.toBean(jsonString, new TypeReference<HashMap<String, String>>() {}, true);
+        log.info("Existed_Token_Map: {}", bean);
         if (!bean.containsKey(mapKey)) {
             return initTokenHeader(bean, mapKey, headerName, response);
         }
@@ -143,6 +149,7 @@ public class BizChatServiceImpl implements BizChatService {
     private String initTokenHeader(Map<String, String> tokenMap, String mapKey, String headerName, HttpServletResponse response) {
         String value = IdUtil.fastSimpleUUID();
         tokenMap.put(mapKey, value);
+        log.info("NEW_Token_Map: {}", tokenMap);
         String encodedToken = Base64.encode(JSONUtil.toJsonStr(tokenMap).getBytes(StandardCharsets.UTF_8));
         response.addHeader(HttpHeaders.ACCESS_CONTROL_EXPOSE_HEADERS, headerName);
         response.setHeader(headerName, encodedToken);

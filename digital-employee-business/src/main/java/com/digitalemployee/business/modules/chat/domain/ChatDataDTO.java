@@ -13,8 +13,8 @@ import java.util.List;
 @Data
 public class ChatDataDTO {
 
-    public static final String CHAT_USER_TOKEN = "chat_user_token";
-    public static final String CHAT_USER_TOKEN_TEST = "chat_user_token_test";
+    public static final String CHAT_USER_TOKEN = "Chat-User-Token";
+    public static final String CHAT_USER_TOKEN_TEST = "Chat-User-Token-Test";
     public static final String DEFAULT_PROCEDURE = "非常抱歉，我还没学到相关知识。";
     /**
      * 数字员工
