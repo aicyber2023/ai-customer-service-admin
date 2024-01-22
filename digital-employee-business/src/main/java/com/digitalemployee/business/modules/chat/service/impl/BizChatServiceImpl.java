@@ -130,8 +130,7 @@ public class BizChatServiceImpl implements BizChatService {
         }
 
         String jsonString = new String(Base64.decode(headerValue.getBytes(StandardCharsets.UTF_8)));
-        Map<String, String> bean = JSONUtil.toBean(jsonString, new TypeReference<HashMap<String, String>>() {
-        }, true);
+        Map<String, String> bean = JSONUtil.toBean(jsonString, new TypeReference<HashMap<String, String>>() {}, true);
         if (!bean.containsKey(mapKey)) {
             return initTokenHeader(bean, mapKey, headerName, response);
         }
@@ -297,7 +296,7 @@ public class BizChatServiceImpl implements BizChatService {
     }
 
     @Override
-    public List<BizSessionRecord> xxx(BizChatRequest param, Long loginUserId, HttpServletRequest request, HttpServletResponse response) {
+    public List<BizSessionRecord> anonymousHistory(BizChatRequest param, Long loginUserId, HttpServletRequest request, HttpServletResponse response) {
         Long digitalEmployeeId = param.getDigitalEmployeeId();
         if (digitalEmployeeId == null) {
             return new ArrayList<>();
