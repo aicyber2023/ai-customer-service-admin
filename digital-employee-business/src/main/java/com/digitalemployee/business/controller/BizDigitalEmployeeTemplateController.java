@@ -50,6 +50,10 @@ public class BizDigitalEmployeeTemplateController extends BaseController {
     public TableDataInfo list(BizDigitalEmployeeTemplate bizDigitalEmployeeTemplate) {
         startPage();
         List<BizDigitalEmployeeTemplate> list = bizDigitalEmployeeTemplateService.selectBizDigitalEmployeeTemplateList(bizDigitalEmployeeTemplate);
+        list.forEach(template -> {
+            template.setAvatar(null);
+            template.setCompanyAvatar(null);
+        });
         return getDataTable(list);
     }
 
@@ -57,6 +61,10 @@ public class BizDigitalEmployeeTemplateController extends BaseController {
     @GetMapping("/selectList")
     public AjaxResult selectList(BizDigitalEmployeeTemplate bizDigitalEmployeeTemplate) {
         List<BizDigitalEmployeeTemplate> data = bizDigitalEmployeeTemplateService.selectBizDigitalEmployeeTemplateList(bizDigitalEmployeeTemplate);
+        data.forEach(template -> {
+            template.setAvatar(null);
+            template.setCompanyAvatar(null);
+        });
         this.selectTemplateData(data);
         return success(data);
     }
