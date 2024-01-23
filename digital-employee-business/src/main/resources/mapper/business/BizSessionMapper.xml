@@ -43,6 +43,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <!-- 权限过滤 -->
             ${params.dataScope}
         </where>
+        order by create_time desc
     </select>
 
     <select id="selectBizSessionListNew" parameterType="BizSession" resultType="BizSession">
@@ -74,6 +75,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <!-- 权限过滤 -->
             ${params.dataScope}
         </where>
+        order by s.create_time desc
     </select>
     
     <select id="selectBizSessionById" parameterType="Long" resultMap="BizSessionResult">

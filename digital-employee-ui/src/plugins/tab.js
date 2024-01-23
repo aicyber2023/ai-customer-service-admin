@@ -40,6 +40,20 @@ export default {
         return router.push('/');
       });
     }
+    console.log(obj,router.currentRoute,store.getters.visitedViews)
+    if (router.currentRoute.path==="/session/details"){
+      // return store.dispatch('tagsView/delView', router.currentRoute).then(({ visitedViews }
+      router.push("/resource/record")
+    }
+    if (router.currentRoute.path==="/details/index"){
+      const index=sessionStorage.getItem("index")||"0"
+      if (index==="1"){
+        router.push("/resource/employee")
+      }else {
+        router.push("/index")
+      }
+
+    }
     return store.dispatch('tagsView/delView', obj);
   },
   // 关闭所有tab页签

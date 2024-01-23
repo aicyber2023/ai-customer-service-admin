@@ -2,10 +2,8 @@ package com.digitalemployee.business.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.digitalemployee.business.domain.BizQuestionFile;
-import org.apache.ibatis.annotations.Param;
 import org.springframework.web.multipart.MultipartFile;
 
-import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.List;
@@ -67,7 +65,7 @@ public interface IBizQuestionFileService extends IService<BizQuestionFile>
      */
     int deleteBizQuestionFileById(Long id);
 
-    public void downInChargeOfTemplate(HttpServletResponse response);
+     void downInChargeOfTemplate(HttpServletResponse response);
 
     void uploadTemplate(MultipartFile file) throws IOException;
 }

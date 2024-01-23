@@ -17,7 +17,7 @@
 export default {
   data() {
     return {
-      chatUrl:process.env.VUE_APP_BASE_CHAT_URL,
+      chatUrl:window.cfg.chatUrl,
       id: "",
       templateId: "",
       token: "",

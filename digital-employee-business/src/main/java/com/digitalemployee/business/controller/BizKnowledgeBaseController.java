@@ -1,17 +1,15 @@
 package com.digitalemployee.business.controller;
 
-import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.digitalemployee.business.domain.BizKnowledgeBase;
 import com.digitalemployee.business.domain.BizKnowledgeBaseFile;
+import com.digitalemployee.business.mapper.BizKnowledgeBaseFileMapper;
 import com.digitalemployee.business.service.IBizKnowledgeBaseService;
 import com.digitalemployee.common.annotation.Log;
-import com.digitalemployee.common.constant.HttpStatus;
 import com.digitalemployee.common.core.controller.BaseController;
 import com.digitalemployee.common.core.domain.AjaxResult;
 import com.digitalemployee.common.core.page.TableDataInfo;
 import com.digitalemployee.common.enums.BusinessType;
 import com.digitalemployee.common.exception.base.BaseException;
-import com.github.pagehelper.PageInfo;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -32,6 +30,8 @@ import java.util.List;
 public class BizKnowledgeBaseController extends BaseController {
 
     private final IBizKnowledgeBaseService bizKnowledgeBaseService;
+
+    private final BizKnowledgeBaseFileMapper bizKnowledgeBaseFileMapper;
 
     /**
      * 查询知识库列表
@@ -83,12 +83,16 @@ public class BizKnowledgeBaseController extends BaseController {
         bizKnowledgeBase.setUpdateBy(String.valueOf(getUserId()));
         return toAjax(bizKnowledgeBaseService.updateBizKnowledgeBase(bizKnowledgeBase));
     }
-
+    /**
+     * 上传知识库同时远程知识库保存
+     */
     @PostMapping("/uploadFile")
     public AjaxResult uploadFile(Long digitalEmployeeId, MultipartFile[] files) {
         return bizKnowledgeBaseService.uploadFile(digitalEmployeeId, files);
     }
-
+    /**
+     * 远程知识库保存
+     */
     @GetMapping("/appendFileToKnowledgeBase")
     public AjaxResult appendFileToKnowledgeBase(Long knowledgeFileId) {
         return success(bizKnowledgeBaseService.appendFileToKnowledgeBase(knowledgeFileId));
@@ -99,7 +103,7 @@ public class BizKnowledgeBaseController extends BaseController {
      */
     @Log(title = "知识库文件", businessType = BusinessType.DELETE)
     @DeleteMapping("/removeFile/{ids}")
-    public AjaxResult removeFile(@PathVariable Long[] ids) {
+    public AjaxResult removeFile(@PathVariable String[] ids) {
         return success(bizKnowledgeBaseService.removeFile(ids));
     }
 
@@ -112,9 +116,11 @@ public class BizKnowledgeBaseController extends BaseController {
     public AjaxResult remove(@PathVariable Long[] ids) {
         return toAjax(bizKnowledgeBaseService.deleteBizKnowledgeBaseByIds(ids));
     }
-
+    /**
+     * 知识库文件列表
+     */
     @GetMapping("/selectKbFileList")
-    public TableDataInfo selectKbFileList(BizKnowledgeBaseFile knowledgeBaseFile) {
+    public TableDataInfo selectKbFileList(BizKnowledgeBaseFile knowledgeBaseFile,Date startTime, Date endTime) {
         Long digitalEmployeeId = knowledgeBaseFile.getDigitalEmployeeId();
         if (digitalEmployeeId == null) {
             throw new BaseException("参数：数字员工ID 不能为空");
@@ -123,8 +129,19 @@ public class BizKnowledgeBaseController extends BaseController {
         knowledgeBaseFile.setKnowledgeBaseId(knowledgeBaseId);
 
         startPage();
-        List<BizKnowledgeBaseFile> list = bizKnowledgeBaseService.selectKbFileList(knowledgeBaseFile);
-        return getDataTable(list);
+        List<BizKnowledgeBaseFile> list = bizKnowledgeBaseService.selectFileList(knowledgeBaseFile,startTime,endTime);
+        List<BizKnowledgeBaseFile> bizKnowledgeBaseFileList = bizKnowledgeBaseFileMapper.getBizKnowledgeBaseFileList(knowledgeBaseFile, startTime, endTime);
+        TableDataInfo dataTable = getDataTable(list);
+        dataTable.setTotal(bizKnowledgeBaseFileList.size());
+        return dataTable;
+    }
+    /**
+     * 获取文档库详细信息
+     */
+    @PreAuthorize("@ss.hasPermi('de:answer:query')")
+    @GetMapping(value = "/file/{id}")
+    public AjaxResult getFile(@PathVariable("id") Long id) {
+        return success(bizKnowledgeBaseService.selectBizKnowledgeBaseFileById(id));
     }
 
 }

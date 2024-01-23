@@ -10,9 +10,7 @@ import cn.hutool.http.HttpRequest;
 import cn.hutool.http.HttpResponse;
 import cn.hutool.json.JSONUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
-import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.digitalemployee.business.api.BizWebSocket;
 import com.digitalemployee.business.domain.BizDigitalEmployee;
@@ -33,6 +31,9 @@ import com.digitalemployee.common.exception.base.BaseException;
 import com.digitalemployee.common.utils.file.FileUploadUtils;
 import com.digitalemployee.system.mapper.SysUserDeConfigMapper;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.ibatis.annotations.Param;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -50,6 +51,7 @@ import java.util.stream.Stream;
  * @author aicyber
  * @date 2023-08-22
  */
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class BizKnowledgeBaseServiceImpl extends ServiceImpl<BizKnowledgeBaseMapper, BizKnowledgeBase> implements IBizKnowledgeBaseService {
@@ -67,6 +69,9 @@ public class BizKnowledgeBaseServiceImpl extends ServiceImpl<BizKnowledgeBaseMap
     private final IBizKnowledgeBaseFileService bizKnowledgeBaseFileService;
 
     private final BizWebSocket bizWebSocket;
+
+//    private final RemoteFileService remoteFileService;
+
 
 
     /**
@@ -130,6 +135,25 @@ public class BizKnowledgeBaseServiceImpl extends ServiceImpl<BizKnowledgeBaseMap
      */
     @Override
     public int deleteBizKnowledgeBaseByIds(Long[] ids) {
+//        for (Long id : ids) {
+//            BizKnowledgeBaseFile bizKnowledgeBaseFile = bizKnowledgeBaseFileMapper.selectBizKnowledgeBaseFileById(id);
+//            if(bizKnowledgeBaseFile !=null){
+//                BizKnowledgeBase knowledgeBase = this.getById(bizKnowledgeBaseFile.getKnowledgeBaseId());
+//                if (knowledgeBase == null) {
+//                    throw new RuntimeException("知识库不存在");
+//                }
+//                JSONObject paramMap = JSONUtil.createObj();
+//                paramMap.put("collection", knowledgeBase.getCollectionName());
+//                log.info("调用删除集合远程接口 START...");
+//                long start = System.currentTimeMillis();
+//                log.info(paramMap.toString());
+//                BaseResponse response = remoteFileService.dropCollection(paramMap);
+//                log.info("调用删除集合远程接口 END...共耗时 {} 毫秒", System.currentTimeMillis() - start);
+//                if (!response.getSuccessful()) {
+//                    throw new RuntimeException("远程服务调用异常：" + response.getMessage());
+//                }
+//            }
+//        }
         return bizKnowledgeBaseMapper.deleteBizKnowledgeBaseByIds(ids);
     }
 
@@ -170,7 +194,9 @@ public class BizKnowledgeBaseServiceImpl extends ServiceImpl<BizKnowledgeBaseMap
             List<BizKnowledgeBaseFile> fileList = new ArrayList<>();
             String savePath = chatResourcesConfig.getKnowledgeFilePath();
 //            List<Long> fileIds =  new ArrayList<>();
-            Map<String, Long> fileIdsMap = new HashMap<>();
+//            Map<String, Long> fileIdsMap = new HashMap<>();
+            Map<String, List<Long>> fileIdsMap = new HashMap<>();
+            List<Long> fileIds =  new ArrayList<>();
             for (MultipartFile file : files) {
                 // 保存文件
                 File saveFile = new File(savePath);
@@ -193,7 +219,9 @@ public class BizKnowledgeBaseServiceImpl extends ServiceImpl<BizKnowledgeBaseMap
             }
             bizKnowledgeBaseFileService.saveBatch(fileList);
             for (BizKnowledgeBaseFile bizKnowledgeBaseFile : fileList) {
-                fileIdsMap.put("fileId", bizKnowledgeBaseFile.getId());
+                fileIds.add(bizKnowledgeBaseFile.getId());
+                fileIdsMap.put("fileId", fileIds);
+                this.appendFileToKnowledgeBase(bizKnowledgeBaseFile.getId());
             }
             return AjaxResult.success(fileIdsMap);
 
@@ -274,8 +302,8 @@ public class BizKnowledgeBaseServiceImpl extends ServiceImpl<BizKnowledgeBaseMap
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public int removeFile(Long[] ids) {
-        for (Long id : ids) {
+    public int removeFile(String[] ids) {
+        for (String id : ids) {
             BizKnowledgeBaseFile knowledgeBaseFile = bizKnowledgeBaseFileService.getById(id);
             if (knowledgeBaseFile == null) {
                 throw new RuntimeException("知识库文件不存在或已删除");
@@ -292,7 +320,7 @@ public class BizKnowledgeBaseServiceImpl extends ServiceImpl<BizKnowledgeBaseMap
                 paramMap.put("collection", knowledgeBase.getCollectionName());
 
                 String[] vectorIdArr = vectorIds.split(",");
-                List<Long> idList = Stream.of(vectorIdArr).map(Long::valueOf).collect(Collectors.toList());
+                List<String> idList = Stream.of(vectorIdArr).map(String::valueOf).collect(Collectors.toList());
                 paramMap.put("ids", idList);
                 String jsonStr = JSONUtil.toJsonStr(paramMap);
 
@@ -314,7 +342,10 @@ public class BizKnowledgeBaseServiceImpl extends ServiceImpl<BizKnowledgeBaseMap
             String filePath = knowledgeBaseFile.getFilePath();
             FileUtil.del(filePath);
         }
-        return bizKnowledgeBaseFileService.deleteBizKnowledgeBaseFileByIds(ids);
+        List<Long> propertyIdList = Arrays.stream(ids)
+                .map(s -> Long.parseLong(s.trim())).collect(Collectors.toList());
+        Long[] idsArr = propertyIdList.toArray(new Long[propertyIdList.size()]);
+        return bizKnowledgeBaseFileService.deleteBizKnowledgeBaseFileByIds(idsArr);
 //        return bizKnowledgeBaseFileService.removeById(knowledgeFileId);
     }
 
@@ -450,6 +481,19 @@ public class BizKnowledgeBaseServiceImpl extends ServiceImpl<BizKnowledgeBaseMap
     }
 
     @Override
+    public List<BizKnowledgeBaseFile> selectFileList( BizKnowledgeBaseFile knowledgeBaseFile,
+                                                     @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") Date startTime, @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") Date endTime) {
+        List<BizKnowledgeBaseFile> list = new ArrayList<>();
+        List<BizKnowledgeBaseFile> bizKnowledgeBaseFileList = bizKnowledgeBaseFileMapper.getBizKnowledgeBaseFileList(knowledgeBaseFile, startTime, endTime);
+        if (!bizKnowledgeBaseFileList.isEmpty()) {
+            for (BizKnowledgeBaseFile bizKnowledgeBaseFile : bizKnowledgeBaseFileList) {
+                list.add(bizKnowledgeBaseFile);
+            }
+        }
+        return list;
+    }
+
+    @Override
     public Long getKnowledgeBaseIdByDeId(Long digitalEmployeeId) {
         BizDigitalEmployee digitalEmployee = bizDigitalEmployeeMapper.selectById(digitalEmployeeId);
         if (digitalEmployee == null) {
@@ -463,6 +507,11 @@ public class BizKnowledgeBaseServiceImpl extends ServiceImpl<BizKnowledgeBaseMap
             knowledgeBaseId = knowledgeBase.getId();
         }
         return knowledgeBaseId;
+    }
+
+    @Override
+    public BizKnowledgeBaseFile selectBizKnowledgeBaseFileById(Long id) {
+        return bizKnowledgeBaseFileMapper.selectBizKnowledgeBaseFileById(id);
     }
 
 }

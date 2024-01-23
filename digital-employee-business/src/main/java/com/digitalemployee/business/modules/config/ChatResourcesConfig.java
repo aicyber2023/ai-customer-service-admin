@@ -56,4 +56,5 @@ public class ChatResourcesConfig {
     @Value(value = "${ai.defaultProcedure}")
     private String defaultProcedure;
 
+
 }

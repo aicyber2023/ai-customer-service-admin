@@ -9,6 +9,6 @@ import java.util.List;
 @EqualsAndHashCode(callSuper = true)
 public class KnowledgeUploadResponse extends ChatRemoteResponse{
 
-    private List<Long> ids;
+    private List<String> ids;
 
 }

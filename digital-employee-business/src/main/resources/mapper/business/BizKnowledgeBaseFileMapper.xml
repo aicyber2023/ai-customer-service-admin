@@ -31,6 +31,19 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="startDateTime != null and endDateTime != null">and create_time between #{startDateTime} and #{endDateTime}</if>
         </where>
     </select>
+    <select id="getBizKnowledgeBaseFileList" parameterType="BizKnowledgeBaseFile" resultMap="BizKnowledgeBaseFileResult">
+        <include refid="selectBizKnowledgeBaseFileVo"/>
+        <where>
+            <if test="bizKnowledgeBaseFile.knowledgeBaseId != null "> and knowledge_base_id = #{bizKnowledgeBaseFile.knowledgeBaseId}</if>
+            <if test="bizKnowledgeBaseFile.fileName != null  and bizKnowledgeBaseFile.fileName != ''"> and file_name like concat('%', #{bizKnowledgeBaseFile.fileName}, '%')</if>
+            <if test="bizKnowledgeBaseFile.status != null"> and `status` = #{bizKnowledgeBaseFile.status}</if>
+            <if test="startTime !=null and endTime !=null">
+                and create_time &gt;= #{startTime}
+                and create_time &lt; #{endTime}
+            </if>
+        </where>
+        ORDER BY create_time DESC
+    </select>
     
     <select id="selectBizKnowledgeBaseFileById" parameterType="Long" resultMap="BizKnowledgeBaseFileResult">
         <include refid="selectBizKnowledgeBaseFileVo"/>

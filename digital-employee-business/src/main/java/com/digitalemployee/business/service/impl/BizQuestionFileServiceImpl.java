@@ -1,19 +1,15 @@
 package com.digitalemployee.business.service.impl;
 
-import java.io.*;
-import java.net.URL;
-import java.net.URLEncoder;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
-import java.util.*;
-
-import org.springframework.util.ResourceUtils;
 import cn.hutool.core.io.IoUtil;
 import cn.hutool.json.JSONObject;
 import cn.hutool.json.JSONUtil;
+import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.digitalemployee.business.api.RemoteModelService;
 import com.digitalemployee.business.api.domain.BaseResponse;
-import com.digitalemployee.business.domain.*;
+import com.digitalemployee.business.domain.BizKnowledgeBase;
+import com.digitalemployee.business.domain.BizQuestionAnswer;
+import com.digitalemployee.business.domain.BizQuestionFile;
+import com.digitalemployee.business.domain.BizSimilarityQuestion;
 import com.digitalemployee.business.mapper.BizDigitalEmployeeMapper;
 import com.digitalemployee.business.mapper.BizQuestionAnswerMapper;
 import com.digitalemployee.business.mapper.BizQuestionFileMapper;
@@ -22,13 +18,17 @@ import com.digitalemployee.business.service.IBizKnowledgeBaseService;
 import com.digitalemployee.business.service.IBizQuestionFileService;
 import com.digitalemployee.common.utils.DateUtils;
 import lombok.RequiredArgsConstructor;
-import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletResponse;
+import java.io.*;
+import java.net.URL;
+import java.net.URLEncoder;
+import java.util.ArrayList;
+import java.util.List;
 
 
 /**
@@ -174,12 +174,11 @@ public class BizQuestionFileServiceImpl extends ServiceImpl<BizQuestionFileMappe
     public void downInChargeOfTemplate(HttpServletResponse response) {
         responseSetting(response, "问答模板", ".xlsx",
                 "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
-
         InputStream inputStream = null;
         OutputStream outputStream = null;
         try {
             // 读取文件的输入流
-            inputStream = Thread.currentThread().getContextClassLoader().getResourceAsStream("templates/问答模板1.xlsx");
+            inputStream = Thread.currentThread().getContextClassLoader().getResourceAsStream("templates/问答模板.xlsx");
             XSSFWorkbook wb = new XSSFWorkbook(inputStream);
             outputStream = response.getOutputStream();
             wb.write(outputStream);

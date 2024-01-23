@@ -14,5 +14,5 @@ public interface BizChatService {
 
     ChatDataDTO initChatData(BizChatRequest chatRequest, Long loginUserId, HttpServletRequest request, HttpServletResponse response);
 
-    List<BizSessionRecord> xxx(BizChatRequest param, Long loginUserId, HttpServletRequest request, HttpServletResponse response);
+    List<BizSessionRecord> anonymousHistory(BizChatRequest param, Long loginUserId, HttpServletRequest request, HttpServletResponse response);
 }

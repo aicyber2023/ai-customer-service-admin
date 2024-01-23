@@ -32,6 +32,7 @@ public class RemoteModelService {
      */
     public QAResponse qa(QAParam param) {
         final String url = chatResourcesConfig.getQaRemoteUrl();
+        // System.out.println(JSONUtil.toJsonStr(param));
         return post(url, JSONUtil.toJsonStr(param), QAResponse.class);
     }
 

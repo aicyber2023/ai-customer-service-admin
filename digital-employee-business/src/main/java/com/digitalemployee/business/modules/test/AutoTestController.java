@@ -39,7 +39,7 @@ import java.util.stream.Collectors;
 @RequestMapping("/autotest")
 @RestController
 @RequiredArgsConstructor
-public class AutoTestController  extends BaseController {
+public class AutoTestController extends BaseController {
 
     /**
      * 测试临时目录
@@ -170,11 +170,12 @@ public class AutoTestController  extends BaseController {
     public AjaxResult deleteVectors(@RequestBody CollectionVo collectionVo) {
         List<Long> ids = collectionVo.getIds();
         List<String> collectionList = new ArrayList<>();
-        if(!ids.isEmpty()){
+        if (!ids.isEmpty()) {
+            //查询远程数据库中没有重复collectionId的数据
             for (Long id : ids) {
                 BizQuestionAnswer bizQuestionAnswer = bizQuestionAnswerService.selectBizQuestionAnswerById(id);
-                List<String> collectionIdList = bizQuestionAnswerService.getQuestionAnswerByCollectionId(bizQuestionAnswer.getCollectionId(),bizQuestionAnswer.getDigitalEmployeeId());
-                if(collectionIdList.size()==1){
+                List<String> collectionIdList = bizQuestionAnswerService.getQuestionAnswerByCollectionId(bizQuestionAnswer.getCollectionId(), bizQuestionAnswer.getDigitalEmployeeId());
+                if (collectionIdList.size() == 1) {
                     collectionList.add(bizQuestionAnswer.getCollectionId());
                 }
             }
@@ -187,10 +188,12 @@ public class AutoTestController  extends BaseController {
             JSONObject paramMap = JSONUtil.createObj();
             paramMap.put("collection", collectionNameQa);
             paramMap.put("ids", collectionList);
+            //删除本地数据库传入的所有数据
             Long[] questionAnswerIdArray = ids.toArray(new Long[ids.size()]);
             if (questionAnswerIdArray.length != 0) {
                 bizQuestionAnswerService.deleteBizQuestionAnswerByIds(questionAnswerIdArray);
             }
+            //只删除远程数据库中没有重复collectionId的数据
             log.info("调用删除向量远程接口 START...");
             long startRemove = System.currentTimeMillis();
             remoteModelService.dropVectors(paramMap);

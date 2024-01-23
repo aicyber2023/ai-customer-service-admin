@@ -91,7 +91,6 @@ public class WorkBenchController extends BaseController {
 
 
 
-
         // 设置数字员工的 今日服务次数 和 今日服务人数
         for (BizDigitalEmployee de : digitalEmployeeList) {
             Long digitalEmpId = de.getId();
