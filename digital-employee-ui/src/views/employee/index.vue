@@ -63,7 +63,7 @@
             <div class="userAvatar">
               <el-avatar
                 :size="125"
-                :src="'data:image/png;base64,' + item.avatar"
+                :src="getUrl(item.id)"
               ></el-avatar>
             </div>
           </div>
@@ -331,6 +331,7 @@ export default {
     },
   },
   methods: {
+
     // // 模糊查询智能客服
     // searchEmployee() {
     //   if (this.search != "") {
@@ -351,10 +352,10 @@ export default {
         }
       });
     },
-    getUrl(templateId) {
+    getUrl(id) {
       let baseUrl = this.baseUrl;
       //console.log("baseurl:", baseUrl);
-      let url = baseUrl + "/de/employeeTemplate/showAvatar/" + templateId;
+      let url = baseUrl + "/de/digitalEmployee/showAvatar/" + id;
       //console.log("url", url);
       return url;
     },
@@ -445,6 +446,12 @@ export default {
           } else {
             selectTemplate(this.form.templateId).then(res => {
               if (res.code == 200) {
+                for (const item of res.data.context) {
+                   delete item .id
+                }
+                for (const item of res.data.procedureList) {
+                  delete item .id
+                }
                 const form = {
                   name: this.form.name,
                   avatar: res.data.avatar,
@@ -452,7 +459,7 @@ export default {
                   companyName: this.form.companyName,
                   companyAvatar: res.data.companyAvatar,
                   companyAvatarContentType: res.data.companyAvatarContentType,
-                  context: res.data.context,
+                  context:res.data.context,
                   temperature: res.data.temperature,
                   presencePenalty: res.data.presencePenalty,
                   frequencyPenalty: res.data.frequencyPenalty,
