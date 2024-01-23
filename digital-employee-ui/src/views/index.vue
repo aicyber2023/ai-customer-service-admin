@@ -595,6 +595,7 @@ export default {
     },
     // 智能客服详情
     details(item) {
+      window.sessionStorage.setItem("index",0)
       //console.log(item);
       this.$router.push(
         `/details/index?id=${item.id}&templateId=${

@@ -474,7 +474,7 @@ import {uuid} from "vue-uuid";
 export default {
   data() {
     return {
-      baseWsUrl:process.env.VUE_APP_BASE_WEBSOCKET_URL,
+      baseWsUrl:(window.cfg.baseUrl).replace("/prod-api",""),
       stateOptions: [
         {
           id: "",

@@ -236,7 +236,7 @@ export default {
   name: "index",
   data() {
     return {
-      baseUrl: process.env.VUE_APP_BASE_URL,
+      baseUrl: window.cfg.baseUrl,
       // 选中的说话风格
       selectSpeakingStyle: "",
       // 新建员工对话框的状态
@@ -570,6 +570,7 @@ export default {
     },
     // 智能客服详情
     details(item) {
+      window.sessionStorage.setItem("index",1)
       //console.log(item);
       this.$router.push(
         `/details/index?id=${item.id}&templateId=${

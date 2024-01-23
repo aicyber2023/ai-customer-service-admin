@@ -696,7 +696,7 @@ export default {
   name: "index",
   data() {
     return {
-      baseUrl:process.env.VUE_APP_BASE_URL,
+      baseUrl:window.cfg.baseUrl,
       loading: false,
       tableData: [],
       total: 0,
