@@ -3,6 +3,8 @@ package com.digitalemployee.business.mapper;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.digitalemployee.business.domain.BizQuestionFile;
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
+
 import java.util.List;
 
 /**
@@ -68,4 +70,6 @@ public interface BizQuestionFileMapper  extends BaseMapper<BizQuestionFile>
      * @return 结果
      */
     int deleteBizQuestionFileByIds(Long[] ids);
+
+    long selectSysUserKbQaDocCount(@Param("sysUserId") Long sysUserId);
 }

@@ -1,5 +1,6 @@
 package com.digitalemployee.business.service.impl;
 
+import cn.hutool.core.util.IdUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
@@ -15,7 +16,6 @@ import com.digitalemployee.business.service.IBizKnowledgeBaseService;
 import com.digitalemployee.common.annotation.DataScope;
 import com.digitalemployee.common.core.domain.entity.SysUserDeConfig;
 import com.digitalemployee.common.utils.SecurityUtils;
-import com.digitalemployee.common.utils.uuid.IdUtils;
 import com.digitalemployee.system.mapper.SysUserDeConfigMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -97,7 +97,8 @@ public class BizDigitalEmployeeServiceImpl extends ServiceImpl<BizDigitalEmploye
         BizKnowledgeBase knowledgeBase = bizKnowledgeBaseService.initKnowledgeBase(bizDigitalEmployee);
         bizDigitalEmployee.setKnowledgeBaseId(knowledgeBase.getId());
 
-        bizDigitalEmployee.setEmployeeKey(IdUtils.fastUUID());
+        // apiKey
+        bizDigitalEmployee.setEmployeeKey(IdUtil.fastSimpleUUID());
         bizDigitalEmployeeMapper.insert(bizDigitalEmployee);
         this.saveContext(bizDigitalEmployee);
         this.saveProcedureList(bizDigitalEmployee);
