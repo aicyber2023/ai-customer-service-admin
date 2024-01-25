@@ -90,8 +90,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="topic != null">topic,</if>
             <if test="sessionType != null">session_type,</if>
             <if test="testUserId != null">test_user_id,</if>
-            <if test="ip != null and ip != ''">ip,</if>
-            <if test="cookie != null and cookie != ''">cookie,</if>
+            <if test="ip != null">ip,</if>
+            <if test="cookie != null">cookie,</if>
             <if test="recordAmount != null">record_amount,</if>
             <if test="createBy != null">create_by,</if>
             <if test="createTime != null">create_time,</if>
@@ -106,8 +106,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="topic != null">#{topic},</if>
             <if test="sessionType != null">#{sessionType},</if>
             <if test="testUserId != null">#{testUserId},</if>
-            <if test="ip != null and ip != ''">#{ip},</if>
-            <if test="cookie != null and cookie != ''">#{cookie},</if>
+            <if test="ip != null">#{ip},</if>
+            <if test="cookie != null">#{cookie},</if>
             <if test="recordAmount != null">#{recordAmount},</if>
             <if test="createBy != null">#{createBy},</if>
             <if test="createTime != null">#{createTime},</if>
@@ -126,8 +126,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="topic != null">topic = #{topic},</if>
             <if test="sessionType != null">session_type = #{sessionType},</if>
             <if test="testUserId != null">test_user_id = #{testUserId},</if>
-            <if test="ip != null and ip != ''">ip = #{ip},</if>
-            <if test="cookie != null and cookie != ''">cookie = #{cookie},</if>
+            <if test="ip != null">ip = #{ip},</if>
+            <if test="cookie != null">cookie = #{cookie},</if>
             <if test="recordAmount != null">record_amount = #{recordAmount},</if>
             <if test="createBy != null">create_by = #{createBy},</if>
             <if test="createTime != null">create_time = #{createTime},</if>

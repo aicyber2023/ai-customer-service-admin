@@ -8,11 +8,13 @@ import com.digitalemployee.business.domain.BizDigitalEmployee;
 import com.digitalemployee.business.modules.chat.domain.BizChatRequest;
 import com.digitalemployee.business.modules.chat.domain.ChatDataDTO;
 import com.digitalemployee.business.modules.chat.service.BizChatService;
+import com.digitalemployee.business.modules.chatsession.domain.BizSessionRecord;
 import com.digitalemployee.business.service.IBizDigitalEmployeeService;
 import com.digitalemployee.common.annotation.Anonymous;
 import com.digitalemployee.common.core.domain.AjaxResult;
 import com.digitalemployee.common.exception.base.BaseException;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
@@ -22,6 +24,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/de/api")
 @RequiredArgsConstructor
+@Slf4j
 public class ChatApiController {
 
     private final IBizDigitalEmployeeService digitalEmployeeService;
@@ -48,7 +51,9 @@ public class ChatApiController {
         param.setDigitalEmployeeId(digitalEmployee.getId());
 
         ChatDataDTO chatData = bizChatService.initChatData(param, null, request, response);
-        return AjaxResult.success(bizChatService.chat(chatData));
+        BizSessionRecord record = bizChatService.chat(chatData);
+        log.info("API调用 - key: {}, record: {}", apiKey, record);
+        return AjaxResult.success(record.getOutputText());
     }
 
 }

@@ -2,6 +2,7 @@ package com.digitalemployee.business.modules.chat.service;
 
 import com.digitalemployee.business.modules.chat.domain.BizChatRequest;
 import com.digitalemployee.business.modules.chat.domain.ChatDataDTO;
+import com.digitalemployee.business.modules.chatsession.domain.BizSession;
 import com.digitalemployee.business.modules.chatsession.domain.BizSessionRecord;
 
 import javax.servlet.http.HttpServletRequest;
@@ -10,7 +11,7 @@ import java.util.List;
 
 public interface BizChatService {
 
-    Object chat(ChatDataDTO chatData);
+    BizSessionRecord chat(ChatDataDTO chatData);
 
     ChatDataDTO initChatData(BizChatRequest chatRequest, Long loginUserId, HttpServletRequest request, HttpServletResponse response);
 

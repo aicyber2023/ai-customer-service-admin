@@ -74,6 +74,7 @@ public class BizChatServiceImpl implements BizChatService {
         // 初始化 ChatDataDTO
         ChatDataDTO chatData = new ChatDataDTO();
         chatData.setUserInput(chatRequest.getUserInput());
+        chatData.setApiKey(chatRequest.getApiKey());
         chatData.setLoginUserId(loginUserId);
         chatData.initCookieToken();
         // 数字员工
@@ -167,6 +168,11 @@ public class BizChatServiceImpl implements BizChatService {
     }
 
     private void getOrInitSession(ChatDataDTO chatData) {
+        if (chatData.getApiKey() != null) {
+            this.initApiSession(chatData);
+            return;
+        }
+
         LambdaQueryWrapper<BizSession> wrapper = Wrappers.lambdaQuery();
         wrapper.eq(BizSession::getDigitalEmployeeId, chatData.getDigitalEmployee().getId())
                 .eq(BizSession::getIp, chatData.getClientIp())
@@ -178,6 +184,22 @@ public class BizChatServiceImpl implements BizChatService {
         }
         if (sessionList.isEmpty()) {
             chatData.initSession();
+            sessionService.insertBizSession(chatData.getSession());
+        } else {
+            chatData.setSession(sessionList.get(0));
+        }
+    }
+
+    private void initApiSession(ChatDataDTO chatData) {
+        LambdaQueryWrapper<BizSession> wrapper = Wrappers.lambdaQuery();
+        wrapper.eq(BizSession::getDigitalEmployeeId, chatData.getDigitalEmployee().getId())
+                .eq(BizSession::getSessionType, 3);
+        List<BizSession> sessionList = sessionService.list(wrapper);
+        if (sessionList.size() > 1) {
+            throw new BaseException("会话数据异常，请联系管理员");
+        }
+        if (sessionList.isEmpty()) {
+            chatData.initApiSession();
             sessionService.insertBizSession(chatData.getSession());
         } else {
             chatData.setSession(sessionList.get(0));
