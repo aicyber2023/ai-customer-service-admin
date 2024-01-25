@@ -97,8 +97,8 @@ public class BizDigitalEmployeeServiceImpl extends ServiceImpl<BizDigitalEmploye
         BizKnowledgeBase knowledgeBase = bizKnowledgeBaseService.initKnowledgeBase(bizDigitalEmployee);
         bizDigitalEmployee.setKnowledgeBaseId(knowledgeBase.getId());
 
-        bizDigitalEmployeeMapper.insert(bizDigitalEmployee);
         bizDigitalEmployee.setEmployeeKey(IdUtils.fastUUID());
+        bizDigitalEmployeeMapper.insert(bizDigitalEmployee);
         this.saveContext(bizDigitalEmployee);
         this.saveProcedureList(bizDigitalEmployee);
         return bizDigitalEmployee;

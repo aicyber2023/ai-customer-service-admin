@@ -7,6 +7,8 @@ public class BizChatRequest {
 
     private Long digitalEmployeeId;
 
+    private String apiKey;
+
     private String userInput;
 
 }
