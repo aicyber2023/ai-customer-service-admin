@@ -149,6 +149,9 @@ public class BizDigitalEmployeeTemplate extends BaseEntity {
     /** 模型开关 0-使用话术 1-使用模型 */
     private Integer modelSwitch;
 
+    /** 回答信息量 0-2 */
+    private BigDecimal quantityOfInformation;
+
 
     /** contextList */
     @TableField(exist = false)

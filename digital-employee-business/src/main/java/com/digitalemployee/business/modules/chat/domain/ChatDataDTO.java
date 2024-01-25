@@ -8,7 +8,9 @@ import com.digitalemployee.business.modules.chatsession.domain.BizSession;
 import com.digitalemployee.business.modules.chatsession.domain.BizSessionRecord;
 import lombok.Data;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Data
 public class ChatDataDTO {
@@ -64,6 +66,8 @@ public class ChatDataDTO {
      * 对话历史
      */
     private List<BizSessionRecord> recordList;
+
+    private Map<String, Object> aiReq  = new HashMap<>();
 
     /**
      * qa请求参数
@@ -192,4 +196,9 @@ public class ChatDataDTO {
             return String.valueOf(digitalEmployee.getId());
         }
     }
+
+    public void putAiReq(String key, Object data) {
+        aiReq.put(key, data);
+    }
+
 }

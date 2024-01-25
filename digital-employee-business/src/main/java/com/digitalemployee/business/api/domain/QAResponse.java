@@ -22,4 +22,7 @@ public class QAResponse extends BaseResponse{
     /** 模型名称 */
     private String model_name;
 
+    /** 回答信息量 */
+    private Double quantity_of_information;
+
 }
