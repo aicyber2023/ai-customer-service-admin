@@ -90,4 +90,14 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             #{id}
         </foreach>
     </delete>
+
+    <select id="selectSysUserKbQaDocCount" resultType="java.lang.Long">
+        SELECT
+            COUNT(*)
+        FROM
+            biz_question_file qf
+        WHERE
+            qf.digital_employee_id IN (SELECT id FROM biz_digital_employee de WHERE de.sys_user_id = #{sysUserId} AND de.status != 2)
+    </select>
+
 </mapper>

@@ -6,10 +6,12 @@ import com.digitalemployee.business.domain.BizDigitalEmployee;
 import com.digitalemployee.business.domain.BizUser;
 import com.digitalemployee.business.mapper.BizDigitalEmployeeMapper;
 import com.digitalemployee.business.mapper.BizKnowledgeBaseFileMapper;
+import com.digitalemployee.business.mapper.BizQuestionFileMapper;
 import com.digitalemployee.business.modules.chatsession.domain.BizSession;
 import com.digitalemployee.business.modules.chatsession.domain.BizSessionRecord;
 import com.digitalemployee.business.modules.chatsession.service.IBizSessionRecordService;
 import com.digitalemployee.business.modules.workbench.domain.ChatResourceVO;
+import com.digitalemployee.business.service.IBizQuestionFileService;
 import com.digitalemployee.business.service.IBizUserService;
 import com.digitalemployee.common.core.controller.BaseController;
 import com.digitalemployee.common.core.domain.AjaxResult;
@@ -33,12 +35,12 @@ public class WorkBenchController extends BaseController {
 
 
     private final BizKnowledgeBaseFileMapper knowledgeBaseFileMapper;
+    private final BizQuestionFileMapper questionFileMapper;
 
     private final BizDigitalEmployeeMapper digitalEmployeeMapper;
 
     private final IBizSessionRecordService sessionRecordService;
 
-    private final IBizUserService bizUserService;
 
     @GetMapping("/chatResource")
     public AjaxResult chatResource() {
@@ -47,15 +49,18 @@ public class WorkBenchController extends BaseController {
         userDeConfigWrapper.eq(SysUserDeConfig::getSysUserId, userId);
         SysUserDeConfig sysUserDeConfig = sysUserDeConfigService.getOne(userDeConfigWrapper);
 
-        // 用户数字已新建员工数量
+        // 用户已新建员工数量
         LambdaQueryWrapper<BizDigitalEmployee> digitalEmployeeWrapper = Wrappers.lambdaQuery();
         digitalEmployeeWrapper.eq(BizDigitalEmployee::getSysUserId, userId).ne(BizDigitalEmployee::getStatus, 2);
         Long usedEmployeeAmount = digitalEmployeeMapper.selectCount(digitalEmployeeWrapper);
 
-        // 用户数字已上传文档数量
+        // 用户已上传文档数量
         Long sysUserKbDocCount = knowledgeBaseFileMapper.selectSysUserKbDocCount(userId);
 
-        return AjaxResult.success(new ChatResourceVO(sysUserDeConfig, usedEmployeeAmount, sysUserKbDocCount));
+        // 用户已上传问答库文件数量
+        long qaFileCount = questionFileMapper.selectSysUserKbQaDocCount(userId);
+
+        return AjaxResult.success(new ChatResourceVO(sysUserDeConfig, usedEmployeeAmount, sysUserKbDocCount, qaFileCount));
     }
 
     @GetMapping("/digitalEmployee")
@@ -93,6 +98,8 @@ public class WorkBenchController extends BaseController {
 
         // 设置数字员工的 今日服务次数 和 今日服务人数
         for (BizDigitalEmployee de : digitalEmployeeList) {
+            de.setAvatar(null);
+            de.setCompanyAvatar(null);
             Long digitalEmpId = de.getId();
             if (sessionMapByDeId.containsKey(digitalEmpId)) {
                 List<BizSessionRecord> deRecordList = sessionMapByDeId.get(digitalEmpId);

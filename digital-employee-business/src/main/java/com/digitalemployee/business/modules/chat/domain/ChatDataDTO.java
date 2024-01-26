@@ -8,7 +8,9 @@ import com.digitalemployee.business.modules.chatsession.domain.BizSession;
 import com.digitalemployee.business.modules.chatsession.domain.BizSessionRecord;
 import lombok.Data;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Data
 public class ChatDataDTO {
@@ -41,6 +43,9 @@ public class ChatDataDTO {
      */
     private String userInput;
 
+    /** apiKey */
+    private String apiKey;
+
     /**
      * 保底话术
      */
@@ -64,6 +69,8 @@ public class ChatDataDTO {
      * 对话历史
      */
     private List<BizSessionRecord> recordList;
+
+    private Map<String, Object> aiReq  = new HashMap<>();
 
     /**
      * qa请求参数
@@ -111,6 +118,18 @@ public class ChatDataDTO {
         session.setTestUserId(loginUserId);
         session.setIp(clientIp);
         session.setCookie(clientToken);
+        session.setRecordAmount(0);
+        session.setUserId(digitalEmployee.getUserId());
+        session.setDeptId(digitalEmployee.getDeptId());
+    }
+
+    public void initApiSession() {
+        session = new BizSession();
+        session.setDigitalEmployeeId(digitalEmployee.getId());
+        session.setSessionType(3);
+        session.setTestUserId(loginUserId);
+        session.setIp("");
+        session.setCookie("");
         session.setRecordAmount(0);
         session.setUserId(digitalEmployee.getUserId());
         session.setDeptId(digitalEmployee.getDeptId());
@@ -192,4 +211,9 @@ public class ChatDataDTO {
             return String.valueOf(digitalEmployee.getId());
         }
     }
+
+    public void putAiReq(String key, Object data) {
+        aiReq.put(key, data);
+    }
+
 }

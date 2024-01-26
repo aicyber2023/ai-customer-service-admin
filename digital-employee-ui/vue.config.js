@@ -35,7 +35,7 @@ module.exports = {
       // detail: https://cli.vuejs.org/config/#devserver-proxy
       [process.env.VUE_APP_BASE_API]: {
         // 本地开发
-        target: `http://127.0.0.1:8080`,
+        target: `http://192.168.1.16:8080`,
         // 测试环境
         // target: "http://121.37.82.194:8203",
         // 生产环境

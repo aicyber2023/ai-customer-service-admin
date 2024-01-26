@@ -59,7 +59,7 @@
                 </div>
                 <div class="desc" :style="{marginLeft:percentageRight<10?'50':'35'}">
                   <div>上传文件数量</div>
-                  <div><b>{{ resource.usedDocAmount }} / {{ resource.docAmount | filterAmount }}</b></div>
+                  <div><b>{{ resource.totalFileAmount}} / {{ resource.docAmount | filterAmount }}</b></div>
                 </div>
               </div>
             </el-col>
@@ -242,7 +242,7 @@
     </el-row>
     <el-row style="margin-left: 0px;margin-right: 0px;display: flex;align-items: center;justify-content: start;flex-wrap: wrap" :gutter="24">
       <div class="employeeItem" @click="details(item)" v-for="(item, index) in emplayeeArr" :key="index">
-        <img :src="'data:image/png;base64,' + item.avatar" alt=""/>
+        <img :src="getUrl(item.id)"/>
         <p style="fontsize: 16px">
           <b>{{ item.templateName }} {{ item.name }}</b>
         </p>
@@ -300,7 +300,8 @@ export default {
         "usedEmployeeAmount": 0,
         "employeeAmount": 0,
         "usedDocAmount": 0,
-        "docAmount": 0
+        "docAmount": 0,
+        totalFileAmount:0
       },
       //   创建者
       createBy: "",
@@ -546,6 +547,14 @@ export default {
     //     }
     //   });
     // },
+    getUrl(id){
+      let baseUrl = window.cfg.baseUrl;
+      let url = baseUrl + "/de/digitalEmployee/showAvatar/" + id;
+      // +
+      // "?uuid=" +
+      // Math.random();
+      return url;
+    },
     getListCheck() {
       let param = {
         pageNum: 1,

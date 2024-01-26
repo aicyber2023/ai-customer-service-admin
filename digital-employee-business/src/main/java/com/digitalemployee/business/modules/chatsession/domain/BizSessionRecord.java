@@ -126,6 +126,8 @@ public class BizSessionRecord extends BaseEntity {
     /** 命中情况 0-问答 1-文档 2-未命中 */
     private Integer hitStatus;
 
+    private String aiResponse;
+
 
     // 发送时间范围
     @TableField(exist = false)

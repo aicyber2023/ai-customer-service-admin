@@ -1,9 +1,13 @@
 window.cfg = {
-// 开发环境 后端服务地址
-  baseUrl: "http://127.0.0.1:8080",
-  // baseUrl: "https://autoai.aicyber.com:8202/prod-api",
+//  baseUrl 指的是后端服务的地址 加入/prod-api使用nginx反向代理访问
+//   注意：如果后端服务没有使用反向代理，则 baseURL 应该配置为后端服务的真实地址
+  baseUrl: "http://127.0.0.1:28082/prod-api",
 
-  // 开发环境 前端对话地址
-  chatUrl: 'http://127.0.0.1:3000',
-  // chatUrl: 'https://autoai.aicyber.com:8201',
+  // chatUrl指的是 在管理系统后台进入的智能客服对话页面访问的地址
+  // 注意: 如果想在浏览器中直接访问对话页面 需要指定身份 在url后边加入 参数即可 例如http://127.0.0.1:28001/#/?isVisitor=1&id=78
+  // isVisitor=1 代表访问模式为访客模式 id=78 代表 使用第78号客服进行对话
+  chatUrl: 'http://127.0.0.1:28001',
 }
+
+
+

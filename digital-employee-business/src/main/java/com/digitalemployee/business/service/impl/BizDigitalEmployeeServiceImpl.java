@@ -1,17 +1,12 @@
 package com.digitalemployee.business.service.impl;
 
+import cn.hutool.core.util.IdUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.digitalemployee.business.domain.BizDigitalEmployee;
-import com.digitalemployee.business.domain.BizDigitalEmployeeContext;
-import com.digitalemployee.business.domain.BizKnowledgeBase;
-import com.digitalemployee.business.domain.BizKnowledgeBaseFile;
-import com.digitalemployee.business.mapper.BizDigitalEmployeeContextMapper;
-import com.digitalemployee.business.mapper.BizDigitalEmployeeMapper;
-import com.digitalemployee.business.mapper.BizKnowledgeBaseFileMapper;
-import com.digitalemployee.business.mapper.BizKnowledgeBaseMapper;
+import com.digitalemployee.business.domain.*;
+import com.digitalemployee.business.mapper.*;
 import com.digitalemployee.business.modules.chatsession.domain.BizSessionRecord;
 import com.digitalemployee.business.modules.chatsession.mapper.BizSessionRecordMapper;
 import com.digitalemployee.business.modules.de.domain.BizDigitalEmployeeProcedure;
@@ -21,7 +16,6 @@ import com.digitalemployee.business.service.IBizKnowledgeBaseService;
 import com.digitalemployee.common.annotation.DataScope;
 import com.digitalemployee.common.core.domain.entity.SysUserDeConfig;
 import com.digitalemployee.common.utils.SecurityUtils;
-import com.digitalemployee.common.utils.uuid.IdUtils;
 import com.digitalemployee.system.mapper.SysUserDeConfigMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -49,6 +43,7 @@ public class BizDigitalEmployeeServiceImpl extends ServiceImpl<BizDigitalEmploye
 
     private final BizKnowledgeBaseMapper knowledgeBaseMapper;
     private final BizKnowledgeBaseFileMapper knowledgeBaseFileMapper;
+    private final BizQuestionFileMapper questionFileMapper;
     private final BizSessionRecordMapper sessionRecordMapper;
 
     private final SysUserDeConfigMapper sysUserDeConfigMapper;
@@ -102,8 +97,9 @@ public class BizDigitalEmployeeServiceImpl extends ServiceImpl<BizDigitalEmploye
         BizKnowledgeBase knowledgeBase = bizKnowledgeBaseService.initKnowledgeBase(bizDigitalEmployee);
         bizDigitalEmployee.setKnowledgeBaseId(knowledgeBase.getId());
 
+        // apiKey
+        bizDigitalEmployee.setEmployeeKey(IdUtil.fastSimpleUUID());
         bizDigitalEmployeeMapper.insert(bizDigitalEmployee);
-        bizDigitalEmployee.setEmployeeKey(IdUtils.fastUUID());
         this.saveContext(bizDigitalEmployee);
         this.saveProcedureList(bizDigitalEmployee);
         return bizDigitalEmployee;
@@ -277,11 +273,16 @@ public class BizDigitalEmployeeServiceImpl extends ServiceImpl<BizDigitalEmploye
         if (list == null || list.isEmpty()) {
             return;
         }
-        List<Long> idList = list.stream().map(BizDigitalEmployee::getId).collect(Collectors.toList());
+        List<Long> deIdList = list.stream()
+                .peek(de -> {
+                    de.setAvatar(null);
+                    de.setCompanyAvatar(null);
+                })
+                .map(BizDigitalEmployee::getId).collect(Collectors.toList());
 
         // 查询服务次数 session count
         LambdaQueryWrapper<BizSessionRecord> sessionRecordWrapper = Wrappers.lambdaQuery();
-        sessionRecordWrapper.in(BizSessionRecord::getDigitalEmployeeId, idList);
+        sessionRecordWrapper.in(BizSessionRecord::getDigitalEmployeeId, deIdList);
         List<BizSessionRecord> sessionRecordList = sessionRecordMapper.selectList(sessionRecordWrapper);
 
         Map<Long, List<BizSessionRecord>> seesionMap
@@ -307,6 +308,12 @@ public class BizDigitalEmployeeServiceImpl extends ServiceImpl<BizDigitalEmploye
             }
         }
 
+        // 查询问答库文件
+        LambdaQueryWrapper<BizQuestionFile> questionFileWrapper = Wrappers.lambdaQuery();
+        questionFileWrapper.in(BizQuestionFile::getDigitalEmployeeId, deIdList);
+        List<BizQuestionFile> questionFileList = questionFileMapper.selectList(questionFileWrapper);
+        Map<Long, List<BizQuestionFile>> questionFileMap = questionFileList.stream().collect(Collectors.groupingBy(BizQuestionFile::getDigitalEmployeeId));
+
         for (BizDigitalEmployee digitalEmployee : list) {
             Long digitalEmployeeId = digitalEmployee.getId();
             Long knowledgeBaseId = digitalEmployee.getKnowledgeBaseId();
@@ -331,11 +338,17 @@ public class BizDigitalEmployeeServiceImpl extends ServiceImpl<BizDigitalEmploye
                         }
                         digitalEmployee.setKnowledgeBaseFileCount(0);
                     }
-//                List<BizKnowledgeBaseFile> fileList = fileMap.get(digitalEmployeeId);
+
 
                 } else {
                     digitalEmployee.setKnowledgeBaseFileCount(0);
                 }
+            }
+
+            if (questionFileMap.containsKey(digitalEmployeeId)) {
+                List<BizQuestionFile> qaFiles = questionFileMap.get(digitalEmployeeId);
+                Integer knowledgeBaseFileCount = digitalEmployee.getKnowledgeBaseFileCount();
+                digitalEmployee.setKnowledgeBaseFileCount(knowledgeBaseFileCount + qaFiles.size());
             }
 
         }

@@ -9,12 +9,15 @@ public class ChatResourceVO {
     private Long usedEmployeeAmount;
     private Long employeeAmount;
     private Long usedDocAmount;
+
     private Long docAmount;
+    private Long qaFileAmount;
+    private Long totalFileAmount;
 
     public ChatResourceVO() {
     }
 
-    public ChatResourceVO(SysUserDeConfig sysUserDeConfig, Long usedEmployeeAmount, Long usedDocAmount) {
+    public ChatResourceVO(SysUserDeConfig sysUserDeConfig, Long usedEmployeeAmount, Long usedDocAmount, Long qaFileAmount) {
         if (sysUserDeConfig == null) {
             this.employeeAmount = 0L;
             this.docAmount = 0L;
@@ -26,7 +29,10 @@ public class ChatResourceVO {
             this.docAmount = sysUserDeConfig.getKnowledgeBaseDocAmount();
 
             this.usedEmployeeAmount = usedEmployeeAmount;
+
             this.usedDocAmount = usedDocAmount;
+            this.qaFileAmount = qaFileAmount;
+            this.totalFileAmount = this.usedDocAmount + this.qaFileAmount;
         }
     }
 }

@@ -17,6 +17,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
 @Slf4j
 @Component
 @RequiredArgsConstructor
@@ -54,8 +55,8 @@ public class RemoteModelService {
      */
     public AppendTextsResponse appendFile(String collection, Map<String, Object> param) {
         final String url = chatResourcesConfig.getQaAppendFileUrl() + collection;
-        log.info("url="+url);
-        log.info("param="+param);
+        log.info("url=" + url);
+        log.info("param=" + param);
         AppendTextsResponse response = postFormDataToJson(url, param, AppendTextsResponse.class);
         if (response != null && !response.getSuccessful()) {
             throw new RuntimeException(url + "远程服务调用异常：" + response.getMessage());
@@ -85,8 +86,8 @@ public class RemoteModelService {
      */
     public AppendQaResponse appendQa(Map<String, Object> param) {
         final String url = chatResourcesConfig.getQaAppendQaUrl();
-        log.info("url="+url);
-        log.info("param="+param.toString());
+        log.info("url=" + url);
+        log.info("param=" + param.toString());
         AppendQaResponse response = post(url, param.toString(), AppendQaResponse.class);
         if (response != null && !response.getSuccessful()) {
             throw new RuntimeException(url + "远程服务调用异常：" + response.getMessage());
@@ -117,8 +118,8 @@ public class RemoteModelService {
      */
     public BaseResponse dropVectors(Map<String, Object> param) {
         final String url = chatResourcesConfig.getQaDropVectorsUrl();
-        log.info("url="+url);
-        log.info("param="+param.toString());
+        log.info("url=" + url);
+        log.info("param=" + param.toString());
         BaseResponse response = post(url, param.toString(), BaseResponse.class);
         if (response != null && !response.getSuccessful()) {
             throw new RuntimeException(url + "远程服务调用异常：" + response.getMessage());
@@ -162,6 +163,7 @@ public class RemoteModelService {
     public static <T> T post(String url, String param, Class<T> beanClass) {
         return JSONUtil.toBean(HttpUtil.post(url, param), beanClass);
     }
+
     public static <T> T post2(String url, String param, Class<T> beanClass) {
         try (HttpResponse result = HttpRequest.post(url)
                 .header(Header.CONTENT_TYPE, ContentType.JSON.getValue())

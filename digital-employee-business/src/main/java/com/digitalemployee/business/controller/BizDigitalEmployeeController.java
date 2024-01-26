@@ -1,5 +1,8 @@
 package com.digitalemployee.business.controller;
 
+import cn.hutool.core.util.IdUtil;
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.digitalemployee.business.domain.BizDigitalEmployee;
 import com.digitalemployee.business.service.IBizDigitalEmployeeService;
 import com.digitalemployee.business.utils.HttpUtils;
@@ -152,6 +155,17 @@ public class BizDigitalEmployeeController extends BaseController {
             return HttpUtils.getResponseBody(employee.getCompanyAvatar(), employee.getCompanyAvatarContentType());
         }
         return ResponseEntity.notFound().build();
+    }
+
+    @PostMapping("/updateApiKey")
+    public AjaxResult updateApiKey(@RequestBody BizDigitalEmployee digitalEmployee) {
+        if (digitalEmployee.getId() == null) {
+            return error("更新apiKey异常，请联系管理员");
+        }
+        BizDigitalEmployee employee = bizDigitalEmployeeService.getById(digitalEmployee.getId());
+        employee.setEmployeeKey(IdUtil.fastSimpleUUID());
+        bizDigitalEmployeeService.updateById(employee);
+        return AjaxResult.success(employee.getEmployeeKey());
     }
 
 }

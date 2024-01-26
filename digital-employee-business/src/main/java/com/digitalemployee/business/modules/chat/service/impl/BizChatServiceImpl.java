@@ -37,6 +37,7 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.math.BigDecimal;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
 
@@ -73,6 +74,7 @@ public class BizChatServiceImpl implements BizChatService {
         // 初始化 ChatDataDTO
         ChatDataDTO chatData = new ChatDataDTO();
         chatData.setUserInput(chatRequest.getUserInput());
+        chatData.setApiKey(chatRequest.getApiKey());
         chatData.setLoginUserId(loginUserId);
         chatData.initCookieToken();
         // 数字员工
@@ -166,6 +168,11 @@ public class BizChatServiceImpl implements BizChatService {
     }
 
     private void getOrInitSession(ChatDataDTO chatData) {
+        if (chatData.getApiKey() != null) {
+            this.initApiSession(chatData);
+            return;
+        }
+
         LambdaQueryWrapper<BizSession> wrapper = Wrappers.lambdaQuery();
         wrapper.eq(BizSession::getDigitalEmployeeId, chatData.getDigitalEmployee().getId())
                 .eq(BizSession::getIp, chatData.getClientIp())
@@ -177,6 +184,22 @@ public class BizChatServiceImpl implements BizChatService {
         }
         if (sessionList.isEmpty()) {
             chatData.initSession();
+            sessionService.insertBizSession(chatData.getSession());
+        } else {
+            chatData.setSession(sessionList.get(0));
+        }
+    }
+
+    private void initApiSession(ChatDataDTO chatData) {
+        LambdaQueryWrapper<BizSession> wrapper = Wrappers.lambdaQuery();
+        wrapper.eq(BizSession::getDigitalEmployeeId, chatData.getDigitalEmployee().getId())
+                .eq(BizSession::getSessionType, 3);
+        List<BizSession> sessionList = sessionService.list(wrapper);
+        if (sessionList.size() > 1) {
+            throw new BaseException("会话数据异常，请联系管理员");
+        }
+        if (sessionList.isEmpty()) {
+            chatData.initApiSession();
             sessionService.insertBizSession(chatData.getSession());
         } else {
             chatData.setSession(sessionList.get(0));
@@ -222,6 +245,8 @@ public class BizChatServiceImpl implements BizChatService {
 
         record.setTokens(record.getOutputText().length());
 
+        record.setAiResponse(JSONUtil.toJsonStr(chatData.getAiReq()));
+
         sessionRecordService.save(record);
         BizSession session = chatData.getSession();
         session.setRecordAmount(session.getRecordAmount() + 1);
@@ -246,7 +271,9 @@ public class BizChatServiceImpl implements BizChatService {
         BizSessionRecord record = chatData.getNewRecord();
         QAParam qaParam = chatData.initQaParam();
         QAResponse qaResponse = remoteModelService.qa(qaParam);
-        if (qaResponse.getSuccessful()) {
+        chatData.putAiReq("qaParam", qaParam);
+        chatData.putAiReq("qaResponse", qaResponse);
+        if (qaResponse.getSuccessful() && this.isHighQuantityOfInformation(qaResponse, chatData.getDigitalEmployee())) {
             record.setHitStatus(0);
             record.setOutputText(qaResponse.getAnswer());
         } else {
@@ -260,7 +287,9 @@ public class BizChatServiceImpl implements BizChatService {
         BizSessionRecord record = chatData.getNewRecord();
         QAParam searchTextParam = chatData.initSearchTextParam();
         QAResponse docResponse = remoteModelService.searchText(searchTextParam);
-        if (docResponse.getSuccessful()) {
+        chatData.putAiReq("docParam", searchTextParam);
+        chatData.putAiReq("docResponse", docResponse);
+        if (docResponse.getSuccessful() && this.isHighQuantityOfInformation(docResponse, chatData.getDigitalEmployee())) {
             record.setHitStatus(1);
             record.setOutputText(docResponse.getAnswer());
         } else {
@@ -274,7 +303,9 @@ public class BizChatServiceImpl implements BizChatService {
         BizSessionRecord record = chatData.getNewRecord();
         QAParam qaParam = chatData.initQaParam();
         QAResponse qaResponse = remoteModelService.qa(qaParam);
-        if (qaResponse.getSuccessful()) {
+        chatData.putAiReq("qaParam", qaParam);
+        chatData.putAiReq("qaResponse", qaResponse);
+        if (qaResponse.getSuccessful() && this.isHighQuantityOfInformation(qaResponse, chatData.getDigitalEmployee())) {
             record.setHitStatus(0);
             record.setOutputText(qaResponse.getAnswer());
         } else {
@@ -282,6 +313,16 @@ public class BizChatServiceImpl implements BizChatService {
             record.setErrorMessage(msg);
             this.doc(chatData);
         }
+    }
+
+    private boolean isHighQuantityOfInformation(QAResponse response, BizDigitalEmployee digitalEmployee) {
+        Double quantityOfInformation = response.getQuantity_of_information();
+        BigDecimal userConfigQuantity = digitalEmployee.getQuantityOfInformation();
+        if (quantityOfInformation == null || userConfigQuantity == null) {
+            // 二者之一为空时，返回true
+            return true;
+        }
+        return quantityOfInformation >= userConfigQuantity.doubleValue();
     }
 
     private void setProcedure(ChatDataDTO chatData) {
@@ -292,6 +333,8 @@ public class BizChatServiceImpl implements BizChatService {
         } else {
             ChatParam chatParam = chatData.initChatParam();
             AiChatResponse aiChatResponse = remoteModelService.chat(chatParam);
+            chatData.putAiReq("chatParam", chatParam);
+            chatData.putAiReq("chatResponse", aiChatResponse);
             if (!aiChatResponse.getSuccessful()) {
                 String msg = record.getErrorMessage() + "大模型错误信息: " + aiChatResponse.getMessage() + "...";
                 record.setErrorMessage(msg);

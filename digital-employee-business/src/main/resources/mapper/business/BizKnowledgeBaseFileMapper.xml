@@ -109,8 +109,9 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         from
             biz_knowledge_base kb left join biz_knowledge_base_file kbf on kb.id = kbf.knowledge_base_id
         where
-            kb.sys_user_id = #{sysUserId}
+            kb.id IN (SELECT knowledge_base_id FROM biz_digital_employee de WHERE de.sys_user_id = #{sysUserId} AND de.status != 2)
     </select>
+
     <select id="selectBizKnowledgeBaseFileIds" parameterType="BizKnowledgeBaseFile" resultMap="BizKnowledgeBaseFileResult">
         <include refid="selectBizKnowledgeBaseFileVo"/>
         where knowledge_base_id = #{knowledgeBaseId}

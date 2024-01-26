@@ -40,6 +40,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="qaRadius"    column="qa_radius"    />
         <result property="kbRadius"    column="kb_radius"    />
         <result property="modelSwitch"    column="model_switch"    />
+        <result property="quantityOfInformation"    column="quantity_of_information"    />
     </resultMap>
 
     <sql id="selectBizDigitalEmployeeVo">
@@ -47,7 +48,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
                max_tokens, presence_penalty, frequency_penalty, send_memory, history_message_count, compress_message_length_threshold,
                lang, builtin, status, create_by, create_time, update_by, update_time, remark, greeting,
                company_avatar, company_avatar_content_type, company_name, employee_key, user_id, dept_id, proactively_greet,
-               chat_type, qa_radius, kb_radius, model_switch
+               chat_type, qa_radius, kb_radius, model_switch, quantity_of_information
         from biz_digital_employee de
     </sql>
 
@@ -126,6 +127,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="qaRadius != null">qa_radius,</if>
             <if test="kbRadius != null">kb_radius,</if>
             <if test="modelSwitch != null">model_switch,</if>
+            <if test="quantityOfInformation != null">quantity_of_information,</if>
          </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
             <if test="templateId != null">#{templateId},</if>
@@ -160,6 +162,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="qaRadius != null">#{qaRadius},</if>
             <if test="kbRadius != null">#{kbRadius},</if>
             <if test="modelSwitch != null">#{modelSwitch},</if>
+            <if test="quantityOfInformation != null">#{quantityOfInformation},</if>
          </trim>
     </insert>
 
@@ -198,6 +201,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="qaRadius != null">qa_radius = #{qaRadius},</if>
             <if test="kbRadius != null">kb_radius = #{kbRadius},</if>
             <if test="modelSwitch != null">model_switch = #{modelSwitch},</if>
+            <if test="quantityOfInformation != null">quantity_of_information = #{quantityOfInformation},</if>
         </trim>
         where id = #{id}
     </update>

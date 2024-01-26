@@ -587,10 +587,11 @@
               <el-select v-model="form.modelSwitch" :disabled="!editMode">
                 <el-option label="使用大模型知识" :value="1"></el-option>
                 <el-option label="使用兜底话术" :value="0"></el-option>
+                <el-option label="智能兜底" :value="2"></el-option>
               </el-select>
             </el-form-item>
           </el-col>
-          <el-col :span="22" v-if="form.modelSwitch==0">
+          <el-col :span="22" v-if="form.modelSwitch==0||form.modelSwitch==2">
             <el-form-item label="兜底话术列表">
               <div class="modelSwitchList">
                 <div class="modelSwitchItem" v-for="(item,index) in form.procedureList" :key="item.id">
@@ -604,6 +605,19 @@
                   </el-radio-group>
                 </div>
               </div>
+            </el-form-item>
+          </el-col>
+          <el-col  :span="11" v-if="form.modelSwitch==2">
+            <el-form-item label="回答信息量" prop="kbRadius">
+              <el-slider
+                v-model="form.quantityOfInformation "
+                :min="0.5"
+                :max="5"
+                :step="0.1"
+                style="padding: 0 10px"
+                :disabled="!editMode"
+              >
+              </el-slider>
             </el-form-item>
           </el-col>
         </el-row>
@@ -753,7 +767,9 @@ export default {
             enable: 1,
             templateId: 1,
           },
-        ]
+        ],
+        // 回答信息量
+        quantityOfInformation:0.8
       },
       rules: {
         name: [
@@ -1091,7 +1107,8 @@ export default {
             enable: 1,
             templateId: 1
           },
-        ]
+        ],
+        quantityOfInformation:0.8,
       };
       this.resetForm("form");
 

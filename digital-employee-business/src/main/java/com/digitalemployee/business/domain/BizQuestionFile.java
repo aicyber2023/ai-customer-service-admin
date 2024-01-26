@@ -1,12 +1,15 @@
 package com.digitalemployee.business.domain;
 
 import com.digitalemployee.common.core.domain.BaseEntity;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.digitalemployee.common.annotation.Excel;
+
+import java.util.Date;
 
 /**
  * 问答库文档对象 biz_question_file
@@ -16,7 +19,7 @@ import com.digitalemployee.common.annotation.Excel;
  */
 @Data
 @TableName("biz_question_file")
-public class BizQuestionFile extends BaseEntity
+public class BizQuestionFile
 {
     private static final long serialVersionUID = 1L;
 
@@ -47,69 +50,11 @@ public class BizQuestionFile extends BaseEntity
     @Excel(name = "文件大小")
     private Long fileSize;
 
-    public void setId(Long id) 
-    {
-        this.id = id;
-    }
+    /** 创建者 */
+    private String createBy;
 
-    public Long getId() 
-    {
-        return id;
-    }
-    public void setDigitalEmployeeId(Long digitalEmployeeId) 
-    {
-        this.digitalEmployeeId = digitalEmployeeId;
-    }
-
-    public Long getDigitalEmployeeId() 
-    {
-        return digitalEmployeeId;
-    }
-
-    public String getQuestionId() {
-        return questionId;
-    }
-
-    public void setQuestionId(String questionId) {
-        this.questionId = questionId;
-    }
-
-    public void setFileName(String fileName)
-    {
-        this.fileName = fileName;
-    }
-
-    public String getFileName() 
-    {
-        return fileName;
-    }
-    public void setFilePath(String filePath) 
-    {
-        this.filePath = filePath;
-    }
-
-    public String getFilePath() 
-    {
-        return filePath;
-    }
-    public void setStatus(Integer status) 
-    {
-        this.status = status;
-    }
-
-    public Integer getStatus() 
-    {
-        return status;
-    }
-    public void setFileSize(Long fileSize) 
-    {
-        this.fileSize = fileSize;
-    }
-
-    public Long getFileSize() 
-    {
-        return fileSize;
-    }
-
+    /** 创建时间 */
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    private Date createTime;
 
 }

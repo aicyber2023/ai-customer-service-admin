@@ -269,35 +269,35 @@
           <el-col :span="4" :offset="4">
             <div style="margin-bottom: 5px">智能客服个数</div>
             <el-form-item label="" prop="employeeAmount" label-width="0" size="mini">
-              <el-input-number :min="0" :controls="false" style="width: 70px" v-model="configForm.employeeAmount" placeholder="请输入智能客服个数"/>
+              <el-input-number :min="-1" :controls="false" style="width: 70px" v-model="configForm.employeeAmount" placeholder="请输入智能客服个数"/>
               个
             </el-form-item>
           </el-col>
           <el-col :span="4">
             <div style="margin-bottom: 5px">总对话条数</div>
             <el-form-item label="" prop="sessionAmount" label-width="0" size="mini">
-              <el-input-number :min="0" :controls="false" style="width: 70px" v-model="configForm.sessionAmount" placeholder="请输入总对话条数"/>
+              <el-input-number :min="-1" :controls="false" style="width: 70px" v-model="configForm.sessionAmount" placeholder="请输入总对话条数"/>
               条
             </el-form-item>
           </el-col>
           <el-col :span="4">
             <div style="margin-bottom: 5px">知识库个数</div>
             <el-form-item label="" prop="knowledgeBaseAmount" label-width="0" size="mini">
-              <el-input-number :min="0" :controls="false" style="width: 70px" v-model="configForm.knowledgeBaseAmount" placeholder="请输入总对话条数"/>
+              <el-input-number :min="-1" :controls="false" style="width: 70px" v-model="configForm.knowledgeBaseAmount" placeholder="请输入总对话条数"/>
               个
             </el-form-item>
           </el-col>
           <el-col :span="4">
             <div style="margin-bottom: 5px">总上传文档数</div>
             <el-form-item label="" prop="knowledgeBaseDocAmount" label-width="0" size="mini">
-              <el-input-number :min="0" :controls="false" style="width: 70px" v-model="configForm.knowledgeBaseDocAmount" placeholder="请输入总对话条数"/>
+              <el-input-number :min="-1" :controls="false" style="width: 70px" v-model="configForm.knowledgeBaseDocAmount" placeholder="请输入总对话条数"/>
               个
             </el-form-item>
           </el-col>
           <el-col :span="4">
             <div style="margin-bottom: 5px">总字数</div>
             <el-form-item label="" prop="knowledgeBaseDocWordAmount" label-width="0" size="mini">
-              <el-input-number :min="0" :controls="false" style="width: 70px" v-model="configForm.knowledgeBaseDocWordAmount" placeholder="请输入总对话条数"/>
+              <el-input-number :min="-1" :controls="false" style="width: 70px" v-model="configForm.knowledgeBaseDocWordAmount" placeholder="请输入总对话条数"/>
               字
             </el-form-item>
           </el-col>
@@ -616,11 +616,11 @@ export default {
         roleIds: []
       };
       this.configForm = {
-        employeeAmount: 2,
-        sessionAmount: 300,
-        knowledgeBaseAmount: 1,
-        knowledgeBaseDocAmount: 10,
-        knowledgeBaseDocWordAmount: 100000
+        employeeAmount: -1,
+        sessionAmount: -1,
+        knowledgeBaseAmount: -1,
+        knowledgeBaseDocAmount: -1,
+        knowledgeBaseDocWordAmount: -1
       };
       this.showConfigBox = false;
       this.resetForm("form");
