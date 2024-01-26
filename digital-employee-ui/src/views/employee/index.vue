@@ -473,6 +473,7 @@ export default {
                   qaRadius:res.data.qaRadius,
                   kbRadius:res.data.kbRadius,
                   modelSwitch:res.data.modelSwitch,
+                  quantityOfInformation:res.data.quantityOfInformation,
                 }
                 add(form).then((res) => {
                   if (res.code == 200) {
